@@ -1,6 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Upload,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import luminaries from "@/assets/collection-luminaries.jpg";
@@ -8,6 +15,8 @@ import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
 import botanica from "@/assets/collection-botanica.jpg";
 import ember from "@/assets/collection-ember.jpg";
+
+// ----- Data ---------------------------------------------------------------
 
 const occasions = [
   { id: "baby-birth", name: "Baby & Birth", desc: "Welcome them into the world" },
@@ -28,102 +37,301 @@ const occasions = [
 ];
 
 const collections = [
-  { id: "luminaries", name: "Little Luminaries", img: luminaries, desc: "Soft, whimsical, and deeply loved.", mood: ["Gentle", "Playful", "Warm"] },
-  { id: "meadow", name: "Meadow & Mane", img: meadow, desc: "Bold landscapes. Earned emotion.", mood: ["Strong", "Grounded", "Honest"] },
-  { id: "fable", name: "Fable & Fawn", img: fable, desc: "Enchanted edge. Adult whimsy.", mood: ["Magical", "Soft", "Charming"] },
-  { id: "botanica", name: "Moonlit Botanica", img: botanica, desc: "Dark florals. Quiet reverence.", mood: ["Reverent", "Timeless", "Dignified"] },
-  { id: "ember", name: "Ember & Ivy", img: ember, desc: "Warm. Intimate. Romantic.", mood: ["Romantic", "Cozy", "Chosen"] },
+  {
+    id: "luminaries",
+    name: "Little Luminaries",
+    img: luminaries,
+    desc: "Soft, whimsical, and deeply loved. Anchored by Punch — the baby macaque who went viral for clinging to his stuffed orangutan.",
+    mood: ["Gentle", "Playful", "Warm"],
+  },
+  {
+    id: "meadow",
+    name: "Meadow & Mane",
+    img: meadow,
+    desc: "Bold landscapes and animals that feel earned. Wide skies, golden fields, rugged wilderness.",
+    mood: ["Strong", "Grounded", "Honest"],
+  },
+  {
+    id: "fable",
+    name: "Fable & Fawn",
+    img: fable,
+    desc: "Enchanted edge. Adult whimsy. Moonlit foxes, glowing cottages, botanical charm.",
+    mood: ["Magical", "Soft", "Charming"],
+  },
+  {
+    id: "botanica",
+    name: "Moonlit Botanica",
+    img: botanica,
+    desc: "Dark florals, candlelight, and quiet reverence. Art that holds grief with dignity.",
+    mood: ["Reverent", "Timeless", "Dignified"],
+  },
+  {
+    id: "ember",
+    name: "Ember & Ivy",
+    img: ember,
+    desc: "Warm, intimate, and romantic. Candlelit gardens, paired foxes, cottage roses.",
+    mood: ["Romantic", "Cozy", "Chosen"],
+  },
 ];
 
-const products = [
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo-blanket";
+
+interface Product {
+  id: ProductId;
+  name: string;
+  startingPrice: number;
+  priceLabel: string;
+  tagline: string;
+  details: string[];
+  cta: string;
+}
+
+const products: Product[] = [
   {
     id: "digital",
     name: "Digital Download",
-    priceLabel: "From $29 signature · $49 preserve",
     startingPrice: 29,
+    priceLabel: "From $29",
     tagline: "Instant. Printable. Frameable.",
     details: [
       "Delivered to inbox instantly",
       "High resolution PNG + PDF",
       "Print at home or any print shop",
       "QR code embedded in art",
+      "Free shipping",
     ],
     cta: "Choose Digital",
   },
   {
     id: "canvas",
-    name: "Canvas Print — 11x14",
-    priceLabel: "From $79 signature · $99 preserve",
+    name: "Canvas Print 11x14",
     startingPrice: 79,
+    priceLabel: "From $79",
     tagline: "Gallery wrap. Ready to hang.",
-    details: ["Ships in 4-6 business days", "Free shipping", "Add digital copy for +$10"],
+    details: ["Ships in 4-6 business days", "Free shipping", "Add digital copy +$10"],
     cta: "Choose Canvas",
   },
   {
     id: "ornament",
     name: "Acrylic Ornament",
-    priceLabel: "From $59 signature · $79 preserve",
     startingPrice: 59,
-    tagline: "A keepsake that plays their song — every time they hold it.",
+    priceLabel: "From $59",
+    tagline: "A keepsake that plays their song every time they hold it.",
     details: ["Gift box included", "Ships in 5-7 business days", "Free shipping"],
     cta: "Choose Ornament",
   },
   {
     id: "jewelry",
     name: "Jewelry",
-    priceLabel: "From $89 silver · $99 gold (signature) · $109/$119 (preserve)",
     startingPrice: 89,
+    priceLabel: "From $89",
     tagline: "Worn every day. Scanned whenever they need it.",
-    details: ["Heart · Circle · Dog Tag", "Ships in 5-7 business days", "Free shipping"],
+    details: [
+      "Heart · Circle · Dog Tag",
+      "Silver or Gold",
+      "Ships in 5-7 business days",
+      "Free shipping",
+    ],
     cta: "Choose Jewelry",
   },
   {
     id: "blanket",
     name: "Sherpa Blanket",
-    priceLabel: "From $119 signature · $139 preserve",
     startingPrice: 119,
+    priceLabel: "From $119",
     tagline: "Wrap up. Press play. They're there.",
     details: [
-      "50x60 inches · Full color",
-      "Soft sherpa · Machine washable",
+      "50x60 · Full color · Soft sherpa",
       "Ships in 3-5 business days",
       "Free shipping",
     ],
     cta: "Choose Blanket",
   },
+  {
+    id: "photo-blanket",
+    name: "Photo Blanket",
+    startingPrice: 119,
+    priceLabel: "From $119",
+    tagline: "Their photo. On something they'll hold forever.",
+    details: [
+      "Upload any photo",
+      "50x60 · Full color · Soft sherpa",
+      "Ships in 3-5 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Photo Blanket",
+  },
 ];
+
+const ornamentDesigns = [
+  {
+    id: "botanica",
+    name: "Moonlit Botanica",
+    sub: "Navy rose botanical wreath",
+    use: "For memorial, grief, and remembrance moments",
+    img: botanica,
+    available: true,
+  },
+  {
+    id: "luminaries",
+    name: "Little Luminaries",
+    sub: "Gold circle watercolor",
+    use: "For baby, new arrival, and lullaby moments",
+    img: luminaries,
+    available: true,
+  },
+  {
+    id: "pet",
+    name: "Pet Memorial",
+    sub: "Warm amber botanicals",
+    use: "For beloved pets who were family",
+    img: ember,
+    available: true,
+  },
+  {
+    id: "classic",
+    name: "Classic Elegant",
+    sub: "Silver pinecone wreath",
+    use: "",
+    img: fable,
+    available: false,
+  },
+  {
+    id: "colorful",
+    name: "Colorful Celebration",
+    sub: "Jewel tone botanicals",
+    use: "",
+    img: meadow,
+    available: false,
+  },
+];
+
+// Per-collection art tiles (placeholder — reuses collection image)
+const artByCollection: Record<string, { id: string; img: string }[]> = Object.fromEntries(
+  collections.map((c) => [
+    c.id,
+    Array.from({ length: 6 }).map((_, i) => ({ id: `${c.id}-${i + 1}`, img: c.img })),
+  ]),
+);
+
+// ----- Helpers ------------------------------------------------------------
+
+const findOccasion = (id: string | null) => occasions.find((o) => o.id === id);
+const findCollection = (id: string | null) => collections.find((c) => c.id === id);
+const findProduct = (id: string | null) => products.find((p) => p.id === id);
+const findOrnament = (id: string | null) => ornamentDesigns.find((o) => o.id === id);
+
+// ----- Page ---------------------------------------------------------------
+
+const TOTAL_STEPS = 4;
 
 const Start = () => {
   const navigate = useNavigate();
+
   const [occasion, setOccasion] = useState<string | null>(null);
   const [collection, setCollection] = useState<string | null>(null);
-  const [product, setProduct] = useState<string | null>(null);
+  const [product, setProduct] = useState<ProductId | null>(null);
+  const [art, setArt] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [artCollection, setArtCollection] = useState<string | null>(null);
 
-  const step2Ref = useRef<HTMLDivElement>(null);
-  const step3Ref = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
+  // Which step is currently expanded for editing (null = none open beyond what's unlocked)
+  const [editingStep, setEditingStep] = useState<number | null>(1);
 
   const step1Done = !!occasion;
-  const step2Unlocked = step1Done;
   const step2Done = !!collection;
-  const step3Unlocked = step2Done;
   const step3Done = !!product;
-  const allDone = step1Done && step2Done && step3Done;
 
-  const completedCount = [step1Done, step2Done, step3Done].filter(Boolean).length;
+  const selectedProduct = findProduct(product);
+  const isPhoto = product === "photo-blanket";
+  const isOrnament = product === "ornament";
+  const isJewelry = product === "jewelry";
 
-  const selectedProduct = useMemo(() => products.find((p) => p.id === product), [product]);
+  const step4Done = useMemo(() => {
+    if (!product) return false;
+    if (isPhoto) return !!photo;
+    if (isOrnament) return !!art; // ornament design id stored in `art`
+    return !!art;
+  }, [product, photo, art, isPhoto, isOrnament]);
 
-  // Smooth scroll on unlock
-  useEffect(() => {
-    if (step1Done) step2Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [step1Done]);
-  useEffect(() => {
-    if (step2Done) step3Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [step2Done]);
-  useEffect(() => {
-    if (allDone) ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [allDone]);
+  const completedCount = [step1Done, step2Done, step3Done, step4Done].filter(Boolean).length;
+  const allDone = completedCount === TOTAL_STEPS;
+
+  // refs for scroll
+  const stepRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  const scrollToStep = (n: number) => {
+    setTimeout(() => {
+      stepRefs[n - 1].current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
+  // Auto-advance
+  const handleSelectOccasion = (id: string) => {
+    setOccasion(id);
+    setEditingStep(2);
+    scrollToStep(2);
+  };
+  const handleSelectCollection = (id: string) => {
+    setCollection(id);
+    setArtCollection(id); // default art collection follows their choice
+    setEditingStep(3);
+    scrollToStep(3);
+  };
+  const handleSelectProduct = (id: ProductId) => {
+    setProduct(id);
+    // reset step 4 when switching product type
+    setArt(null);
+    setPhoto(null);
+    setEditingStep(4);
+    scrollToStep(4);
+  };
+  const handleSelectArt = (id: string) => {
+    setArt(id);
+    setEditingStep(null);
+    setTimeout(() => {
+      ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
+  };
+  const handleSelectOrnament = (id: string) => {
+    setArt(id);
+    setEditingStep(null);
+    setTimeout(() => {
+      ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
+  };
+
+  // Change handlers — clear everything after that step
+  const changeStep = (n: number) => {
+    if (n <= 1) {
+      setCollection(null); setArtCollection(null); setProduct(null); setArt(null); setPhoto(null);
+    } else if (n === 2) {
+      setProduct(null); setArt(null); setPhoto(null);
+    } else if (n === 3) {
+      setArt(null); setPhoto(null);
+    }
+    setEditingStep(n);
+    scrollToStep(n);
+  };
+
+  // Photo upload
+  const handlePhoto = (file: File | null) => {
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhoto(e.target?.result as string);
+      setEditingStep(null);
+      setTimeout(() => ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleContinue = () => {
     if (!allDone) return;
@@ -131,13 +339,35 @@ const Start = () => {
       occasion: occasion!,
       collection: collection!,
       product: product!,
+      art: art ?? "",
     });
-    navigate(`/personalize?${params.toString()}`);
+    let target = "/personalize/signature";
+    if (isJewelry) target = "/personalize/jewelry";
+    else if (isOrnament) target = "/personalize/ornament";
+    navigate(`${target}?${params.toString()}`);
   };
+
+  // Missing-step nudge text
+  const missingText = !step1Done
+    ? "choose the occasion"
+    : !step2Done
+    ? "choose a collection"
+    : !step3Done
+    ? "choose how to give it"
+    : !step4Done
+    ? isPhoto
+      ? "upload their photo"
+      : isOrnament
+      ? "pick an ornament design"
+      : "pick the art"
+    : null;
+
+  // Currently displayed step number for header
+  const currentStep = !step1Done ? 1 : !step2Done ? 2 : !step3Done ? 3 : !step4Done ? 4 : 4;
 
   return (
     <main className="min-h-screen bg-cream text-navy">
-      {/* Header */}
+      {/* HEADER */}
       <header className="bg-gradient-navy text-cream relative overflow-hidden">
         <div className="absolute inset-0 starfield opacity-40" />
         <div className="container relative z-10 py-10 md:py-14">
@@ -153,19 +383,18 @@ const Start = () => {
             <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-balance leading-[1.05]">
               Let's find the <span className="italic text-gold">perfect key.</span>
             </h1>
-            <p className="text-cream/70 text-lg">Three choices. Then we do the rest.</p>
+            <p className="text-cream/70 text-lg">A few choices. Then we do the rest.</p>
           </div>
 
-          {/* Progress */}
           <div className="mt-10 max-w-md">
             <div className="flex items-center justify-between text-xs text-cream/60 mb-2">
-              <span>Step {Math.min(completedCount + 1, 3)} of 3</span>
-              <span>{completedCount}/3 complete</span>
+              <span>Step {currentStep} of {TOTAL_STEPS}</span>
+              <span>{completedCount}/{TOTAL_STEPS} complete</span>
             </div>
-            <div className="h-1.5 rounded-full bg-cream/10 overflow-hidden">
+            <div className="h-1 rounded-full bg-cream/10 overflow-hidden">
               <div
                 className="h-full bg-gradient-gold transition-all duration-500"
-                style={{ width: `${(completedCount / 3) * 100}%` }}
+                style={{ width: `${(completedCount / TOTAL_STEPS) * 100}%` }}
               />
             </div>
           </div>
@@ -173,12 +402,16 @@ const Start = () => {
       </header>
 
       {/* STEP 1 */}
-      <Section
+      <StepBlock
+        ref={stepRefs[0]}
         index="01"
         title="What moment are you celebrating?"
         subtitle="Every occasion has its own song."
         unlocked
         complete={step1Done}
+        collapsed={step1Done && editingStep !== 1}
+        summary={step1Done ? `📍 ${findOccasion(occasion)?.name}` : ""}
+        onChange={() => changeStep(1)}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {occasions.map((o) => {
@@ -186,21 +419,14 @@ const Start = () => {
             return (
               <button
                 key={o.id}
-                onClick={() => setOccasion(o.id)}
+                onClick={() => handleSelectOccasion(o.id)}
                 className={cn(
                   "relative text-left p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300",
                   "hover:-translate-y-0.5 hover:shadow-card",
-                  selected
-                    ? "border-gold ring-2 ring-gold/40 shadow-card"
-                    : "border-border/60",
-                  !occasion && "animate-pulse-border-init",
+                  selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
                 )}
               >
-                {selected && (
-                  <span className="absolute top-3 right-3 size-6 rounded-full bg-gold text-navy flex items-center justify-center">
-                    <Check className="size-4" strokeWidth={3} />
-                  </span>
-                )}
+                {selected && <SelectedDot />}
                 <h3 className="font-serif text-lg md:text-xl text-navy leading-tight mb-1.5 pr-7">
                   {o.name}
                 </h3>
@@ -209,31 +435,31 @@ const Start = () => {
             );
           })}
         </div>
-      </Section>
+      </StepBlock>
 
       {/* STEP 2 */}
-      <div ref={step2Ref}>
-      <Section
+      <StepBlock
+        ref={stepRefs[1]}
         index="02"
         title="Choose the art that speaks to them."
         subtitle="Any collection for any occasion. You know them — trust that."
-        unlocked={step2Unlocked}
+        unlocked={step1Done}
         complete={step2Done}
+        collapsed={step2Done && editingStep !== 2}
+        summary={step2Done ? `🎨 ${findCollection(collection)?.name}` : ""}
+        onChange={() => changeStep(2)}
+        pulse={step1Done && !step2Done}
       >
         <div className="grid md:grid-cols-2 gap-5 md:gap-6">
           {collections.map((c) => {
             const selected = collection === c.id;
             return (
-              <button
+              <article
                 key={c.id}
-                onClick={() => step2Unlocked && setCollection(c.id)}
-                disabled={!step2Unlocked}
                 className={cn(
-                  "group relative text-left bg-card rounded-2xl overflow-hidden border transition-all duration-300",
+                  "group relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
                   "hover:-translate-y-0.5 hover:shadow-card",
-                  selected
-                    ? "border-gold ring-2 ring-gold/40 shadow-card"
-                    : "border-border/60",
+                  selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
                 )}
               >
                 {selected && (
@@ -249,32 +475,52 @@ const Start = () => {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <h3 className="font-serif text-2xl text-navy mb-2">{c.name}</h3>
-                  <p className="text-[15px] text-muted-foreground mb-4">{c.desc}</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                  <p className="text-[15px] text-muted-foreground mb-4 leading-relaxed">{c.desc}</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-6">
                     {c.mood.map((m) => (
                       <span key={m} className="text-xs tracking-[0.2em] uppercase text-gold font-medium">
                         {m}
                       </span>
                     ))}
                   </div>
+                  <Button
+                    variant={selected ? "gold" : "navy"}
+                    className="w-full mt-auto"
+                    onClick={() => handleSelectCollection(c.id)}
+                  >
+                    {selected ? "Selected" : "Choose this collection"}
+                  </Button>
                 </div>
-              </button>
+              </article>
             );
           })}
         </div>
-      </Section>
-      </div>
+      </StepBlock>
 
       {/* STEP 3 */}
-      <div ref={step3Ref}>
-      <Section
+      <StepBlock
+        ref={stepRefs[2]}
         index="03"
         title="How would you like to give it?"
-        subtitle="Every Key of Hearts works on any of these. Free shipping on every US order."
-        unlocked={step3Unlocked}
+        subtitle={
+          <>
+            Free shipping on every US order.
+            <br />
+            🌍 International customers pay shipping — shown before payment.
+          </>
+        }
+        unlocked={step2Done}
         complete={step3Done}
+        collapsed={step3Done && editingStep !== 3}
+        summary={
+          step3Done
+            ? `🎁 ${selectedProduct?.name} · ${selectedProduct?.priceLabel}`
+            : ""
+        }
+        onChange={() => changeStep(3)}
+        pulse={step2Done && !step3Done}
       >
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {products.map((p) => {
@@ -285,17 +531,10 @@ const Start = () => {
                 className={cn(
                   "relative bg-card rounded-2xl p-6 md:p-7 border transition-all duration-300 flex flex-col",
                   "hover:-translate-y-0.5 hover:shadow-card",
-                  selected
-                    ? "border-gold ring-2 ring-gold/40 shadow-card"
-                    : "border-border/60",
-                  !step3Unlocked && "opacity-60",
+                  selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
                 )}
               >
-                {selected && (
-                  <span className="absolute top-4 right-4 size-7 rounded-full bg-gold text-navy flex items-center justify-center">
-                    <Check className="size-4" strokeWidth={3} />
-                  </span>
-                )}
+                {selected && <SelectedDot />}
                 <p className="label-eyebrow text-gold mb-2.5 pr-8">{p.priceLabel}</p>
                 <h3 className="font-serif text-2xl text-navy mb-2 leading-tight">{p.name}</h3>
                 <p className="font-serif italic text-navy/70 text-base mb-5 leading-snug text-balance">
@@ -309,8 +548,7 @@ const Start = () => {
                 <Button
                   variant={selected ? "gold" : "navy"}
                   className="w-full mt-auto"
-                  disabled={!step3Unlocked}
-                  onClick={() => setProduct(p.id)}
+                  onClick={() => handleSelectProduct(p.id)}
                 >
                   {selected ? "Selected" : p.cta}
                 </Button>
@@ -319,13 +557,6 @@ const Start = () => {
           })}
         </div>
 
-        {/* Shipping notice */}
-        <p className="mt-10 text-center text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          🇺🇸 Free shipping on every US order.<br />
-          🌍 International customers pay shipping — calculated at checkout before payment.
-        </p>
-
-        {/* Live price */}
         {selectedProduct && (
           <div className="mt-10 text-center animate-fade-up">
             <p className="font-serif text-2xl md:text-3xl text-gold">
@@ -334,15 +565,126 @@ const Start = () => {
             <p className="text-sm text-muted-foreground mt-2">+ $20 for Preserve a Voice</p>
           </div>
         )}
-      </Section>
-      </div>
+      </StepBlock>
+
+      {/* STEP 4 */}
+      <StepBlock
+        ref={stepRefs[3]}
+        index="04"
+        title={
+          isOrnament
+            ? "Choose their ornament design."
+            : isPhoto
+            ? "Upload their photo."
+            : isJewelry
+            ? "Choose the art for their card."
+            : selectedProduct
+            ? `Choose the art for their ${selectedProduct.name.toLowerCase()}.`
+            : "Choose their art."
+        }
+        subtitle={
+          isOrnament
+            ? "Each design is crafted for a different kind of moment."
+            : isPhoto
+            ? "This becomes the art on their blanket."
+            : isJewelry
+            ? "Your card ships first — arriving before their jewelry so they know something beautiful is on its way."
+            : "This is what they'll see every time they hold it."
+        }
+        unlocked={step3Done}
+        complete={step4Done}
+        collapsed={step4Done && editingStep !== 4}
+        summary={
+          step4Done
+            ? isPhoto
+              ? "🖼 Photo uploaded"
+              : isOrnament
+              ? `🖼 ${findOrnament(art)?.name}`
+              : `🖼 ${findCollection(artCollection)?.name} art`
+            : ""
+        }
+        onChange={() => changeStep(4)}
+        pulse={step3Done && !step4Done}
+      >
+        {/* Variant: ornament */}
+        {isOrnament && (
+          <div className="grid md:grid-cols-2 gap-5 md:gap-6">
+            {ornamentDesigns.map((d) => {
+              const selected = art === d.id;
+              const disabled = !d.available;
+              return (
+                <article
+                  key={d.id}
+                  className={cn(
+                    "relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
+                    !disabled && "hover:-translate-y-0.5 hover:shadow-card",
+                    selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+                    disabled && "opacity-60",
+                  )}
+                >
+                  {selected && (
+                    <span className="absolute top-4 right-4 z-10 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
+                      <Check className="size-5" strokeWidth={3} />
+                    </span>
+                  )}
+                  <div className={cn("aspect-[16/10] overflow-hidden bg-muted", disabled && "grayscale")}>
+                    <img src={d.img} alt={d.name} loading="lazy" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="font-serif text-2xl text-navy mb-1">{d.name}</h3>
+                    <p className="text-[15px] text-navy/70 mb-2">{d.sub}</p>
+                    {d.use && <p className="text-sm text-muted-foreground mb-5">{d.use}</p>}
+                    {disabled ? (
+                      <span className="mt-auto inline-flex items-center justify-center text-xs label-eyebrow text-gold border border-gold/40 rounded-full py-3">
+                        Coming Soon
+                      </span>
+                    ) : (
+                      <Button
+                        variant={selected ? "gold" : "navy"}
+                        className="w-full mt-auto"
+                        onClick={() => handleSelectOrnament(d.id)}
+                      >
+                        {selected ? "Selected" : "Choose this design"}
+                      </Button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Variant: photo upload */}
+        {isPhoto && (
+          <PhotoUpload photo={photo} onFile={handlePhoto} onClear={() => setPhoto(null)} />
+        )}
+
+        {/* Variant: art grid (digital, canvas, blanket, jewelry) */}
+        {!isOrnament && !isPhoto && product && (
+          <ArtPicker
+            currentCollectionId={artCollection ?? collection!}
+            onChangeCollection={(id) => {
+              setArtCollection(id);
+              setArt(null);
+            }}
+            selectedArt={art}
+            onSelectArt={handleSelectArt}
+            note={
+              isJewelry
+                ? "This art appears on their personalized card — included with every order."
+                : "Can't find exactly what you want? More art added regularly."
+            }
+            limit={isJewelry ? 6 : undefined}
+          />
+        )}
+      </StepBlock>
 
       {/* CONTINUE */}
       <div ref={ctaRef} className="container pb-32 pt-4">
         <div className="max-w-2xl mx-auto text-center space-y-4">
-          {!allDone && (
+          {!allDone && missingText && (
             <p className="text-gold text-sm md:text-base">
-              Choose your occasion, collection, and product to continue
+              Just one more step — {missingText} to continue
             </p>
           )}
           <Button
@@ -354,9 +696,11 @@ const Start = () => {
           >
             Continue to personalize <ArrowRight className="ml-1" />
           </Button>
-          <p className="text-xs text-muted-foreground">
-            You'll choose Signature or Preserve on the next page
-          </p>
+          {!isJewelry && !isOrnament && (
+            <p className="text-xs text-muted-foreground">
+              You'll choose Signature song or Preserve a Voice on the next page
+            </p>
+          )}
         </div>
       </div>
 
@@ -372,45 +716,241 @@ const Start = () => {
   );
 };
 
-const Section = ({
-  index,
-  title,
-  subtitle,
-  unlocked,
-  complete,
-  children,
-  ...rest
-}: {
+// ----- Sub-components -----------------------------------------------------
+
+const SelectedDot = () => (
+  <span className="absolute top-3 right-3 size-6 rounded-full bg-gold text-navy flex items-center justify-center">
+    <Check className="size-4" strokeWidth={3} />
+  </span>
+);
+
+interface StepBlockProps {
   index: string;
-  title: string;
-  subtitle: string;
+  title: React.ReactNode;
+  subtitle: React.ReactNode;
   unlocked: boolean;
   complete: boolean;
+  collapsed: boolean;
+  summary?: string;
+  onChange?: () => void;
+  pulse?: boolean;
   children: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>) => (
-  <section
-    {...rest}
-    className={cn(
-      "container py-16 md:py-24 scroll-mt-24 transition-opacity duration-500",
-      !unlocked && "opacity-40 pointer-events-none select-none",
-    )}
-  >
-    <div className="max-w-2xl mb-10 md:mb-12">
-      <div className="flex items-baseline gap-4 mb-4">
-        <span className="font-serif text-3xl md:text-4xl text-gold">{index}</span>
-        {complete && (
-          <span className="inline-flex items-center gap-1.5 text-xs label-eyebrow text-gold">
-            <Check className="size-3.5" strokeWidth={3} /> Selected
-          </span>
+}
+
+const StepBlock = forwardRef<HTMLDivElement, StepBlockProps>(function StepBlock(
+  { index, title, subtitle, unlocked, complete, collapsed, summary, onChange, pulse, children },
+  ref,
+) {
+  return (
+    <section
+      ref={ref}
+      className={cn(
+        "container py-12 md:py-20 scroll-mt-24 transition-opacity duration-500",
+        !unlocked && "opacity-40 pointer-events-none select-none",
+      )}
+    >
+      {collapsed ? (
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4 p-5 md:p-6 rounded-2xl bg-card border border-gold/40 shadow-soft">
+          <div className="flex items-center gap-4 min-w-0">
+            <span className="font-serif text-xl text-gold shrink-0">{index}</span>
+            <span className="size-6 rounded-full bg-gold text-navy flex items-center justify-center shrink-0">
+              <Check className="size-4" strokeWidth={3} />
+            </span>
+            <p className="font-serif text-lg md:text-xl text-navy truncate">{summary}</p>
+          </div>
+          <button
+            onClick={onChange}
+            className="text-sm text-gold hover:text-navy transition-colors underline-offset-4 hover:underline shrink-0"
+          >
+            Change
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className={cn("max-w-2xl mb-8 md:mb-10", pulse && "animate-pulse-border-init")}>
+            <div className="flex items-baseline gap-4 mb-4">
+              <span className="font-serif text-3xl md:text-4xl text-gold">{index}</span>
+              {complete && (
+                <span className="inline-flex items-center gap-1.5 text-xs label-eyebrow text-gold">
+                  <Check className="size-3.5" strokeWidth={3} /> Selected
+                </span>
+              )}
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy text-balance leading-tight mb-3">
+              {title}
+            </h2>
+            <p className="text-base md:text-lg text-navy/70 leading-relaxed">{subtitle}</p>
+          </div>
+          {children}
+        </>
+      )}
+    </section>
+  );
+});
+
+// ArtPicker -----------------------------------------------------------------
+
+const ArtPicker = ({
+  currentCollectionId,
+  onChangeCollection,
+  selectedArt,
+  onSelectArt,
+  note,
+  limit,
+}: {
+  currentCollectionId: string;
+  onChangeCollection: (id: string) => void;
+  selectedArt: string | null;
+  onSelectArt: (id: string) => void;
+  note: string;
+  limit?: number;
+}) => {
+  const [open, setOpen] = useState(false);
+  const current = findCollection(currentCollectionId) ?? collections[0];
+  const tiles = (artByCollection[current.id] ?? []).slice(0, limit ?? undefined);
+
+  return (
+    <div>
+      {/* Collection switcher */}
+      <div className="relative inline-block mb-6">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-card border border-border/60 hover:border-gold transition-colors text-sm"
+        >
+          <span className="text-muted-foreground">Showing:</span>
+          <span className="font-serif text-navy">{current.name}</span>
+          <ChevronDown className={cn("size-4 text-gold transition-transform", open && "rotate-180")} />
+        </button>
+        {open && (
+          <div className="absolute z-20 mt-2 left-0 min-w-[16rem] rounded-2xl bg-card border border-border/60 shadow-card overflow-hidden">
+            {collections.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => {
+                  onChangeCollection(c.id);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "w-full text-left px-4 py-3 hover:bg-muted/40 transition-colors flex items-center justify-between gap-3",
+                  c.id === current.id && "text-gold",
+                )}
+              >
+                <span className="font-serif text-base">{c.name}</span>
+                {c.id === current.id && <Check className="size-4" strokeWidth={3} />}
+              </button>
+            ))}
+          </div>
         )}
       </div>
-      <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-navy text-balance leading-tight mb-3">
-        {title}
-      </h2>
-      <p className="text-base md:text-lg text-navy/70 leading-relaxed">{subtitle}</p>
+
+      {/* Grid (desktop) / horizontal scroll (mobile) */}
+      <div className="md:grid md:grid-cols-3 md:gap-4 flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible">
+        {tiles.map((t) => {
+          const selected = selectedArt === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => onSelectArt(t.id)}
+              className={cn(
+                "relative group rounded-2xl overflow-hidden border-2 transition-all duration-300 shrink-0 snap-center",
+                "w-[80vw] md:w-auto aspect-square",
+                selected
+                  ? "border-gold ring-2 ring-gold/40 shadow-card"
+                  : "border-transparent hover:border-gold/60",
+              )}
+            >
+              <img src={t.img} alt="" className="w-full h-full object-cover" loading="lazy" />
+              {selected && (
+                <span className="absolute top-3 right-3 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
+                  <Check className="size-5" strokeWidth={3} />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="mt-6 text-sm text-muted-foreground text-center md:text-left">{note}</p>
     </div>
-    {children}
-  </section>
-);
+  );
+};
+
+// PhotoUpload --------------------------------------------------------------
+
+const PhotoUpload = ({
+  photo,
+  onFile,
+  onClear,
+}: {
+  photo: string | null;
+  onFile: (file: File | null) => void;
+  onClear: () => void;
+}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [drag, setDrag] = useState(false);
+
+  if (photo) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="relative rounded-2xl overflow-hidden bg-card border border-gold/40 shadow-card">
+          <img src={photo} alt="Uploaded" className="w-full max-h-[60vh] object-contain bg-navy/5" />
+          <button
+            onClick={onClear}
+            className="absolute top-4 right-4 size-9 rounded-full bg-cream/90 hover:bg-cream text-navy flex items-center justify-center shadow-soft"
+            aria-label="Remove photo"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+        <p className="font-serif italic text-xl text-navy text-center mt-6">
+          Looking good. Let's keep going.
+        </p>
+        <p className="text-sm text-muted-foreground text-center mt-4 max-w-lg mx-auto">
+          Their photo prints full bleed on premium sherpa. A QR code sits in the corner — scan it to
+          hear their song or voice.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <label
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDrag(true);
+        }}
+        onDragLeave={() => setDrag(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDrag(false);
+          onFile(e.dataTransfer.files?.[0] ?? null);
+        }}
+        className={cn(
+          "block cursor-pointer rounded-2xl border-2 border-dashed p-12 md:p-16 text-center bg-card transition-all duration-300",
+          drag ? "border-gold bg-gold/5" : "border-border hover:border-gold/60",
+        )}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png"
+          className="sr-only"
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
+        <Upload className="size-10 text-gold mx-auto mb-5" />
+        <p className="font-serif text-xl md:text-2xl text-navy mb-2">Upload their photo</p>
+        <p className="text-sm text-muted-foreground mb-1">JPG · PNG · Max 10MB</p>
+        <p className="text-sm text-muted-foreground">
+          Best results: clear subject, good lighting, high resolution
+        </p>
+      </label>
+      <p className="text-sm text-muted-foreground text-center mt-6 max-w-lg mx-auto">
+        Their photo prints full bleed on premium sherpa. A QR code sits in the corner — scan it to
+        hear their song or voice.
+      </p>
+    </div>
+  );
+};
 
 export default Start;
