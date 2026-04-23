@@ -497,6 +497,43 @@ const Start = () => {
             );
           })}
         </div>
+
+        {/* Why the card matters */}
+        <div className="mt-16 md:mt-20 pt-12 md:pt-14 border-t border-gold/30">
+          <h3 className="font-serif text-xl md:text-2xl text-navy mb-8 md:mb-10 text-center">
+            Why the card matters
+          </h3>
+          <div className="grid md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
+            <div className="text-center md:text-left">
+              <div className="text-3xl mb-3">📬</div>
+              <p className="label-eyebrow text-gold mb-2">It arrives first</p>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                For jewelry and ornament orders — your card ships separately and arrives
+                before their gift. They know something beautiful is coming.
+              </p>
+            </div>
+            <div className="text-center md:text-left">
+              <div className="text-3xl mb-3">✍️</div>
+              <p className="label-eyebrow text-gold mb-2">Written just for them</p>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                We write a personal message using the details you share. Or use your own
+                words — we'll make them shine.
+              </p>
+            </div>
+            <div className="text-center md:text-left">
+              <div className="text-3xl mb-3">🔑</div>
+              <p className="label-eyebrow text-gold mb-2">The QR lives here</p>
+              <p className="text-[15px] text-muted-foreground leading-relaxed">
+                Scan the card. Hear their song. The card is where the magic starts —
+                and where it stays forever.
+              </p>
+            </div>
+          </div>
+          <p className="mt-10 md:mt-12 text-center text-sm text-muted-foreground/80 leading-relaxed max-w-xl mx-auto">
+            Every Key of Hearts includes a premium 5x7 card. Printed on thick matte
+            stock. Frameable. Keepsake quality. Included with every order — even digital.
+          </p>
+        </div>
       </StepBlock>
 
       {/* STEP 3 */}
