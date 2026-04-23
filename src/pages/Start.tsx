@@ -540,7 +540,7 @@ const Start = () => {
       <StepBlock
         ref={stepRefs[2]}
         index="03"
-        title="How would you like to give it?"
+        title="What would you like to gift them?"
         subtitle={
           <>
             Free shipping on every US order.
