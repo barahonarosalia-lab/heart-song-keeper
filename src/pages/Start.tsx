@@ -441,7 +441,7 @@ const Start = () => {
       <StepBlock
         ref={stepRefs[1]}
         index="02"
-        title="Pick a card for your loved one."
+        title="What would you like to gift them?"
         subtitle="This card arrives with their gift — or before it. It holds their personal message and their QR code. Choose the one that feels like them."
         unlocked={step1Done}
         complete={step2Done}
