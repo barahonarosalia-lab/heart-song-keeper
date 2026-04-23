@@ -335,6 +335,7 @@ const Start = () => {
           </div>
         )}
       </Section>
+      </div>
 
       {/* CONTINUE */}
       <div ref={ctaRef} className="container pb-32 pt-4">
