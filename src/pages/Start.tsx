@@ -212,8 +212,8 @@ const Start = () => {
       </Section>
 
       {/* STEP 2 */}
+      <div ref={step2Ref}>
       <Section
-        ref={step2Ref}
         index="02"
         title="Choose the art that speaks to them."
         subtitle="Any collection for any occasion. You know them — trust that."
