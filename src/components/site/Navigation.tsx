@@ -49,7 +49,7 @@ export const Navigation = () => {
 
         <div className="hidden lg:block">
           <Button variant="gold" asChild>
-            <a href="#start">Find their key</a>
+            <a href="/start">Find their key</a>
           </Button>
         </div>
 
@@ -81,7 +81,7 @@ export const Navigation = () => {
             </a>
           ))}
           <Button variant="gold" className="w-full mt-2" asChild>
-            <a href="#start" onClick={() => setOpen(false)}>Find their key</a>
+            <a href="/start" onClick={() => setOpen(false)}>Find their key</a>
           </Button>
         </div>
       </div>

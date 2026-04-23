@@ -32,7 +32,7 @@ export const Hero = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 sm:items-center pt-2">
             <Button variant="gold" size="lg" asChild>
-              <a href="#start">
+              <a href="/start">
                 Find their key <ArrowRight className="ml-1" />
               </a>
             </Button>
