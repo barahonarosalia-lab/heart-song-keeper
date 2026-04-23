@@ -608,26 +608,8 @@ const Start = () => {
       <StepBlock
         ref={stepRefs[3]}
         index="04"
-        title={
-          isOrnament
-            ? "Choose their ornament design."
-            : isPhoto
-            ? "Upload their photo."
-            : isJewelry
-            ? "Choose the art for their card."
-            : selectedProduct
-            ? `Choose the art for their ${selectedProduct.name.toLowerCase()}.`
-            : "Choose their art."
-        }
-        subtitle={
-          isOrnament
-            ? "Each design is crafted for a different kind of moment."
-            : isPhoto
-            ? "This becomes the art on their blanket."
-            : isJewelry
-            ? "Your card ships first — arriving before their jewelry so they know something beautiful is on its way."
-            : "This is what they'll see every time they hold it."
-        }
+        title="Choose the art for your gift."
+        subtitle="This is the image that will be placed on your product."
         unlocked={step3Done}
         complete={step4Done}
         collapsed={step4Done && editingStep !== 4}
