@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -736,8 +736,6 @@ interface StepBlockProps {
   pulse?: boolean;
   children: React.ReactNode;
 }
-
-import { forwardRef } from "react";
 
 const StepBlock = forwardRef<HTMLDivElement, StepBlockProps>(function StepBlock(
   { index, title, subtitle, unlocked, complete, collapsed, summary, onChange, pulse, children },
