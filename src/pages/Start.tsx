@@ -737,22 +737,13 @@ interface StepBlockProps {
   children: React.ReactNode;
 }
 
-const StepBlock = (() => {
-  const Inner = (
-    {
-      index,
-      title,
-      subtitle,
-      unlocked,
-      complete,
-      collapsed,
-      summary,
-      onChange,
-      pulse,
-      children,
-    }: StepBlockProps,
-    ref: React.Ref<HTMLDivElement>,
-  ) => (
+import { forwardRef } from "react";
+
+const StepBlock = forwardRef<HTMLDivElement, StepBlockProps>(function StepBlock(
+  { index, title, subtitle, unlocked, complete, collapsed, summary, onChange, pulse, children },
+  ref,
+) {
+  return (
     <section
       ref={ref}
       className={cn(
@@ -761,11 +752,7 @@ const StepBlock = (() => {
       )}
     >
       {collapsed ? (
-        <div
-          className={cn(
-            "max-w-3xl mx-auto flex items-center justify-between gap-4 p-5 md:p-6 rounded-2xl bg-card border border-gold/40 shadow-soft",
-          )}
-        >
+        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4 p-5 md:p-6 rounded-2xl bg-card border border-gold/40 shadow-soft">
           <div className="flex items-center gap-4 min-w-0">
             <span className="font-serif text-xl text-gold shrink-0">{index}</span>
             <span className="size-6 rounded-full bg-gold text-navy flex items-center justify-center shrink-0">
@@ -801,12 +788,7 @@ const StepBlock = (() => {
       )}
     </section>
   );
-  return Object.assign(
-    // forwardRef wrapper
-    (props: StepBlockProps & { ref?: React.Ref<HTMLDivElement> }) => Inner(props, props.ref ?? null),
-    { displayName: "StepBlock" },
-  );
-})();
+});
 
 // ArtPicker -----------------------------------------------------------------
 
