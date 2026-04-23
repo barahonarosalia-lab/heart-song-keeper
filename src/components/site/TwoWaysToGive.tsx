@@ -105,7 +105,7 @@ const Card = ({
 
       <div className="mt-auto">
         <Button variant="gold" size="lg" asChild>
-          <a href="#start-flow">
+          <a href="/start">
             Start here <ArrowRight />
           </a>
         </Button>
