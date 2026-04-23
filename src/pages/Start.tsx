@@ -265,10 +265,11 @@ const Start = () => {
           })}
         </div>
       </Section>
+      </div>
 
       {/* STEP 3 */}
+      <div ref={step3Ref}>
       <Section
-        ref={step3Ref}
         index="03"
         title="How would you like to give it?"
         subtitle="Every Key of Hearts works on any of these. Free shipping on every US order."
