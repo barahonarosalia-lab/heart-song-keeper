@@ -531,6 +531,73 @@ const Start = () => {
     }
   }, [step3Complete]);
 
+  // Step 5 is complete once the customer has selected a (selectable) card design
+  const step5Complete = !!order.card_design;
+
+  // Reveal Step 6 once Step 5 is complete
+  useEffect(() => {
+    if (step5Complete && step6Ref.current) {
+      setTimeout(() => {
+        step6Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, [step5Complete]);
+
+  const scrollToRef = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  // Build a clean recap of the order for Step 6 summary
+  const summaryItems: { label: string; value: string; ref: React.RefObject<HTMLDivElement> }[] = [];
+  if (order.tier) {
+    summaryItems.push({
+      label: "Tier",
+      value: order.tier === "signature" ? "Signature" : "Preserve",
+      ref: step2Ref,
+    });
+  }
+  if (order.occasion) {
+    summaryItems.push({ label: "Occasion", value: order.occasion, ref: step2Ref });
+  }
+  if (order.product) {
+    const p = PRODUCTS.find((x) => x.id === order.product);
+    if (p) summaryItems.push({ label: "Product", value: p.name, ref: step3Ref });
+  }
+  if (order.product === "jewelry") {
+    if (order.jewelry_style) {
+      const s = JEWELRY_STYLES.find((j) => j.id === order.jewelry_style);
+      summaryItems.push({
+        label: "Jewelry style",
+        value: `${s?.name ?? ""}${order.jewelry_finish ? ` · ${order.jewelry_finish === "gold" ? "Gold" : "Silver"}` : ""}`,
+        ref: step3Ref,
+      });
+    }
+    const eng = [order.engraving_line_1, order.engraving_line_2].filter(Boolean).join(" / ");
+    if (eng) summaryItems.push({ label: "Engraving", value: eng, ref: step3Ref });
+  }
+  if (order.product === "ornament") {
+    if (order.ornament_design) {
+      const d = ORNAMENT_DESIGNS.find((x) => x.id === order.ornament_design);
+      if (d) summaryItems.push({ label: "Ornament design", value: d.name, ref: step3Ref });
+    }
+    const ornText = [order.ornament_line_1, order.ornament_line_2, order.ornament_year, order.ornament_dedication]
+      .filter(Boolean)
+      .join(" · ");
+    if (ornText) summaryItems.push({ label: "Ornament text", value: ornText, ref: step3Ref });
+  }
+  if (order.art_selected && activeCollection) {
+    const piece = activeCollection.pieces.find((p) => p.id === order.art_selected);
+    summaryItems.push({
+      label: "Art selected",
+      value: `${activeCollection.name} — ${piece?.name ?? ""}`,
+      ref: step4Ref,
+    });
+  }
+  if (order.card_design) {
+    const cd = CARD_DESIGNS.find((c) => c.id === order.card_design);
+    if (cd) summaryItems.push({ label: "Card art", value: cd.collection, ref: step5Ref });
+  }
+
   return (
     <main className="min-h-screen bg-cream text-navy">
       {/* HEADER */}
