@@ -347,8 +347,10 @@ const Start = () => {
   const changeStep = (n: number) => {
     if (n <= 1) {
       setCollection(null); setArtCollection(null); setProduct(null); setArt(null); setPhoto(null);
+      setJewelryStyle(null); setJewelryFinish(null); setEngravingLine1(""); setEngravingLine2("");
     } else if (n === 2) {
       setProduct(null); setArt(null); setPhoto(null);
+      setJewelryStyle(null); setJewelryFinish(null); setEngravingLine1(""); setEngravingLine2("");
     } else if (n === 3) {
       setArt(null); setPhoto(null);
     }
