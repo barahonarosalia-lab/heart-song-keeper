@@ -969,6 +969,183 @@ const Start = () => {
           </Step>
         )}
       </div>
+
+      {/* STEP 6 — Make it theirs */}
+      <div ref={step6Ref}>
+        {step5Complete && (
+          <Step
+            index="06"
+            title="Make it theirs."
+            subtitle="This is what makes your Key unlike anything else."
+          >
+            <div className="max-w-3xl space-y-10 md:space-y-12">
+              {/* Your name */}
+              <div className="space-y-3">
+                <label htmlFor="gifter-name" className="label-eyebrow text-gold block">
+                  Your name
+                </label>
+                <Input
+                  id="gifter-name"
+                  value={order.gifter_name}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, gifter_name: e.target.value }))
+                  }
+                  placeholder="Your first name"
+                  className="h-12 rounded-xl bg-card border-border/60 text-base"
+                />
+              </div>
+
+              {/* Their name */}
+              <div className="space-y-3">
+                <label htmlFor="recipient-name" className="label-eyebrow text-gold block">
+                  Their name
+                </label>
+                <Input
+                  id="recipient-name"
+                  value={order.recipient_name}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, recipient_name: e.target.value }))
+                  }
+                  placeholder="Who is this gift for?"
+                  className="h-12 rounded-xl bg-card border-border/60 text-base"
+                />
+              </div>
+
+              {/* Relationship */}
+              <div className="space-y-3">
+                <label htmlFor="relationship" className="label-eyebrow text-gold block">
+                  Your relationship
+                </label>
+                <Input
+                  id="relationship"
+                  value={order.relationship}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, relationship: e.target.value }))
+                  }
+                  placeholder="e.g. my daughter, my best friend, my mom"
+                  className="h-12 rounded-xl bg-card border-border/60 text-base"
+                />
+              </div>
+
+              {/* Your message */}
+              <div className="space-y-3">
+                <label htmlFor="customer-message" className="label-eyebrow text-gold block">
+                  Your message <span className="text-muted-foreground/70 normal-case tracking-normal">(optional)</span>
+                </label>
+                <Textarea
+                  id="customer-message"
+                  value={order.customer_message}
+                  maxLength={500}
+                  rows={5}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, customer_message: e.target.value.slice(0, 500) }))
+                  }
+                  placeholder="Write something from the heart — a memory, a moment, what they mean to you. We'll shape it into their card message."
+                  className="rounded-xl bg-card border-border/60 text-base p-4"
+                />
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+                    Not sure what to say? Leave this blank and we'll write something beautiful from the details you've given us.
+                  </p>
+                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                    {order.customer_message.length}/500
+                  </span>
+                </div>
+              </div>
+
+              {/* Dedication */}
+              <div className="space-y-3">
+                <label htmlFor="dedication" className="label-eyebrow text-gold block">
+                  A short dedication <span className="text-muted-foreground/70 normal-case tracking-normal">(optional)</span>
+                </label>
+                <Input
+                  id="dedication"
+                  value={order.dedication}
+                  maxLength={100}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, dedication: e.target.value.slice(0, 100) }))
+                  }
+                  placeholder="e.g. Because they were here. / For every ordinary Tuesday."
+                  className="h-12 rounded-xl bg-card border-border/60 text-base"
+                />
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+                    A line that's entirely yours — featured on its own inside their card.
+                  </p>
+                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                    {order.dedication.length}/100
+                  </span>
+                </div>
+              </div>
+
+              {/* Use exact words toggle */}
+              <div className="space-y-3">
+                <label className="flex items-center justify-between gap-4 cursor-pointer">
+                  <span className="text-base text-navy font-medium">
+                    Use my exact words — don't add anything
+                  </span>
+                  <Switch
+                    checked={order.use_exact_words}
+                    onCheckedChange={(checked) =>
+                      setOrder((prev) => ({ ...prev, use_exact_words: checked }))
+                    }
+                    className="data-[state=checked]:bg-gold"
+                  />
+                </label>
+                {order.use_exact_words && (
+                  <p className="text-sm leading-relaxed italic" style={{ color: "#C4796A" }}>
+                    Your words will appear exactly as written. Nothing added. Nothing changed.
+                  </p>
+                )}
+              </div>
+
+              {/* Order summary */}
+              <div className="rounded-2xl bg-cream-warm border border-gold/40 p-6 md:p-7 space-y-4 shadow-soft">
+                <p className="label-eyebrow text-gold">Your order summary</p>
+                <ul className="divide-y divide-gold/15">
+                  {summaryItems.map((item, idx) => (
+                    <li
+                      key={idx}
+                      className="py-3 flex items-start justify-between gap-4 text-sm md:text-base"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                          {item.label}
+                        </p>
+                        <p className="text-navy font-serif leading-snug break-words">
+                          {item.value}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => scrollToRef(item.ref)}
+                        className="text-xs font-medium text-gold hover:text-gold-deep underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors shrink-0 mt-5"
+                      >
+                        Edit
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Final CTA */}
+              <Button
+                type="button"
+                variant="gold"
+                size="xl"
+                className="w-full font-serif text-lg"
+                disabled={
+                  !order.gifter_name.trim() ||
+                  !order.recipient_name.trim() ||
+                  !order.relationship.trim()
+                }
+              >
+                Continue to checkout →
+              </Button>
+            </div>
+          </Step>
+        )}
+      </div>
     </main>
   );
 };
