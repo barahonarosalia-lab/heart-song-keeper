@@ -44,6 +44,12 @@ interface OrderState {
   collection: string | null;
   art_selected: string | null;
   card_design: string | null;
+  gifter_name: string;
+  recipient_name: string;
+  relationship: string;
+  customer_message: string;
+  dedication: string;
+  use_exact_words: boolean;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
