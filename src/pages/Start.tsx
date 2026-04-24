@@ -1154,4 +1154,45 @@ const PhotoUpload = ({
   );
 };
 
+// EngravingField ----------------------------------------------------------
+
+const EngravingField = ({
+  label,
+  required,
+  value,
+  onChange,
+  maxLength,
+}: {
+  label: string;
+  required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
+  maxLength: number;
+}) => {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2 gap-3">
+        <label className="text-sm font-medium text-navy">
+          {label}
+          {required ? (
+            <span className="text-gold ml-1">*</span>
+          ) : (
+            <span className="text-muted-foreground ml-1 font-normal">(optional)</span>
+          )}
+        </label>
+        <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+          {value.length}/{maxLength}
+        </span>
+      </div>
+      <input
+        type="text"
+        value={value}
+        maxLength={maxLength}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full h-11 rounded-md border border-input bg-background px-3 text-base md:text-sm text-navy placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:border-gold transition-colors"
+      />
+    </div>
+  );
+};
+
 export default Start;
