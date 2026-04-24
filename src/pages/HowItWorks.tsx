@@ -178,7 +178,7 @@ export default function HowItWorks() {
               It never stops working.
             </h2>
             <p className="text-navy/60 leading-relaxed text-[17px] max-w-2xl mx-auto">
-              Every Key of Hearts includes a unique QR code. Scan it and their song plays — every time, forever. We guarantee QR accessibility for a minimum of 10 years.
+              Every Key of Hearts includes a unique QR code. Scan it and their song plays — every time. We&apos;re committed to keeping every Key alive for as long as we exist. If that ever changes, you&apos;ll have 90 days notice and a full download of your audio file — so their voice is always yours to keep, no matter what.
             </p>
           </div>
 
