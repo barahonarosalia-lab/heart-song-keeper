@@ -223,7 +223,14 @@ const findOrnament = (id: string | null) => ornamentDesigns.find((o) => o.id ===
 
 // ----- Page ---------------------------------------------------------------
 
-const TOTAL_STEPS = 4;
+type JewelryStyle = "heart" | "circle" | "dogtag";
+type JewelryFinish = "silver" | "gold";
+
+const jewelryStyles: { id: JewelryStyle; name: string }[] = [
+  { id: "heart", name: "Heart" },
+  { id: "circle", name: "Circle" },
+  { id: "dogtag", name: "Dog Tag" },
+];
 
 const Start = () => {
   const navigate = useNavigate();
@@ -234,6 +241,12 @@ const Start = () => {
   const [art, setArt] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [artCollection, setArtCollection] = useState<string | null>(null);
+
+  // Jewelry-specific state
+  const [jewelryStyle, setJewelryStyle] = useState<JewelryStyle | null>(null);
+  const [jewelryFinish, setJewelryFinish] = useState<JewelryFinish | null>(null);
+  const [engravingLine1, setEngravingLine1] = useState("");
+  const [engravingLine2, setEngravingLine2] = useState("");
 
   // Which step is currently expanded for editing (null = none open beyond what's unlocked)
   const [editingStep, setEditingStep] = useState<number | null>(1);
@@ -247,15 +260,26 @@ const Start = () => {
   const isOrnament = product === "ornament";
   const isJewelry = product === "jewelry";
 
+  // For jewelry, Step 4 is skipped entirely; jewelry config lives in Step 3.
+  const jewelryConfigDone = !!jewelryStyle && !!jewelryFinish && engravingLine1.trim().length > 0;
+
   const step4Done = useMemo(() => {
     if (!product) return false;
+    if (isJewelry) return true; // jewelry has no Step 4
     if (isPhoto) return !!photo;
-    if (isOrnament) return !!art; // ornament design id stored in `art`
+    if (isOrnament) return !!art;
     return !!art;
-  }, [product, photo, art, isPhoto, isOrnament]);
+  }, [product, photo, art, isPhoto, isOrnament, isJewelry]);
 
-  const completedCount = [step1Done, step2Done, step3Done, step4Done].filter(Boolean).length;
-  const allDone = completedCount === TOTAL_STEPS;
+  // Total steps shown depends on product (jewelry skips Step 4)
+  const totalSteps = isJewelry ? 3 : 4;
+
+  const completedCount = isJewelry
+    ? [step1Done, step2Done, step3Done && jewelryConfigDone].filter(Boolean).length
+    : [step1Done, step2Done, step3Done, step4Done].filter(Boolean).length;
+  const allDone = isJewelry
+    ? step1Done && step2Done && step3Done && jewelryConfigDone
+    : completedCount === totalSteps;
 
   // refs for scroll
   const stepRefs = [
