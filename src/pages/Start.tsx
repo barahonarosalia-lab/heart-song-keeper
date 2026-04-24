@@ -501,4 +501,63 @@ const OccasionCard = ({
   </button>
 );
 
+// ----- Song card ----------------------------------------------------------
+
+const SongCard = ({
+  label,
+  title,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  title: string;
+  selected: boolean;
+  onSelect: () => void;
+}) => (
+  <div
+    className={cn(
+      "relative rounded-2xl bg-card p-6 border transition-all duration-300 flex flex-col",
+      selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+    )}
+  >
+    {selected && (
+      <span className="absolute top-4 right-4 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy shadow-gold">
+        <Check className="size-3.5" strokeWidth={3} />
+      </span>
+    )}
+
+    <p className="label-eyebrow text-gold mb-3">{label}</p>
+    <h3 className="font-serif text-xl md:text-2xl text-navy leading-tight mb-5 pr-8">
+      {title}
+    </h3>
+
+    {/* Player placeholder */}
+    <div className="flex items-center gap-3 mb-6">
+      <button
+        type="button"
+        aria-label={`Play ${title}`}
+        className="inline-flex items-center justify-center size-11 rounded-full bg-navy text-cream hover:bg-navy-deep transition-colors flex-shrink-0"
+      >
+        <Play className="size-4 ml-0.5" fill="currentColor" />
+      </button>
+      <div className="flex-1 h-1.5 rounded-full bg-border/60 overflow-hidden">
+        <div className="h-full w-0 bg-gold rounded-full" />
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        "mt-auto inline-flex items-center justify-center rounded-full h-11 px-5 text-sm font-medium border-2 transition-all",
+        selected
+          ? "bg-gold text-navy border-gold"
+          : "bg-transparent text-navy border-gold hover:bg-gold/10",
+      )}
+    >
+      {selected ? "Selected" : "Choose this song"}
+    </button>
+  </div>
+);
+
 export default Start;
