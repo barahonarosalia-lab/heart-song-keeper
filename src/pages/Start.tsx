@@ -40,6 +40,7 @@ interface OrderState {
   engraving_line_2: string;
   collection: string | null;
   art_selected: string | null;
+  card_design: string | null;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
