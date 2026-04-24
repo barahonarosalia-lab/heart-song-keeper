@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Navigation } from "@/components/site/Navigation";
 
 // ----- Types -----
 type Tier = "signature" | "preserve";
@@ -143,7 +144,8 @@ const Upgrade = () => {
     });
     return (
       <main className="min-h-screen bg-cream flex flex-col">
-        <section className="bg-navy text-cream flex-1 flex items-center py-24 md:py-32">
+        <Navigation />
+        <section className="bg-navy text-cream flex-1 flex items-center py-24 md:py-32 pt-32 md:pt-40">
           <div className="container max-w-2xl text-center space-y-8">
             <p className="label-eyebrow text-gold">UPGRADE CONFIRMED</p>
             <h1 className="font-serif text-5xl md:text-7xl text-cream text-balance">
@@ -174,8 +176,9 @@ const Upgrade = () => {
   // ----- DEFAULT STATE -----
   return (
     <main className="min-h-screen bg-cream">
+      <Navigation />
       {/* Header */}
-      <header className="bg-navy text-cream py-20 md:py-28">
+      <header className="bg-navy text-cream pt-32 md:pt-40 pb-20 md:pb-28">
         <div className="container max-w-3xl text-center space-y-5">
           <p className="label-eyebrow text-gold">UPGRADE YOUR KEY</p>
           <h1 className="font-serif text-5xl md:text-7xl text-cream text-balance">

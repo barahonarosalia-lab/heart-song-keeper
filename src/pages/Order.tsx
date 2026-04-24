@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/site/Footer";
+import { Navigation } from "@/components/site/Navigation";
 
 // ----- Types -----
 type Tier = "signature" | "preserve";
@@ -329,7 +330,9 @@ const Order = () => {
   // Redirect on invalid / unpaid orders
   if (!order || !order.paid) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <div className="min-h-screen bg-cream flex flex-col">
+        <Navigation />
+        <div className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center space-y-6">
           <p className="label-eyebrow text-gold">Key of Hearts</p>
           <h1 className="font-serif text-3xl md:text-4xl text-navy">We couldn't find that order.</h1>
@@ -343,6 +346,7 @@ const Order = () => {
             <a href="https://keyofhearts.com">Return home</a>
           </Button>
         </div>
+        </div>
       </div>
     );
   }
@@ -352,8 +356,9 @@ const Order = () => {
 
   return (
     <div className="min-h-screen bg-cream">
+      <Navigation />
       {/* Header */}
-      <header className="bg-navy-deep text-cream relative overflow-hidden">
+      <header className="bg-navy-deep text-cream relative overflow-hidden pt-20">
         <div className="absolute inset-0 starfield opacity-30" />
         <div className="container relative py-20 md:py-28 text-center">
           <p className="label-eyebrow text-gold mb-6">Key of Hearts</p>
