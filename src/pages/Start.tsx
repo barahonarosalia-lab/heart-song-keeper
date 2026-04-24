@@ -380,8 +380,13 @@ const Start = () => {
       art: art ?? "",
     });
     let target = "/personalize/signature";
-    if (isJewelry) target = "/personalize/jewelry";
-    else if (isOrnament) target = "/personalize/ornament";
+    if (isJewelry) {
+      target = "/personalize/jewelry";
+      params.set("jewelry_style", jewelryStyle ?? "");
+      params.set("jewelry_finish", jewelryFinish ?? "");
+      params.set("engraving_line_1", engravingLine1);
+      if (engravingLine2) params.set("engraving_line_2", engravingLine2);
+    } else if (isOrnament) target = "/personalize/ornament";
     navigate(`${target}?${params.toString()}`);
   };
 
@@ -392,6 +397,12 @@ const Start = () => {
     ? "choose a collection"
     : !step3Done
     ? "choose how to give it"
+    : isJewelry && !jewelryConfigDone
+    ? !jewelryStyle
+      ? "pick a jewelry style"
+      : !jewelryFinish
+      ? "pick silver or gold"
+      : "add an engraving"
     : !step4Done
     ? isPhoto
       ? "upload their photo"
@@ -401,7 +412,17 @@ const Start = () => {
     : null;
 
   // Currently displayed step number for header
-  const currentStep = !step1Done ? 1 : !step2Done ? 2 : !step3Done ? 3 : !step4Done ? 4 : 4;
+  const currentStep = !step1Done
+    ? 1
+    : !step2Done
+    ? 2
+    : !step3Done
+    ? 3
+    : isJewelry
+    ? 3
+    : !step4Done
+    ? 4
+    : 4;
 
   return (
     <main className="min-h-screen bg-cream text-navy">
