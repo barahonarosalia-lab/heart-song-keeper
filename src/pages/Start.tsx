@@ -468,14 +468,55 @@ const Start = () => {
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
+      photo_url: product === "photo_blanket" ? prev.photo_url : "",
+      photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
+      photo_quality_override:
+        product === "photo_blanket" ? prev.photo_quality_override : false,
     }));
 
-    // Auto-scroll to Step 4 when an art-bearing product is selected
-    if (ART_PRODUCTS.includes(product)) {
+    // Auto-scroll to Step 4 when a product that uses it is selected
+    if (STEP4_PRODUCTS.includes(product)) {
       setTimeout(() => {
         step4Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 200);
     }
+  };
+
+  // Handle photo upload for photo blanket — checks dimensions client-side
+  const handlePhotoUpload = (file: File | null) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const shortest = Math.min(img.naturalWidth, img.naturalHeight);
+      let quality: PhotoQuality = "red";
+      if (shortest >= 3000) quality = "green";
+      else if (shortest >= 1500) quality = "yellow";
+      setOrder((prev) => ({
+        ...prev,
+        photo_url: url,
+        photo_quality: quality,
+        photo_quality_override: false,
+      }));
+    };
+    img.onerror = () => {
+      setOrder((prev) => ({
+        ...prev,
+        photo_url: url,
+        photo_quality: "red",
+        photo_quality_override: false,
+      }));
+    };
+    img.src = url;
+  };
+
+  const handleRemovePhoto = () => {
+    setOrder((prev) => ({
+      ...prev,
+      photo_url: "",
+      photo_quality: null,
+      photo_quality_override: false,
+    }));
   };
 
   // Determine if Step 2 is complete enough to unlock Step 3
