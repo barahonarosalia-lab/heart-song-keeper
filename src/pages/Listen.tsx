@@ -107,7 +107,7 @@ const ProgressBar = ({
           type="button"
           aria-label="Seek"
           onClick={(e) => {
-            const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+            const rect = e.currentTarget.getBoundingClientRect();
             const ratio = (e.clientX - rect.left) / rect.width;
             onSeek(Math.max(0, Math.min(1, ratio)) * duration);
           }}
