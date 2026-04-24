@@ -17,7 +17,7 @@ import ember from "@/assets/collection-ember.jpg";
 
 type Tier = "signature" | "preserve";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket" | "gift_card";
 type PhotoQuality = "green" | "yellow" | "red";
 type JewelryStyle = "heart" | "circle" | "dog_tag";
 type JewelryFinish = "silver" | "gold";
@@ -54,6 +54,11 @@ interface OrderState {
   photo_url: string;
   photo_quality: PhotoQuality | null;
   photo_quality_override: boolean;
+  gift_card_amount: number | null;
+  gift_card_custom_amount: number | null;
+  gift_card_recipient_name: string;
+  gift_card_gifter_name: string;
+  gift_card_note: string;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
@@ -188,6 +193,22 @@ const PRODUCTS: ProductDef[] = [
       "Free shipping",
     ],
     cta: "Choose Photo Blanket",
+  },
+  {
+    id: "gift_card",
+    name: "Gift Card",
+    signature: 29,
+    preserve: 29,
+    tagline: "The perfect gift when you're not sure what they'd love.",
+    details: [
+      "Choose any amount from $29",
+      "Delivered instantly by email",
+      "Beautiful PDF — print or forward",
+      "Redeemable at keyofhearts.com/redeem",
+      "Never expires",
+      "Free",
+    ],
+    cta: "Choose Gift Card",
   },
 ];
 
@@ -409,6 +430,11 @@ const Start = () => {
     photo_url: "",
     photo_quality: null,
     photo_quality_override: false,
+    gift_card_amount: null,
+    gift_card_custom_amount: null,
+    gift_card_recipient_name: "",
+    gift_card_gifter_name: "",
+    gift_card_note: "",
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -474,6 +500,14 @@ const Start = () => {
       photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
       photo_quality_override:
         product === "photo_blanket" ? prev.photo_quality_override : false,
+      gift_card_amount: product === "gift_card" ? prev.gift_card_amount : null,
+      gift_card_custom_amount:
+        product === "gift_card" ? prev.gift_card_custom_amount : null,
+      gift_card_recipient_name:
+        product === "gift_card" ? prev.gift_card_recipient_name : "",
+      gift_card_gifter_name:
+        product === "gift_card" ? prev.gift_card_gifter_name : "",
+      gift_card_note: product === "gift_card" ? prev.gift_card_note : "",
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
@@ -572,6 +606,20 @@ const Start = () => {
     }));
     setFromCollections(true);
     if (piece) setPrefilledArtId(piece.id);
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Pre-select product from ?product= query (e.g. /start?product=gift_card)
+  useEffect(() => {
+    const productParam = searchParams.get("product");
+    if (!productParam) return;
+    const valid: ProductId[] = [
+      "digital", "canvas", "ornament", "jewelry", "blanket", "photo_blanket", "gift_card",
+    ];
+    if (valid.includes(productParam as ProductId)) {
+      setOrder((prev) => ({ ...prev, product: productParam as ProductId }));
+    }
     // run once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1546,9 +1594,14 @@ const ProductCard = ({
         <JewelryExpansion order={order} setOrder={setOrder} tier={tier} />
       )}
 
+      {selected && product.id === "gift_card" && (
+        <GiftCardExpansion order={order} setOrder={setOrder} />
+      )}
+
       {selected &&
         product.id !== "ornament" &&
-        product.id !== "jewelry" && (
+        product.id !== "jewelry" &&
+        product.id !== "gift_card" && (
           <p className="text-xs text-muted-foreground italic">
             Choose their art below ↓
           </p>
@@ -2211,6 +2264,193 @@ const PhotoUpload = ({
           )}
         </div>
       )}
+    </div>
+  );
+};
+
+// ----- Gift Card expansion ------------------------------------------------
+
+const GIFT_CARD_PRESETS = [29, 49, 59, 89, 119];
+
+const GiftCardExpansion = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+}) => {
+  const isCustom = order.gift_card_amount === -1;
+  const customValid =
+    isCustom &&
+    order.gift_card_custom_amount !== null &&
+    order.gift_card_custom_amount >= 29;
+  const presetValid =
+    !isCustom &&
+    order.gift_card_amount !== null &&
+    order.gift_card_amount >= 29;
+  const amountReady = customValid || presetValid;
+
+  return (
+    <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* Denomination selector */}
+      <div className="space-y-4">
+        <p className="label-eyebrow text-gold">Choose their amount</p>
+        <div className="grid grid-cols-2 gap-3">
+          {GIFT_CARD_PRESETS.map((amt) => {
+            const selected = order.gift_card_amount === amt;
+            return (
+              <button
+                key={amt}
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    gift_card_amount: amt,
+                    gift_card_custom_amount: null,
+                  }))
+                }
+                className={cn(
+                  "rounded-full h-12 text-base font-serif border-2 transition-all",
+                  selected
+                    ? "bg-gold text-navy border-gold shadow-gold"
+                    : "bg-card text-navy border-border/60 hover:border-gold",
+                )}
+              >
+                ${amt}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_amount: -1,
+              }))
+            }
+            className={cn(
+              "col-span-2 rounded-full h-12 text-base font-serif border-2 transition-all",
+              isCustom
+                ? "bg-gold text-navy border-gold shadow-gold"
+                : "bg-card text-navy border-border/60 hover:border-gold",
+            )}
+          >
+            Custom amount
+          </button>
+        </div>
+
+        {isCustom && (
+          <div className="space-y-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
+            <label htmlFor="gc-custom" className="label-eyebrow text-gold block">
+              Enter amount
+            </label>
+            <Input
+              id="gc-custom"
+              type="number"
+              min={29}
+              inputMode="numeric"
+              value={order.gift_card_custom_amount ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                const num = v === "" ? null : Math.max(0, parseInt(v, 10) || 0);
+                setOrder((prev) => ({ ...prev, gift_card_custom_amount: num }));
+              }}
+              placeholder="e.g. $75"
+              className="h-12 rounded-xl bg-card border-border/60 text-base"
+            />
+            {order.gift_card_custom_amount !== null &&
+              order.gift_card_custom_amount < 29 && (
+                <p className="text-xs italic" style={{ color: "#C4796A" }}>
+                  Minimum gift card amount is $29.
+                </p>
+              )}
+          </div>
+        )}
+      </div>
+
+      {/* Optional fields */}
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <label htmlFor="gc-to" className="label-eyebrow text-gold block">
+            To
+          </label>
+          <Input
+            id="gc-to"
+            value={order.gift_card_recipient_name}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_recipient_name: e.target.value.slice(0, 80),
+              }))
+            }
+            placeholder="Who is this for?"
+            className="h-12 rounded-xl bg-card border-border/60 text-base"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <label htmlFor="gc-from" className="label-eyebrow text-gold block">
+            From
+          </label>
+          <Input
+            id="gc-from"
+            value={order.gift_card_gifter_name}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_gifter_name: e.target.value.slice(0, 80),
+              }))
+            }
+            placeholder="Your name"
+            className="h-12 rounded-xl bg-card border-border/60 text-base"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <label htmlFor="gc-note" className="label-eyebrow text-gold block">
+            A note <span className="text-muted-foreground/70 normal-case tracking-normal">(optional)</span>
+          </label>
+          <Textarea
+            id="gc-note"
+            value={order.gift_card_note}
+            maxLength={150}
+            rows={3}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_note: e.target.value.slice(0, 150),
+              }))
+            }
+            placeholder="e.g. For whenever you're ready to start."
+            className="rounded-xl bg-card border-border/60 text-base p-4"
+          />
+          <div className="flex justify-end">
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {order.gift_card_note.length}/150
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Info box */}
+      <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6">
+        <p className="text-sm text-navy/80 leading-relaxed">
+          Your gift card PDF will be emailed to you instantly.<br />
+          Forward it, print it, or save it for the right moment.<br />
+          It never expires and covers any Key of Hearts order.
+        </p>
+      </div>
+
+      {/* CTA */}
+      <Button
+        type="button"
+        variant="gold"
+        size="xl"
+        className="w-full font-serif text-lg"
+        disabled={!amountReady}
+      >
+        Continue to checkout →
+      </Button>
     </div>
   );
 };
