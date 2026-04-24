@@ -369,6 +369,13 @@ const Start = () => {
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
     }));
+
+    // Auto-scroll to Step 4 when an art-bearing product is selected
+    if (ART_PRODUCTS.includes(product)) {
+      setTimeout(() => {
+        step4Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
   };
 
   // Determine if Step 2 is complete enough to unlock Step 3
