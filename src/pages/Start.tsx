@@ -854,6 +854,38 @@ const Start = () => {
           </Step>
         )}
       </div>
+
+      {/* STEP 5 — Choose the art for their card */}
+      <div ref={step5Ref}>
+        {step3Complete && order.product && (
+          <Step
+            index="05"
+            title="Choose the art for their card."
+            subtitle={cardSubheadlineForProduct(order.product)}
+          >
+            <div className="max-w-5xl space-y-8 md:space-y-10">
+              <CardGallery
+                designs={CARD_DESIGNS}
+                selectedId={order.card_design}
+                onToggle={(designId) =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    card_design: prev.card_design === designId ? null : designId,
+                  }))
+                }
+              />
+
+              {/* QR info notice */}
+              <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6 space-y-3">
+                <p className="label-eyebrow text-gold">Your QR code</p>
+                <p className="text-sm md:text-base text-navy/80 leading-relaxed">
+                  {qrNoticeCopy(order)}
+                </p>
+              </div>
+            </div>
+          </Step>
+        )}
+      </div>
     </main>
   );
 };
