@@ -414,6 +414,11 @@ const Start = () => {
     photo_url: "",
     photo_quality: null,
     photo_quality_override: false,
+    gift_card_amount: null,
+    gift_card_custom_amount: null,
+    gift_card_recipient_name: "",
+    gift_card_gifter_name: "",
+    gift_card_note: "",
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
