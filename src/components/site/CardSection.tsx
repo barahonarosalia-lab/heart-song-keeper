@@ -25,8 +25,7 @@ export const CardSection = () => {
             </p>
           </div>
           <p className="text-gold/90 text-sm leading-relaxed pt-2">
-            Included with every Key of Hearts. Even digital orders receive a
-            beautiful PDF card by email.
+            Included with every Key of Hearts. Physical orders receive a printed card. Digital orders receive a beautiful PDF card by email — ready to print or frame.
           </p>
         </div>
       </div>
