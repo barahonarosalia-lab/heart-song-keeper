@@ -47,7 +47,7 @@ const qrFeatures = [
   },
   {
     icon: "🛡️",
-    text: "Guaranteed — 10 year minimum accessibility promise",
+    text: "Protected — 90 days notice + full audio download if anything ever changes",
   },
 ];
 
