@@ -197,61 +197,44 @@ interface CollectionDef {
   pieces: ArtPiece[];
 }
 
+// Generate 10 placeholder art slots per collection.
+// Real art images will be swapped in before launch.
+const makePlaceholders = (collectionId: string, count = 10): ArtPiece[] =>
+  Array.from({ length: count }, (_, i) => ({
+    id: `${collectionId}_art_${i + 1}`,
+    name: `Art ${i + 1}`,
+  }));
+
 const COLLECTIONS: CollectionDef[] = [
   {
     id: "little_luminaries",
     name: "Little Luminaries",
     cover: luminaries,
-    pieces: [
-      { id: "punch_lullaby", name: "Punch & Lullaby" },
-      { id: "first_breath", name: "First Breath" },
-      { id: "moonlit_crib", name: "Moonlit Crib" },
-      { id: "tiny_hands", name: "Tiny Hands" },
-    ],
+    pieces: makePlaceholders("little_luminaries"),
   },
   {
     id: "moonlit_botanica",
     name: "Moonlit Botanica",
     cover: botanica,
-    pieces: [
-      { id: "candlelit_wreath", name: "Candlelit Wreath" },
-      { id: "evening_rose", name: "Evening Rose" },
-      { id: "quiet_reverence", name: "Quiet Reverence" },
-      { id: "midnight_garden", name: "Midnight Garden" },
-    ],
+    pieces: makePlaceholders("moonlit_botanica"),
   },
   {
     id: "meadow_mane",
     name: "Meadow & Mane",
     cover: meadow,
-    pieces: [
-      { id: "wide_skies", name: "Wide Skies" },
-      { id: "golden_field", name: "Golden Field" },
-      { id: "rugged_ridge", name: "Rugged Ridge" },
-      { id: "lone_stag", name: "Lone Stag" },
-    ],
+    pieces: makePlaceholders("meadow_mane"),
   },
   {
     id: "fable_fawn",
     name: "Fable & Fawn",
     cover: fable,
-    pieces: [
-      { id: "moonlit_fox", name: "Moonlit Fox" },
-      { id: "glowing_cottage", name: "Glowing Cottage" },
-      { id: "enchanted_grove", name: "Enchanted Grove" },
-      { id: "starlit_path", name: "Starlit Path" },
-    ],
+    pieces: makePlaceholders("fable_fawn"),
   },
   {
     id: "ember_ivy",
     name: "Ember & Ivy",
     cover: ember,
-    pieces: [
-      { id: "candlelit_garden", name: "Candlelit Garden" },
-      { id: "paired_foxes", name: "Paired Foxes" },
-      { id: "cottage_roses", name: "Cottage Roses" },
-      { id: "warm_hearth", name: "Warm Hearth" },
-    ],
+    pieces: makePlaceholders("ember_ivy"),
   },
 ];
 
