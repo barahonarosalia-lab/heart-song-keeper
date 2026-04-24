@@ -736,51 +736,18 @@ const Start = () => {
                   )}
               </div>
 
-              {/* Image gallery */}
+              {/* Image gallery — horizontal swipe */}
               {activeCollection && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <p className="label-eyebrow text-gold">Choose their art</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-                    {activeCollection.pieces.map((piece) => {
-                      const selected = order.art_selected === piece.id;
-                      return (
-                        <button
-                          key={piece.id}
-                          type="button"
-                          onClick={() =>
-                            setOrder((prev) => ({ ...prev, art_selected: piece.id }))
-                          }
-                          className={cn(
-                            "relative group text-left rounded-2xl overflow-hidden bg-card border transition-all duration-300",
-                            "hover:-translate-y-0.5 hover:shadow-card",
-                            selected
-                              ? "border-gold ring-2 ring-gold/40 shadow-card"
-                              : "border-border/60",
-                          )}
-                        >
-                          <div className="aspect-square overflow-hidden bg-muted">
-                            <img
-                              src={activeCollection.cover}
-                              alt={piece.name}
-                              loading="lazy"
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                          </div>
-                          {selected && (
-                            <span className="absolute top-2.5 right-2.5 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy shadow-gold">
-                              <Check className="size-3.5" strokeWidth={3} />
-                            </span>
-                          )}
-                          <div className="p-3">
-                            <p className="font-serif text-sm md:text-base text-navy leading-tight">
-                              {piece.name}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <ArtGallery
+                  collection={activeCollection}
+                  selectedId={order.art_selected}
+                  onToggle={(pieceId) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      art_selected: prev.art_selected === pieceId ? null : pieceId,
+                    }))
+                  }
+                />
               )}
             </div>
           </Step>
