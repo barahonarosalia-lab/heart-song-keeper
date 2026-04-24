@@ -401,6 +401,9 @@ const Start = () => {
     customer_message: "",
     dedication: "",
     use_exact_words: false,
+    photo_url: "",
+    photo_quality: null,
+    photo_quality_override: false,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
