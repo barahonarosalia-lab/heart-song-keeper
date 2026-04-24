@@ -1476,12 +1476,19 @@ const ProductCard = ({
       <p className="italic text-muted-foreground mb-5">{product.tagline}</p>
 
       <ul className="space-y-2 mb-7 text-sm text-muted-foreground">
-        {product.details.map((d) => (
-          <li key={d} className="flex gap-2">
-            <span className="text-gold">·</span>
-            <span>{d}</span>
-          </li>
-        ))}
+        {product.details.map((d, idx) => {
+          const isFirstDigitalPreserve =
+            product.id === "digital" && idx === 0 && tier === "preserve";
+          const display = isFirstDigitalPreserve
+            ? "Your digital file arrives instantly. Your voice goes live within 48 hours of us receiving it."
+            : d;
+          return (
+            <li key={d} className="flex gap-2">
+              <span className="text-gold">·</span>
+              <span>{display}</span>
+            </li>
+          );
+        })}
       </ul>
 
       {!selected && (
