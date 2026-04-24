@@ -12,6 +12,7 @@ import CollectionsPage from "./pages/Collections.tsx";
 import HowItWorks from "./pages/HowItWorks.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import GiftCards from "./pages/GiftCards.tsx";
+import { Placeholder } from "./pages/Placeholder.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,10 @@ const App = () => (
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/gift-cards" element={<GiftCards />} />
+          <Route path="/faq" element={<Placeholder eyebrow="FAQ" title="Answers are on the way." />} />
+          <Route path="/privacy" element={<Placeholder eyebrow="PRIVACY" title="Privacy policy coming soon." />} />
+          <Route path="/terms" element={<Placeholder eyebrow="TERMS" title="Terms of service coming soon." />} />
+          <Route path="/accessibility" element={<Placeholder eyebrow="ACCESSIBILITY" title="Our accessibility statement is on the way." />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
