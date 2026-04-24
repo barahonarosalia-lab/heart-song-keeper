@@ -1003,14 +1003,9 @@ const ProductCard = ({
       {selected &&
         product.id !== "ornament" &&
         product.id !== "jewelry" && (
-          <button
-            type="button"
-            onClick={onChooseArt}
-            className="mt-auto inline-flex items-center justify-center gap-2 rounded-full h-11 px-5 text-sm font-medium border-2 bg-transparent text-navy border-gold hover:bg-gold/10 transition-colors"
-          >
-            Choose their art
-            <ArrowRight className="size-4" />
-          </button>
+          <p className="text-xs text-muted-foreground italic">
+            Choose their art below ↓
+          </p>
         )}
     </div>
   );
