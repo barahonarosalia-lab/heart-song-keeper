@@ -174,6 +174,21 @@ const PRODUCTS: ProductDef[] = [
     ],
     cta: "Choose Blanket",
   },
+  {
+    id: "photo_blanket",
+    name: "Photo Blanket",
+    signature: 119,
+    preserve: 139,
+    tagline: "A moment in time. Their voice. Forever.",
+    details: [
+      "Your photo full bleed",
+      "QR code woven into art",
+      "Sherpa 50x60",
+      "Ships in 3-5 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Photo Blanket",
+  },
 ];
 
 interface OrnamentDesign {
