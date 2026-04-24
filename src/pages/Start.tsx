@@ -17,7 +17,7 @@ import ember from "@/assets/collection-ember.jpg";
 
 type Tier = "signature" | "preserve";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket" | "gift_card";
 type PhotoQuality = "green" | "yellow" | "red";
 type JewelryStyle = "heart" | "circle" | "dog_tag";
 type JewelryFinish = "silver" | "gold";
