@@ -22,6 +22,7 @@ interface OrderRecord {
   card_collection: string;
   recipient_name: string;
   gifter_name: string;
+  jewelry_style: string;
   audio_uploaded: boolean;
   paid: boolean;
 }
@@ -52,6 +53,7 @@ const loadOrder = (orderId: string, params: URLSearchParams): OrderRecord | null
     card_collection: params.get("card") ?? "Little Luminaries",
     recipient_name: params.get("recipient") ?? "Sarah",
     gifter_name: params.get("gifter") ?? "James",
+    jewelry_style: params.get("jewelry_style") ?? "Engraved Jewelry",
     audio_uploaded: params.get("audio") === "true",
     paid: params.get("paid") !== "false",
   };
@@ -65,9 +67,9 @@ const SummaryRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
-  const { tier, product, recipient_name, audio_uploaded } = order;
-  const productLabel = PRODUCT_LABEL[product].toLowerCase();
+  const { tier, product, recipient_name, audio_uploaded, jewelry_style } = order;
 
+  // ----- Signature -----
   if (tier === "signature" && product === "digital") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
@@ -76,28 +78,126 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "signature") {
+  if (tier === "signature" && product === "canvas") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
-        Your card ships first — arriving in 2-3 days so {recipient_name} knows something beautiful is on its way.
-        Their {productLabel} follows within 5-7 business days.
+        Your canvas and card are being prepared together. They'll ship within 3-5 business days and arrive together — ready to hang and scan.
       </p>
     );
   }
-  if (tier === "preserve" && audio_uploaded) {
+  if (tier === "signature" && (product === "blanket" || product === "photo_blanket")) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Your blanket and card are being prepared together. They'll ship within 3-5 business days and arrive together — ready to wrap around and scan.
+      </p>
+    );
+  }
+  if (tier === "signature" && product === "ornament") {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Your card ships first — arriving in 2-3 days so {recipient_name} knows something beautiful is on its way.
+        Their ornament follows within 5-7 business days.
+      </p>
+    );
+  }
+  if (tier === "signature" && product === "jewelry") {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Your card ships first — arriving in 2-3 days so {recipient_name} knows something beautiful is on its way.
+        Their {jewelry_style} follows within 5-7 business days.
+      </p>
+    );
+  }
+
+  // ----- Preserve -----
+  if (tier === "preserve" && product === "digital" && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording. We're wrapping it in an original score composed just for this moment.
-        You'll hear from us within 48 business hours of your audio arriving.
+        You'll hear from us within 48 business hours.
         Their QR is already live — playing something beautiful while we work.
       </p>
     );
   }
+  if (tier === "preserve" && product === "digital" && !audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Their QR is already live — playing a song matched to their occasion while we wait for their voice.
+        Upload their recording below when you're ready. We'll have it live within 48 hours of receiving it.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "canvas" && audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        We received their recording and we're working on it. Their canvas and card will ship together within 3-5 business days.
+        Their QR goes live within 48 hours of their audio being approved.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "canvas" && !audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Their canvas and card will ship together within 3-5 business days.
+        Their QR is already playing something beautiful — upload their recording below when you're ready and we'll have their voice live within 48 hours.
+      </p>
+    );
+  }
+  if (tier === "preserve" && (product === "blanket" || product === "photo_blanket") && audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        We received their recording and we're working on it. Their blanket and card will ship together within 3-5 business days.
+        Their QR goes live within 48 hours of their audio being approved.
+      </p>
+    );
+  }
+  if (tier === "preserve" && (product === "blanket" || product === "photo_blanket") && !audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Their blanket and card will ship together within 3-5 business days.
+        Their QR is already playing something beautiful — upload their recording below when you're ready and we'll have their voice live within 48 hours.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "ornament" && audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        We received their recording and we're working on it. Their card ships first — arriving in 2-3 days.
+        Their ornament follows within 5-7 business days.
+        Their QR goes live within 48 hours of their audio being approved.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "ornament" && !audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Their card ships first — arriving in 2-3 days. Their ornament follows within 5-7 business days.
+        Their QR is already playing something beautiful — upload their recording below when you're ready.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "jewelry" && audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        We received their recording and we're working on it. Their card ships first — arriving in 2-3 days.
+        Their {jewelry_style} follows within 5-7 business days.
+        Their QR goes live within 48 hours of their audio being approved.
+      </p>
+    );
+  }
+  if (tier === "preserve" && product === "jewelry" && !audio_uploaded) {
+    return (
+      <p className="text-navy/80 text-lg leading-relaxed font-light">
+        Their card ships first — arriving in 2-3 days. Their {jewelry_style} follows within 5-7 business days.
+        Their QR is already playing something beautiful — upload their recording below when you're ready.
+      </p>
+    );
+  }
+
+  // Fallback (should never reach here)
   return (
     <p className="text-navy/80 text-lg leading-relaxed font-light">
-      Their QR is already live — playing a song matched to their occasion while we wait for their voice.
-      When you're ready, upload their recording below. We'll have it live within 48 hours of receiving it.
-      No rush. We're here when you are.
+      We're preparing your Key with care. You'll hear from us soon.
     </p>
   );
 };
