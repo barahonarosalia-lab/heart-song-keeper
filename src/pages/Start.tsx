@@ -621,6 +621,11 @@ const Start = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {products.map((p) => {
             const selected = product === p.id;
+            // Jewelry price label updates dynamically based on chosen finish
+            const dynamicLabel =
+              p.id === "jewelry" && selected && jewelryFinish === "gold"
+                ? "From $99"
+                : p.priceLabel;
             return (
               <article
                 key={p.id}
@@ -631,7 +636,7 @@ const Start = () => {
                 )}
               >
                 {selected && <SelectedDot />}
-                <p className="label-eyebrow text-gold mb-2.5 pr-8">{p.priceLabel}</p>
+                <p className="label-eyebrow text-gold mb-2.5 pr-8">{dynamicLabel}</p>
                 <h3 className="font-serif text-2xl text-navy mb-2 leading-tight">{p.name}</h3>
                 <p className="font-serif italic text-navy/70 text-base mb-5 leading-snug text-balance">
                   "{p.tagline}"
@@ -652,6 +657,127 @@ const Start = () => {
             );
           })}
         </div>
+
+        {/* Jewelry-only configurator: style → finish → notice + engraving */}
+        {isJewelry && (
+          <div className="mt-12 md:mt-16 pt-10 md:pt-12 border-t border-gold/30 space-y-10 animate-fade-up">
+            {/* Style picker */}
+            <div>
+              <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                Choose your style
+              </h3>
+              <div className="grid grid-cols-3 gap-3 md:gap-4">
+                {jewelryStyles.map((s) => {
+                  const selected = jewelryStyle === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => setJewelryStyle(s.id)}
+                      className={cn(
+                        "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-center",
+                        "hover:-translate-y-0.5 hover:shadow-card",
+                        selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+                      )}
+                    >
+                      {selected && <SelectedDot />}
+                      <p className="font-serif text-lg md:text-xl text-navy">{s.name}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Finish picker — appears after style is chosen */}
+            {jewelryStyle && (
+              <div className="animate-fade-up">
+                <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                  Choose your finish
+                </h3>
+                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                  {/* Silver */}
+                  <button
+                    onClick={() => setJewelryFinish("silver")}
+                    className={cn(
+                      "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-left",
+                      "hover:-translate-y-0.5 hover:shadow-card",
+                      jewelryFinish === "silver"
+                        ? "border-[hsl(220,10%,70%)] ring-2 ring-[hsl(220,10%,70%)]/40 shadow-card"
+                        : "border-border/60",
+                    )}
+                  >
+                    {jewelryFinish === "silver" && (
+                      <span className="absolute top-3 right-3 size-6 rounded-full bg-[hsl(220,10%,70%)] text-navy flex items-center justify-center">
+                        <Check className="size-4" strokeWidth={3} />
+                      </span>
+                    )}
+                    <p className="font-serif text-lg md:text-xl text-navy mb-1">
+                      Silver — from $89
+                    </p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Signature $89 · Preserve $109
+                    </p>
+                  </button>
+                  {/* Gold */}
+                  <button
+                    onClick={() => setJewelryFinish("gold")}
+                    className={cn(
+                      "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-left",
+                      "hover:-translate-y-0.5 hover:shadow-card",
+                      jewelryFinish === "gold"
+                        ? "border-gold ring-2 ring-gold/40 shadow-card"
+                        : "border-border/60",
+                    )}
+                  >
+                    {jewelryFinish === "gold" && <SelectedDot />}
+                    <p className="font-serif text-lg md:text-xl text-navy mb-1">
+                      Gold — from $99
+                    </p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Signature $99 · Preserve $119
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Notice + engraving — appears after both style and finish chosen */}
+            {jewelryStyle && jewelryFinish && (
+              <div className="space-y-8 animate-fade-up">
+                <div className="rounded-xl bg-cream border border-border/60 p-5 md:p-6">
+                  <p className="text-sm leading-relaxed text-[#6B6B6B]">
+                    Your QR code is engraved on the front. Every time they scan it,
+                    your song plays. Art is not available on jewelry — the QR code
+                    is the gift.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                    What would you like engraved on the back?
+                  </h3>
+                  <div className="space-y-5">
+                    <EngravingField
+                      label="Line 1 — Name or short phrase"
+                      required
+                      value={engravingLine1}
+                      onChange={setEngravingLine1}
+                      maxLength={20}
+                    />
+                    <EngravingField
+                      label="Line 2 — Date or second line"
+                      value={engravingLine2}
+                      onChange={setEngravingLine2}
+                      maxLength={20}
+                    />
+                  </div>
+                  <p className="mt-4 text-sm text-[#6B6B6B]">
+                    Engraving is included — no extra charge.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {selectedProduct && (
           <div className="mt-10 text-center animate-fade-up">
