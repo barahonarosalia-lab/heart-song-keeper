@@ -1,6 +1,6 @@
 export const CardSection = () => {
   return (
-    <section className="relative bg-navy text-cream py-24 md:py-32 overflow-hidden">
+    <section className="relative bg-navy text-cream pt-24 md:pt-32 pb-10 md:pb-14 overflow-hidden">
       <div className="absolute inset-0 starfield opacity-20" />
       <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
 
