@@ -63,21 +63,21 @@ const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
 ];
 
 const OCCASIONS = [
-  "Memorial & Remembrance",
-  "Pregnancy & Infant Loss",
+  "Memorial & Grief",
+  "Pregnancy Loss",
   "Pet Memorial",
-  "Wedding & Anniversary",
-  "Birth & Baby",
+  "Anniversary & Wedding",
+  "Baby & Birth",
+  "New Parent",
   "Birthday",
   "Mother's Day",
   "Father's Day",
   "Military & Deployment",
   "Graduation",
-  "Sobriety & Milestone",
+  "College Send-Off",
+  "Sobriety & Recovery",
   "Friendship",
   "Just Because",
-  "Childhood Memory",
-  "Holiday & Christmas",
 ];
 
 const MUSIC_STYLES = [
