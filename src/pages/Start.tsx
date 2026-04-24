@@ -490,6 +490,31 @@ const Start = () => {
     [order.collection],
   );
 
+  // Step 3 is "complete" once the customer has picked everything required for
+  // their product. This unlocks Step 5 (the card art picker).
+  const step3Complete = (() => {
+    if (!order.product) return false;
+    if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
+    if (order.product === "ornament") return !!order.ornament_design;
+    if (order.product === "jewelry") {
+      return (
+        !!order.jewelry_style &&
+        !!order.jewelry_finish &&
+        !!order.engraving_line_1.trim()
+      );
+    }
+    return false;
+  })();
+
+  // Reveal Step 5 once Step 3 is complete
+  useEffect(() => {
+    if (step3Complete && step5Ref.current) {
+      setTimeout(() => {
+        step5Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, [step3Complete]);
+
   return (
     <main className="min-h-screen bg-cream text-navy">
       {/* HEADER */}
