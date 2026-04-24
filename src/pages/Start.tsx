@@ -51,6 +51,9 @@ interface OrderState {
   customer_message: string;
   dedication: string;
   use_exact_words: boolean;
+  photo_url: string;
+  photo_quality: PhotoQuality | null;
+  photo_quality_override: boolean;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
