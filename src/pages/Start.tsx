@@ -269,21 +269,21 @@ const COLLECTIONS: CollectionDef[] = [
 
 // Map an occasion (Step 2) to a default collection (Step 4)
 const OCCASION_TO_COLLECTION: Record<string, string> = {
-  "Birth & Baby": "little_luminaries",
+  "Memorial & Grief": "moonlit_botanica",
+  "Pregnancy Loss": "moonlit_botanica",
+  "Pet Memorial": "moonlit_botanica",
+  "Anniversary & Wedding": "ember_ivy",
+  "Baby & Birth": "little_luminaries",
+  "New Parent": "little_luminaries",
+  "Birthday": "meadow_mane",
   "Mother's Day": "little_luminaries",
   "Father's Day": "meadow_mane",
-  "Memorial & Remembrance": "moonlit_botanica",
-  "Pregnancy & Infant Loss": "moonlit_botanica",
-  "Pet Memorial": "moonlit_botanica",
   "Military & Deployment": "meadow_mane",
   "Graduation": "meadow_mane",
-  "Sobriety & Milestone": "meadow_mane",
-  "Childhood Memory": "meadow_mane",
-  "Birthday": "meadow_mane",
-  "Just Because": "meadow_mane",
+  "College Send-Off": "meadow_mane",
+  "Sobriety & Recovery": "meadow_mane",
   "Friendship": "fable_fawn",
-  "Wedding & Anniversary": "ember_ivy",
-  "Holiday & Christmas": "fable_fawn",
+  "Just Because": "meadow_mane",
 };
 
 // Map a product to the Step 4 headline noun
