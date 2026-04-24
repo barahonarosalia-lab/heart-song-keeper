@@ -10,6 +10,7 @@ import Listen from "./pages/Listen.tsx";
 import Upgrade from "./pages/Upgrade.tsx";
 import CollectionsPage from "./pages/Collections.tsx";
 import HowItWorks from "./pages/HowItWorks.tsx";
+import Pricing from "./pages/Pricing.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/upgrade" element={<Upgrade />} />
           <Route path="/collections" element={<CollectionsPage />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/pricing" element={<Pricing />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
