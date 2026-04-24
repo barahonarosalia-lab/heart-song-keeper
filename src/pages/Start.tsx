@@ -958,61 +958,76 @@ const Start = () => {
         )}
       </div>
 
-      {/* STEP 4 — Choose their art (Canvas, Blanket, Digital only) */}
+      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) OR Photo upload (Photo Blanket) */}
       <div ref={step4Ref}>
         {showStep4 && (
           <Step
             index="04"
             title={step4Headline}
-            subtitle="This is what they'll see every time they hold it."
+            subtitle={step4Subtitle}
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
-              {/* Collection dropdown */}
-              <div className="space-y-3 max-w-md">
-                <label htmlFor="collection-select" className="label-eyebrow text-gold block">
-                  Collection
-                </label>
-                <select
-                  id="collection-select"
-                  value={order.collection ?? ""}
-                  onChange={(e) =>
-                    setOrder((prev) => ({
-                      ...prev,
-                      collection: e.target.value || null,
-                      art_selected: null,
-                    }))
-                  }
-                  className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
-                >
-                  <option value="" disabled>
-                    Choose a collection
-                  </option>
-                  {COLLECTIONS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {order.occasion &&
-                  OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
-                    <p className="text-xs text-muted-foreground italic">
-                      Suggested for "{order.occasion}" — change anytime.
-                    </p>
-                  )}
-              </div>
-
-              {/* Image gallery — horizontal swipe */}
-              {activeCollection && (
-                <ArtGallery
-                  collection={activeCollection}
-                  selectedId={order.art_selected}
-                  onToggle={(pieceId) =>
-                    setOrder((prev) => ({
-                      ...prev,
-                      art_selected: prev.art_selected === pieceId ? null : pieceId,
-                    }))
+              {order.product === "photo_blanket" ? (
+                <PhotoUpload
+                  photoUrl={order.photo_url}
+                  quality={order.photo_quality}
+                  override={order.photo_quality_override}
+                  onUpload={handlePhotoUpload}
+                  onRemove={handleRemovePhoto}
+                  onOverride={() =>
+                    setOrder((prev) => ({ ...prev, photo_quality_override: true }))
                   }
                 />
+              ) : (
+                <>
+                  {/* Collection dropdown */}
+                  <div className="space-y-3 max-w-md">
+                    <label htmlFor="collection-select" className="label-eyebrow text-gold block">
+                      Collection
+                    </label>
+                    <select
+                      id="collection-select"
+                      value={order.collection ?? ""}
+                      onChange={(e) =>
+                        setOrder((prev) => ({
+                          ...prev,
+                          collection: e.target.value || null,
+                          art_selected: null,
+                        }))
+                      }
+                      className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
+                    >
+                      <option value="" disabled>
+                        Choose a collection
+                      </option>
+                      {COLLECTIONS.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    {order.occasion &&
+                      OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
+                        <p className="text-xs text-muted-foreground italic">
+                          Suggested for "{order.occasion}" — change anytime.
+                        </p>
+                      )}
+                  </div>
+
+                  {/* Image gallery — horizontal swipe */}
+                  {activeCollection && (
+                    <ArtGallery
+                      collection={activeCollection}
+                      selectedId={order.art_selected}
+                      onToggle={(pieceId) =>
+                        setOrder((prev) => ({
+                          ...prev,
+                          art_selected: prev.art_selected === pieceId ? null : pieceId,
+                        }))
+                      }
+                    />
+                  )}
+                </>
               )}
             </div>
           </Step>
