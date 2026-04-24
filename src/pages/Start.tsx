@@ -2024,4 +2024,141 @@ const CardGallery = ({
   );
 };
 
+// ----- Photo upload (Photo Blanket) --------------------------------------
+
+const PhotoUpload = ({
+  photoUrl,
+  quality,
+  override,
+  onUpload,
+  onRemove,
+  onOverride,
+}: {
+  photoUrl: string;
+  quality: PhotoQuality | null;
+  override: boolean;
+  onUpload: (file: File | null) => void;
+  onRemove: () => void;
+  onOverride: () => void;
+}) => {
+  return (
+    <div className="space-y-5 max-w-2xl">
+      {!photoUrl && (
+        <label
+          htmlFor="photo-file"
+          className="block rounded-2xl border-2 border-dashed border-border hover:border-gold hover:bg-gold/5 p-10 md:p-12 text-center cursor-pointer transition-all bg-card/50"
+        >
+          <input
+            id="photo-file"
+            type="file"
+            accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+            className="sr-only"
+            onChange={(e) => onUpload(e.target.files?.[0] ?? null)}
+          />
+          <div className="flex flex-col items-center gap-3">
+            <span className="inline-flex items-center justify-center size-14 rounded-full bg-gold/15 text-gold">
+              <UploadCloud className="size-7" />
+            </span>
+            <p className="label-eyebrow text-gold">Upload their photo</p>
+            <p className="text-sm text-muted-foreground">
+              JPG · PNG · up to 50MB
+            </p>
+          </div>
+        </label>
+      )}
+
+      {photoUrl && (
+        <div className="space-y-4">
+          <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card aspect-[4/3] max-w-md">
+            <img
+              src={photoUrl}
+              alt="Uploaded photo preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="photo-file-replace"
+              className="text-xs text-muted-foreground hover:text-gold underline underline-offset-4 cursor-pointer transition-colors"
+            >
+              Replace photo
+              <input
+                id="photo-file-replace"
+                type="file"
+                accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+                className="sr-only"
+                onChange={(e) => onUpload(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="text-xs text-muted-foreground hover:text-rose underline underline-offset-4 transition-colors"
+            >
+              Remove photo
+            </button>
+          </div>
+
+          {/* Quality feedback */}
+          {quality === "green" && (
+            <div
+              className="flex items-start gap-2.5 text-sm font-medium leading-relaxed"
+              style={{ color: "#2D6A4F" }}
+            >
+              <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
+              <span>Your photo looks great for printing.</span>
+            </div>
+          )}
+
+          {quality === "yellow" && (
+            <div className="flex items-start gap-2.5 text-sm font-medium text-gold leading-relaxed">
+              <AlertTriangle className="size-5 shrink-0 mt-0.5" />
+              <span>
+                Your photo will print well. For the sharpest result, a higher
+                resolution image gives the best quality on a large blanket.
+              </span>
+            </div>
+          )}
+
+          {quality === "red" && (
+            <div className="space-y-2">
+              <div
+                className="flex items-start gap-2.5 text-sm font-medium leading-relaxed"
+                style={{ color: "#C4796A" }}
+              >
+                <XCircle className="size-5 shrink-0 mt-0.5" />
+                <span>
+                  This photo may appear blurry when printed at blanket size.
+                  Please upload a higher resolution version for the best result.
+                  Need help? Email us at{" "}
+                  <a
+                    href="mailto:hello@keyofhearts.com"
+                    className="underline underline-offset-2"
+                  >
+                    hello@keyofhearts.com
+                  </a>
+                </span>
+              </div>
+              {!override && (
+                <button
+                  type="button"
+                  onClick={onOverride}
+                  className="text-xs text-muted-foreground hover:text-navy underline underline-offset-4 transition-colors"
+                >
+                  Continue anyway — I understand the quality may be affected.
+                </button>
+              )}
+              {override && (
+                <p className="text-xs italic text-muted-foreground">
+                  Quality override accepted — you can continue.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default Start;
