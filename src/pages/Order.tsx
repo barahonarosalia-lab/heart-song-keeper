@@ -53,6 +53,7 @@ const loadOrder = (orderId: string, params: URLSearchParams): OrderRecord | null
     card_collection: params.get("card") ?? "Little Luminaries",
     recipient_name: params.get("recipient") ?? "Sarah",
     gifter_name: params.get("gifter") ?? "James",
+    jewelry_style: params.get("jewelry_style") ?? "Engraved Jewelry",
     audio_uploaded: params.get("audio") === "true",
     paid: params.get("paid") !== "false",
   };
