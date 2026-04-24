@@ -16,8 +16,8 @@ const cards = [
   },
   {
     label: "The New Parent",
-    headline: "A lullaby composed just for them.",
-    body: "Before they're old enough to remember — they'll have it forever.",
+    headline: "Record it tonight.",
+    body: "The night they came home. While they're asleep on your chest. Before you forget what this feels like. We'll keep it forever.",
   },
   {
     label: "The Graduate",
@@ -26,8 +26,8 @@ const cards = [
   },
   {
     label: "The Pet Family",
-    headline: "They were family. Every single day.",
-    body: "A song for the one who greeted you at the door. Whose spot on the couch is still warm in your heart.",
+    headline: "I still look for you.",
+    body: "Record what you'd say if you could. We'll wrap it in music and keep it somewhere you can always find it.",
   },
   {
     label: "The Couple",

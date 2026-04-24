@@ -25,6 +25,10 @@ export const Hero = () => {
               Forever.
             </h1>
 
+            <p className="font-serif italic text-gold text-lg text-center">
+              I'll find a way to tell you again.
+            </p>
+
             <p className="hidden sm:block text-lg md:text-xl text-cream/60 max-w-md leading-relaxed">
               A song. A voice. A story.<br />
               Behind a QR code.<br />
