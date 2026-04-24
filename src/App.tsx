@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Start from "./pages/Start.tsx";
 import Order from "./pages/Order.tsx";
 import Listen from "./pages/Listen.tsx";
+import Upgrade from "./pages/Upgrade.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
