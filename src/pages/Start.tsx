@@ -27,6 +27,8 @@ interface OrderState {
   ornament_design: string | null;
   ornament_dedication: string;
   ornament_year: string;
+  ornament_line_1: string;
+  ornament_line_2: string;
   jewelry_style: JewelryStyle | null;
   jewelry_finish: JewelryFinish | null;
   engraving_line_1: string;
@@ -191,6 +193,8 @@ const Start = () => {
     ornament_design: null,
     ornament_dedication: "",
     ornament_year: "",
+    ornament_line_1: "",
+    ornament_line_2: "",
     jewelry_style: null,
     jewelry_finish: null,
     engraving_line_1: "",
@@ -247,6 +251,8 @@ const Start = () => {
       ornament_design: product === "ornament" ? prev.ornament_design : null,
       ornament_dedication: product === "ornament" ? prev.ornament_dedication : "",
       ornament_year: product === "ornament" ? prev.ornament_year : "",
+      ornament_line_1: product === "ornament" ? prev.ornament_line_1 : "",
+      ornament_line_2: product === "ornament" ? prev.ornament_line_2 : "",
       jewelry_style: product === "jewelry" ? prev.jewelry_style : null,
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
