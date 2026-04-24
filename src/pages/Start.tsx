@@ -789,99 +789,96 @@ const Start = () => {
         )}
       </StepBlock>
 
-      {/* STEP 4 */}
-      <StepBlock
-        ref={stepRefs[3]}
-        index="04"
-        title="Choose the art for your gift."
-        subtitle="This is the image that will be placed on your product."
-        unlocked={step3Done}
-        complete={step4Done}
-        collapsed={step4Done && editingStep !== 4}
-        summary={
-          step4Done
-            ? isPhoto
-              ? "🖼 Photo uploaded"
-              : isOrnament
-              ? `🖼 ${findOrnament(art)?.name}`
-              : `🖼 ${findCollection(artCollection)?.name} art`
-            : ""
-        }
-        onChange={() => changeStep(4)}
-        pulse={step3Done && !step4Done}
-      >
-        {/* Variant: ornament */}
-        {isOrnament && (
-          <div className="grid md:grid-cols-2 gap-5 md:gap-6">
-            {ornamentDesigns.map((d) => {
-              const selected = art === d.id;
-              const disabled = !d.available;
-              return (
-                <article
-                  key={d.id}
-                  className={cn(
-                    "relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
-                    !disabled && "hover:-translate-y-0.5 hover:shadow-card",
-                    selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
-                    disabled && "opacity-60",
-                  )}
-                >
-                  {selected && (
-                    <span className="absolute top-4 right-4 z-10 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
-                      <Check className="size-5" strokeWidth={3} />
-                    </span>
-                  )}
-                  <div className={cn("aspect-[16/10] overflow-hidden bg-muted", disabled && "grayscale")}>
-                    <img src={d.img} alt={d.name} loading="lazy" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="font-serif text-2xl text-navy mb-1">{d.name}</h3>
-                    <p className="text-[15px] text-navy/70 mb-2">{d.sub}</p>
-                    {d.use && <p className="text-sm text-muted-foreground mb-5">{d.use}</p>}
-                    {disabled ? (
-                      <span className="mt-auto inline-flex items-center justify-center text-xs label-eyebrow text-gold border border-gold/40 rounded-full py-3">
-                        Coming Soon
-                      </span>
-                    ) : (
-                      <Button
-                        variant={selected ? "gold" : "navy"}
-                        className="w-full mt-auto"
-                        onClick={() => handleSelectOrnament(d.id)}
-                      >
-                        {selected ? "Selected" : "Choose this design"}
-                      </Button>
+      {/* STEP 4 — hidden entirely for jewelry orders */}
+      {!isJewelry && (
+        <StepBlock
+          ref={stepRefs[3]}
+          index="04"
+          title="Choose the art for your gift."
+          subtitle="This is the image that will be placed on your product."
+          unlocked={step3Done}
+          complete={step4Done}
+          collapsed={step4Done && editingStep !== 4}
+          summary={
+            step4Done
+              ? isPhoto
+                ? "🖼 Photo uploaded"
+                : isOrnament
+                ? `🖼 ${findOrnament(art)?.name}`
+                : `🖼 ${findCollection(artCollection)?.name} art`
+              : ""
+          }
+          onChange={() => changeStep(4)}
+          pulse={step3Done && !step4Done}
+        >
+          {/* Variant: ornament */}
+          {isOrnament && (
+            <div className="grid md:grid-cols-2 gap-5 md:gap-6">
+              {ornamentDesigns.map((d) => {
+                const selected = art === d.id;
+                const disabled = !d.available;
+                return (
+                  <article
+                    key={d.id}
+                    className={cn(
+                      "relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
+                      !disabled && "hover:-translate-y-0.5 hover:shadow-card",
+                      selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+                      disabled && "opacity-60",
                     )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
+                  >
+                    {selected && (
+                      <span className="absolute top-4 right-4 z-10 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
+                        <Check className="size-5" strokeWidth={3} />
+                      </span>
+                    )}
+                    <div className={cn("aspect-[16/10] overflow-hidden bg-muted", disabled && "grayscale")}>
+                      <img src={d.img} alt={d.name} loading="lazy" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="font-serif text-2xl text-navy mb-1">{d.name}</h3>
+                      <p className="text-[15px] text-navy/70 mb-2">{d.sub}</p>
+                      {d.use && <p className="text-sm text-muted-foreground mb-5">{d.use}</p>}
+                      {disabled ? (
+                        <span className="mt-auto inline-flex items-center justify-center text-xs label-eyebrow text-gold border border-gold/40 rounded-full py-3">
+                          Coming Soon
+                        </span>
+                      ) : (
+                        <Button
+                          variant={selected ? "gold" : "navy"}
+                          className="w-full mt-auto"
+                          onClick={() => handleSelectOrnament(d.id)}
+                        >
+                          {selected ? "Selected" : "Choose this design"}
+                        </Button>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
 
-        {/* Variant: photo upload */}
-        {isPhoto && (
-          <PhotoUpload photo={photo} onFile={handlePhoto} onClear={() => setPhoto(null)} />
-        )}
+          {/* Variant: photo upload */}
+          {isPhoto && (
+            <PhotoUpload photo={photo} onFile={handlePhoto} onClear={() => setPhoto(null)} />
+          )}
 
-        {/* Variant: art grid (digital, canvas, blanket, jewelry) */}
-        {!isOrnament && !isPhoto && product && (
-          <ArtPicker
-            currentCollectionId={artCollection ?? collection!}
-            onChangeCollection={(id) => {
-              setArtCollection(id);
-              setArt(null);
-            }}
-            selectedArt={art}
-            onSelectArt={handleSelectArt}
-            note={
-              isJewelry
-                ? "This art appears on their personalized card — included with every order."
-                : "Can't find exactly what you want? More art added regularly."
-            }
-            limit={isJewelry ? 6 : undefined}
-          />
-        )}
-      </StepBlock>
+          {/* Variant: art grid (digital, canvas, blanket) */}
+          {!isOrnament && !isPhoto && product && (
+            <ArtPicker
+              currentCollectionId={artCollection ?? collection!}
+              onChangeCollection={(id) => {
+                setArtCollection(id);
+                setArt(null);
+              }}
+              selectedArt={art}
+              onSelectArt={handleSelectArt}
+              note="Can't find exactly what you want? More art added regularly."
+            />
+          )}
+        </StepBlock>
+      )}
 
       {/* CONTINUE */}
       <div ref={ctaRef} className="container pb-32 pt-4">
