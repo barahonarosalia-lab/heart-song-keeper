@@ -1594,9 +1594,14 @@ const ProductCard = ({
         <JewelryExpansion order={order} setOrder={setOrder} tier={tier} />
       )}
 
+      {selected && product.id === "gift_card" && (
+        <GiftCardExpansion order={order} setOrder={setOrder} />
+      )}
+
       {selected &&
         product.id !== "ornament" &&
-        product.id !== "jewelry" && (
+        product.id !== "jewelry" &&
+        product.id !== "gift_card" && (
           <p className="text-xs text-muted-foreground italic">
             Choose their art below ↓
           </p>
