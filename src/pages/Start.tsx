@@ -2268,4 +2268,191 @@ const PhotoUpload = ({
   );
 };
 
+// ----- Gift Card expansion ------------------------------------------------
+
+const GIFT_CARD_PRESETS = [29, 49, 59, 89, 119];
+
+const GiftCardExpansion = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+}) => {
+  const isCustom = order.gift_card_amount === -1;
+  const customValid =
+    isCustom &&
+    order.gift_card_custom_amount !== null &&
+    order.gift_card_custom_amount >= 29;
+  const presetValid =
+    !isCustom &&
+    order.gift_card_amount !== null &&
+    order.gift_card_amount >= 29;
+  const amountReady = customValid || presetValid;
+
+  return (
+    <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* Denomination selector */}
+      <div className="space-y-4">
+        <p className="label-eyebrow text-gold">Choose their amount</p>
+        <div className="grid grid-cols-2 gap-3">
+          {GIFT_CARD_PRESETS.map((amt) => {
+            const selected = order.gift_card_amount === amt;
+            return (
+              <button
+                key={amt}
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    gift_card_amount: amt,
+                    gift_card_custom_amount: null,
+                  }))
+                }
+                className={cn(
+                  "rounded-full h-12 text-base font-serif border-2 transition-all",
+                  selected
+                    ? "bg-gold text-navy border-gold shadow-gold"
+                    : "bg-card text-navy border-border/60 hover:border-gold",
+                )}
+              >
+                ${amt}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_amount: -1,
+              }))
+            }
+            className={cn(
+              "col-span-2 rounded-full h-12 text-base font-serif border-2 transition-all",
+              isCustom
+                ? "bg-gold text-navy border-gold shadow-gold"
+                : "bg-card text-navy border-border/60 hover:border-gold",
+            )}
+          >
+            Custom amount
+          </button>
+        </div>
+
+        {isCustom && (
+          <div className="space-y-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
+            <label htmlFor="gc-custom" className="label-eyebrow text-gold block">
+              Enter amount
+            </label>
+            <Input
+              id="gc-custom"
+              type="number"
+              min={29}
+              inputMode="numeric"
+              value={order.gift_card_custom_amount ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                const num = v === "" ? null : Math.max(0, parseInt(v, 10) || 0);
+                setOrder((prev) => ({ ...prev, gift_card_custom_amount: num }));
+              }}
+              placeholder="e.g. $75"
+              className="h-12 rounded-xl bg-card border-border/60 text-base"
+            />
+            {order.gift_card_custom_amount !== null &&
+              order.gift_card_custom_amount < 29 && (
+                <p className="text-xs italic" style={{ color: "#C4796A" }}>
+                  Minimum gift card amount is $29.
+                </p>
+              )}
+          </div>
+        )}
+      </div>
+
+      {/* Optional fields */}
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <label htmlFor="gc-to" className="label-eyebrow text-gold block">
+            To
+          </label>
+          <Input
+            id="gc-to"
+            value={order.gift_card_recipient_name}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_recipient_name: e.target.value.slice(0, 80),
+              }))
+            }
+            placeholder="Who is this for?"
+            className="h-12 rounded-xl bg-card border-border/60 text-base"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <label htmlFor="gc-from" className="label-eyebrow text-gold block">
+            From
+          </label>
+          <Input
+            id="gc-from"
+            value={order.gift_card_gifter_name}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_gifter_name: e.target.value.slice(0, 80),
+              }))
+            }
+            placeholder="Your name"
+            className="h-12 rounded-xl bg-card border-border/60 text-base"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <label htmlFor="gc-note" className="label-eyebrow text-gold block">
+            A note <span className="text-muted-foreground/70 normal-case tracking-normal">(optional)</span>
+          </label>
+          <Textarea
+            id="gc-note"
+            value={order.gift_card_note}
+            maxLength={150}
+            rows={3}
+            onChange={(e) =>
+              setOrder((prev) => ({
+                ...prev,
+                gift_card_note: e.target.value.slice(0, 150),
+              }))
+            }
+            placeholder="e.g. For whenever you're ready to start."
+            className="rounded-xl bg-card border-border/60 text-base p-4"
+          />
+          <div className="flex justify-end">
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {order.gift_card_note.length}/150
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Info box */}
+      <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6">
+        <p className="text-sm text-navy/80 leading-relaxed">
+          Your gift card PDF will be emailed to you instantly.<br />
+          Forward it, print it, or save it for the right moment.<br />
+          It never expires and covers any Key of Hearts order.
+        </p>
+      </div>
+
+      {/* CTA */}
+      <Button
+        type="button"
+        variant="gold"
+        size="xl"
+        className="w-full font-serif text-lg"
+        disabled={!amountReady}
+      >
+        Continue to checkout →
+      </Button>
+    </div>
+  );
+};
+
 export default Start;
