@@ -693,10 +693,105 @@ const Start = () => {
                   tier={order.tier!}
                   selected={order.product === product.id}
                   onSelect={() => handleSelectProduct(product.id)}
+                  onChooseArt={handleChooseArt}
                   order={order}
                   setOrder={setOrder}
                 />
               ))}
+            </div>
+          </Step>
+        )}
+      </div>
+
+      {/* STEP 4 — Choose their art (Canvas, Blanket, Digital only) */}
+      <div ref={step4Ref}>
+        {showStep4 && (
+          <Step
+            index="04"
+            title={step4Headline}
+            subtitle="This is what they'll see every time they hold it."
+          >
+            <div className="max-w-5xl space-y-8 md:space-y-10">
+              {/* Collection dropdown */}
+              <div className="space-y-3 max-w-md">
+                <label htmlFor="collection-select" className="label-eyebrow text-gold block">
+                  Collection
+                </label>
+                <select
+                  id="collection-select"
+                  value={order.collection ?? ""}
+                  onChange={(e) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      collection: e.target.value || null,
+                      art_selected: null,
+                    }))
+                  }
+                  className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
+                >
+                  <option value="" disabled>
+                    Choose a collection
+                  </option>
+                  {COLLECTIONS.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {order.occasion &&
+                  OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
+                    <p className="text-xs text-muted-foreground italic">
+                      Suggested for "{order.occasion}" — change anytime.
+                    </p>
+                  )}
+              </div>
+
+              {/* Image gallery */}
+              {activeCollection && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <p className="label-eyebrow text-gold">Choose their art</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                    {activeCollection.pieces.map((piece) => {
+                      const selected = order.art_selected === piece.id;
+                      return (
+                        <button
+                          key={piece.id}
+                          type="button"
+                          onClick={() =>
+                            setOrder((prev) => ({ ...prev, art_selected: piece.id }))
+                          }
+                          className={cn(
+                            "relative group text-left rounded-2xl overflow-hidden bg-card border transition-all duration-300",
+                            "hover:-translate-y-0.5 hover:shadow-card",
+                            selected
+                              ? "border-gold ring-2 ring-gold/40 shadow-card"
+                              : "border-border/60",
+                          )}
+                        >
+                          <div className="aspect-square overflow-hidden bg-muted">
+                            <img
+                              src={activeCollection.cover}
+                              alt={piece.name}
+                              loading="lazy"
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                          </div>
+                          {selected && (
+                            <span className="absolute top-2.5 right-2.5 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy shadow-gold">
+                              <Check className="size-3.5" strokeWidth={3} />
+                            </span>
+                          )}
+                          <div className="p-3">
+                            <p className="font-serif text-sm md:text-base text-navy leading-tight">
+                              {piece.name}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </Step>
         )}
