@@ -1,9 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, Info, Play, UploadCloud } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Info, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import luminaries from "@/assets/collection-luminaries.jpg";
+import meadow from "@/assets/collection-meadow.jpg";
+import fable from "@/assets/collection-fable.jpg";
+import botanica from "@/assets/collection-botanica.jpg";
+import ember from "@/assets/collection-ember.jpg";
 
 // ----- Types --------------------------------------------------------------
 
