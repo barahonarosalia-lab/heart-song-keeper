@@ -60,18 +60,18 @@ export const ForEveryLove = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {cards.map((c, i) => (
             <article
               key={c.label}
-              className="group bg-cream rounded-2xl p-7 md:p-8 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40"
+              className="group bg-cream rounded-2xl py-4 px-5 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40"
               style={{ animationDelay: `${i * 60}ms` }}
             >
-              <p className="label-eyebrow text-gold mb-5">{c.label}</p>
-              <h3 className="font-serif text-xl md:text-2xl text-navy leading-snug mb-4 text-balance">
+              <p className="label-eyebrow text-gold mb-3">{c.label}</p>
+              <h3 className="font-serif text-lg text-navy leading-snug mb-3 text-balance">
                 {c.headline}
               </h3>
-              <p className="text-[15px] text-muted-foreground leading-relaxed">
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
                 {c.body}
               </p>
             </article>
