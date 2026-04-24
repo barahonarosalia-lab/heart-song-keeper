@@ -1,0 +1,283 @@
+import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+type Collection = {
+  name: string;
+  slug: string;
+  img: string;
+  comingSoon?: boolean;
+};
+
+type Props = {
+  collection: Collection | null;
+  onClose: () => void;
+};
+
+export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
+  // Lock body scroll while open
+  useEffect(() => {
+    if (!collection) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [collection]);
+
+  // Reset expanded state on collection change
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  useEffect(() => {
+    setExpandedIndex(null);
+  }, [collection?.slug]);
+
+  // Esc to close
+  useEffect(() => {
+    if (!collection) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (expandedIndex !== null) setExpandedIndex(null);
+      else onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [collection, expandedIndex, onClose]);
+
+  if (!collection) return null;
+
+  // Coming soon variant
+  if (collection.comingSoon) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-navy text-cream overflow-y-auto">
+        <div className="absolute inset-0 starfield opacity-25 pointer-events-none" />
+        <div className="relative container max-w-md mx-auto pt-6 pb-16 px-6">
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex items-center gap-1.5 text-sm text-cream/80 hover:text-cream transition-colors"
+          >
+            <ArrowLeft className="size-4" /> Back
+          </button>
+
+          <div className="mt-24 text-center space-y-6">
+            <p className="label-eyebrow text-gold">Coming Soon</p>
+            <h2 className="font-serif text-4xl md:text-5xl text-gold">{collection.name}</h2>
+            <p className="text-cream/80 text-base md:text-lg leading-relaxed max-w-sm mx-auto">
+              This collection is coming soon. We'll let you know when it's ready.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const input = (e.currentTarget.elements.namedItem("email") as HTMLInputElement);
+                if (!input?.value) return;
+                // TODO: wire to backend / n8n
+                input.value = "";
+                alert("Thank you — we'll be in touch.");
+              }}
+              className="pt-4 max-w-sm mx-auto space-y-3"
+            >
+              <Input
+                name="email"
+                type="email"
+                required
+                placeholder="your@email.com"
+                className="bg-cream/10 border-cream/30 text-cream placeholder:text-cream/50 focus-visible:ring-gold"
+              />
+              <Button type="submit" variant="gold" className="w-full">
+                Notify me <ArrowRight className="size-4" />
+              </Button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Build 10 placeholder slots — repeat the collection hero for now
+  const images = Array.from({ length: 10 }, (_, i) => ({
+    src: collection.img,
+    index: i + 1,
+  }));
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-navy text-cream overflow-hidden flex flex-col">
+      <div className="absolute inset-0 starfield opacity-20 pointer-events-none" />
+
+      {/* Header */}
+      <div className="relative pt-5 pb-4 px-5 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => (expandedIndex !== null ? setExpandedIndex(null) : onClose())}
+          className="inline-flex items-center gap-1.5 text-sm text-cream/80 hover:text-cream transition-colors"
+        >
+          <ArrowLeft className="size-4" /> Back
+        </button>
+        <p className="label-eyebrow text-gold absolute left-1/2 -translate-x-1/2 top-6 text-center">
+          {collection.name}
+        </p>
+        <span className="w-12" aria-hidden />
+      </div>
+
+      {expandedIndex === null ? (
+        <GalleryView images={images} onSelect={setExpandedIndex} />
+      ) : (
+        <ExpandedView
+          collection={collection}
+          images={images}
+          startIndex={expandedIndex}
+          onChangeIndex={setExpandedIndex}
+        />
+      )}
+    </div>
+  );
+};
+
+// ---------------- Gallery (grid of swipeable images) ----------------
+
+const GalleryView = ({
+  images,
+  onSelect,
+}: {
+  images: { src: string; index: number }[];
+  onSelect: (i: number) => void;
+}) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", containScroll: "trimSnaps" });
+  const [selected, setSelected] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const update = () => {
+      setSelected(emblaApi.selectedScrollSnap());
+      setSnaps(emblaApi.scrollSnapList());
+    };
+    update();
+    emblaApi.on("select", update);
+    emblaApi.on("reInit", update);
+    return () => {
+      emblaApi.off("select", update);
+      emblaApi.off("reInit", update);
+    };
+  }, [emblaApi]);
+
+  return (
+    <div className="relative flex-1 flex flex-col justify-center pb-8">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex gap-3">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onSelect(i)}
+              className="min-w-0 shrink-0 basis-[85%] first:pl-[7.5%] last:pr-[7.5%] focus:outline-none"
+              aria-label={`View art ${img.index}`}
+            >
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
+                <img
+                  src={img.src}
+                  alt={`Art ${img.index}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <p className="mt-3 text-center text-[11px] tracking-[0.25em] uppercase text-gold/80">
+                Art {img.index}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {snaps.length > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {snaps.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Go to art ${i + 1}`}
+              onClick={() => emblaApi?.scrollTo(i)}
+              className={cn(
+                "h-1.5 rounded-full transition-all",
+                selected === i ? "w-6 bg-gold" : "w-1.5 bg-gold/30",
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ---------------- Expanded image view ----------------
+
+const ExpandedView = ({
+  collection,
+  images,
+  startIndex,
+  onChangeIndex,
+}: {
+  collection: Collection;
+  images: { src: string; index: number }[];
+  startIndex: number;
+  onChangeIndex: (i: number) => void;
+}) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", startIndex, loop: false });
+  const [current, setCurrent] = useState(startIndex);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const update = () => {
+      const idx = emblaApi.selectedScrollSnap();
+      setCurrent(idx);
+      onChangeIndex(idx);
+    };
+    emblaApi.on("select", update);
+    return () => {
+      emblaApi.off("select", update);
+    };
+  }, [emblaApi, onChangeIndex]);
+
+  const artNumber = images[current]?.index ?? current + 1;
+
+  return (
+    <div className="relative flex-1 flex flex-col">
+      <div ref={emblaRef} className="overflow-hidden flex-1">
+        <div className="flex h-full">
+          {images.map((img, i) => (
+            <div key={i} className="min-w-0 shrink-0 basis-full h-full flex items-center justify-center px-5">
+              <img
+                src={img.src}
+                alt={`Art ${img.index}`}
+                className="max-w-full max-h-full object-contain rounded-xl"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Slide-up info card — ~25% screen height */}
+      <div className="bg-cream text-navy rounded-t-3xl shadow-2xl px-6 pt-5 pb-6 animate-slide-up-card">
+        <div className="max-w-md mx-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="label-eyebrow text-gold">{collection.name}</p>
+            <p className="text-[11px] tracking-[0.25em] uppercase text-navy/60">
+              Art {artNumber}
+            </p>
+          </div>
+          <p className="font-serif text-lg text-navy">From $29 · Signature or Preserve</p>
+          <Button variant="gold" className="w-full" asChild>
+            <a href={`/start?collection=${collection.slug}&art=${artNumber}`}>
+              Use this art <ArrowRight className="size-4" />
+            </a>
+          </Button>
+          <p className="text-xs text-muted-foreground text-center">
+            You'll choose your product and personalize next
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
