@@ -38,6 +38,8 @@ interface OrderState {
   jewelry_finish: JewelryFinish | null;
   engraving_line_1: string;
   engraving_line_2: string;
+  collection: string | null;
+  art_selected: string | null;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
