@@ -392,6 +392,38 @@ const Start = () => {
     }
   }, [step2Complete]);
 
+  // Handler: jump from Step 3 product card to Step 4 (art picker)
+  const handleChooseArt = () => {
+    setTimeout(() => {
+      step4Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
+
+  // Default the collection from the chosen occasion when entering Step 4 —
+  // only when no collection is set yet, so the customer can still change it.
+  useEffect(() => {
+    if (
+      order.product &&
+      ART_PRODUCTS.includes(order.product) &&
+      order.occasion &&
+      !order.collection
+    ) {
+      const defaultId = OCCASION_TO_COLLECTION[order.occasion];
+      if (defaultId) {
+        setOrder((prev) => ({ ...prev, collection: defaultId }));
+      }
+    }
+  }, [order.product, order.occasion, order.collection]);
+
+  const showStep4 = !!order.product && ART_PRODUCTS.includes(order.product);
+  const step4Headline = order.product
+    ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
+    : "";
+  const activeCollection = useMemo(
+    () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
+    [order.collection],
+  );
+
   return (
     <main className="min-h-screen bg-cream text-navy">
       {/* HEADER */}
