@@ -296,6 +296,9 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 // Products that route through the art-picker step
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
+// Products that auto-scroll to Step 4 (art picker OR photo upload)
+const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital", "photo_blanket"];
+
 // ----- Card designs (Step 5) ---------------------------------------------
 
 interface CardDesign {
