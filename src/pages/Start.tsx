@@ -353,6 +353,8 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
       return "Included with their canvas. Frameable. Yours to keep forever.";
     case "blanket":
       return "Included with their blanket. Frameable. Yours to keep forever.";
+    case "photo_blanket":
+      return "Included with their photo blanket. Frameable. Yours to keep forever.";
     case "ornament":
       return "Included with their ornament. Frameable. Yours to keep forever.";
     case "digital":
