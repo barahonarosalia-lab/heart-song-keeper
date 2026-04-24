@@ -223,7 +223,14 @@ const findOrnament = (id: string | null) => ornamentDesigns.find((o) => o.id ===
 
 // ----- Page ---------------------------------------------------------------
 
-const TOTAL_STEPS = 4;
+type JewelryStyle = "heart" | "circle" | "dogtag";
+type JewelryFinish = "silver" | "gold";
+
+const jewelryStyles: { id: JewelryStyle; name: string }[] = [
+  { id: "heart", name: "Heart" },
+  { id: "circle", name: "Circle" },
+  { id: "dogtag", name: "Dog Tag" },
+];
 
 const Start = () => {
   const navigate = useNavigate();
@@ -234,6 +241,12 @@ const Start = () => {
   const [art, setArt] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [artCollection, setArtCollection] = useState<string | null>(null);
+
+  // Jewelry-specific state
+  const [jewelryStyle, setJewelryStyle] = useState<JewelryStyle | null>(null);
+  const [jewelryFinish, setJewelryFinish] = useState<JewelryFinish | null>(null);
+  const [engravingLine1, setEngravingLine1] = useState("");
+  const [engravingLine2, setEngravingLine2] = useState("");
 
   // Which step is currently expanded for editing (null = none open beyond what's unlocked)
   const [editingStep, setEditingStep] = useState<number | null>(1);
@@ -247,15 +260,26 @@ const Start = () => {
   const isOrnament = product === "ornament";
   const isJewelry = product === "jewelry";
 
+  // For jewelry, Step 4 is skipped entirely; jewelry config lives in Step 3.
+  const jewelryConfigDone = !!jewelryStyle && !!jewelryFinish && engravingLine1.trim().length > 0;
+
   const step4Done = useMemo(() => {
     if (!product) return false;
+    if (isJewelry) return true; // jewelry has no Step 4
     if (isPhoto) return !!photo;
-    if (isOrnament) return !!art; // ornament design id stored in `art`
+    if (isOrnament) return !!art;
     return !!art;
-  }, [product, photo, art, isPhoto, isOrnament]);
+  }, [product, photo, art, isPhoto, isOrnament, isJewelry]);
 
-  const completedCount = [step1Done, step2Done, step3Done, step4Done].filter(Boolean).length;
-  const allDone = completedCount === TOTAL_STEPS;
+  // Total steps shown depends on product (jewelry skips Step 4)
+  const totalSteps = isJewelry ? 3 : 4;
+
+  const completedCount = isJewelry
+    ? [step1Done, step2Done, step3Done && jewelryConfigDone].filter(Boolean).length
+    : [step1Done, step2Done, step3Done, step4Done].filter(Boolean).length;
+  const allDone = isJewelry
+    ? step1Done && step2Done && step3Done && jewelryConfigDone
+    : completedCount === totalSteps;
 
   // refs for scroll
   const stepRefs = [
@@ -289,6 +313,18 @@ const Start = () => {
     // reset step 4 when switching product type
     setArt(null);
     setPhoto(null);
+    // Reset jewelry-specific state when switching away from jewelry
+    if (id !== "jewelry") {
+      setJewelryStyle(null);
+      setJewelryFinish(null);
+      setEngravingLine1("");
+      setEngravingLine2("");
+    }
+    // Jewelry has no Step 4 — keep editing on Step 3 so finish/engraving can reveal
+    if (id === "jewelry") {
+      setEditingStep(3);
+      return;
+    }
     setEditingStep(4);
     scrollToStep(4);
   };
@@ -311,8 +347,10 @@ const Start = () => {
   const changeStep = (n: number) => {
     if (n <= 1) {
       setCollection(null); setArtCollection(null); setProduct(null); setArt(null); setPhoto(null);
+      setJewelryStyle(null); setJewelryFinish(null); setEngravingLine1(""); setEngravingLine2("");
     } else if (n === 2) {
       setProduct(null); setArt(null); setPhoto(null);
+      setJewelryStyle(null); setJewelryFinish(null); setEngravingLine1(""); setEngravingLine2("");
     } else if (n === 3) {
       setArt(null); setPhoto(null);
     }
@@ -342,8 +380,13 @@ const Start = () => {
       art: art ?? "",
     });
     let target = "/personalize/signature";
-    if (isJewelry) target = "/personalize/jewelry";
-    else if (isOrnament) target = "/personalize/ornament";
+    if (isJewelry) {
+      target = "/personalize/jewelry";
+      params.set("jewelry_style", jewelryStyle ?? "");
+      params.set("jewelry_finish", jewelryFinish ?? "");
+      params.set("engraving_line_1", engravingLine1);
+      if (engravingLine2) params.set("engraving_line_2", engravingLine2);
+    } else if (isOrnament) target = "/personalize/ornament";
     navigate(`${target}?${params.toString()}`);
   };
 
@@ -354,6 +397,12 @@ const Start = () => {
     ? "choose a collection"
     : !step3Done
     ? "choose how to give it"
+    : isJewelry && !jewelryConfigDone
+    ? !jewelryStyle
+      ? "pick a jewelry style"
+      : !jewelryFinish
+      ? "pick silver or gold"
+      : "add an engraving"
     : !step4Done
     ? isPhoto
       ? "upload their photo"
@@ -363,7 +412,17 @@ const Start = () => {
     : null;
 
   // Currently displayed step number for header
-  const currentStep = !step1Done ? 1 : !step2Done ? 2 : !step3Done ? 3 : !step4Done ? 4 : 4;
+  const currentStep = !step1Done
+    ? 1
+    : !step2Done
+    ? 2
+    : !step3Done
+    ? 3
+    : isJewelry
+    ? 3
+    : !step4Done
+    ? 4
+    : 4;
 
   return (
     <main className="min-h-screen bg-cream text-navy">
@@ -388,13 +447,13 @@ const Start = () => {
 
           <div className="mt-10 max-w-md">
             <div className="flex items-center justify-between text-xs text-cream/60 mb-2">
-              <span>Step {currentStep} of {TOTAL_STEPS}</span>
-              <span>{completedCount}/{TOTAL_STEPS} complete</span>
+              <span>Step {currentStep} of {totalSteps}</span>
+              <span>{completedCount}/{totalSteps} complete</span>
             </div>
             <div className="h-1 rounded-full bg-cream/10 overflow-hidden">
               <div
                 className="h-full bg-gradient-gold transition-all duration-500"
-                style={{ width: `${(completedCount / TOTAL_STEPS) * 100}%` }}
+                style={{ width: `${(completedCount / totalSteps) * 100}%` }}
               />
             </div>
           </div>
@@ -562,6 +621,11 @@ const Start = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {products.map((p) => {
             const selected = product === p.id;
+            // Jewelry price label updates dynamically based on chosen finish
+            const dynamicLabel =
+              p.id === "jewelry" && selected && jewelryFinish === "gold"
+                ? "From $99"
+                : p.priceLabel;
             return (
               <article
                 key={p.id}
@@ -572,7 +636,7 @@ const Start = () => {
                 )}
               >
                 {selected && <SelectedDot />}
-                <p className="label-eyebrow text-gold mb-2.5 pr-8">{p.priceLabel}</p>
+                <p className="label-eyebrow text-gold mb-2.5 pr-8">{dynamicLabel}</p>
                 <h3 className="font-serif text-2xl text-navy mb-2 leading-tight">{p.name}</h3>
                 <p className="font-serif italic text-navy/70 text-base mb-5 leading-snug text-balance">
                   "{p.tagline}"
@@ -594,6 +658,127 @@ const Start = () => {
           })}
         </div>
 
+        {/* Jewelry-only configurator: style → finish → notice + engraving */}
+        {isJewelry && (
+          <div className="mt-12 md:mt-16 pt-10 md:pt-12 border-t border-gold/30 space-y-10 animate-fade-up">
+            {/* Style picker */}
+            <div>
+              <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                Choose your style
+              </h3>
+              <div className="grid grid-cols-3 gap-3 md:gap-4">
+                {jewelryStyles.map((s) => {
+                  const selected = jewelryStyle === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => setJewelryStyle(s.id)}
+                      className={cn(
+                        "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-center",
+                        "hover:-translate-y-0.5 hover:shadow-card",
+                        selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+                      )}
+                    >
+                      {selected && <SelectedDot />}
+                      <p className="font-serif text-lg md:text-xl text-navy">{s.name}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Finish picker — appears after style is chosen */}
+            {jewelryStyle && (
+              <div className="animate-fade-up">
+                <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                  Choose your finish
+                </h3>
+                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                  {/* Silver */}
+                  <button
+                    onClick={() => setJewelryFinish("silver")}
+                    className={cn(
+                      "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-left",
+                      "hover:-translate-y-0.5 hover:shadow-card",
+                      jewelryFinish === "silver"
+                        ? "border-[hsl(220,10%,70%)] ring-2 ring-[hsl(220,10%,70%)]/40 shadow-card"
+                        : "border-border/60",
+                    )}
+                  >
+                    {jewelryFinish === "silver" && (
+                      <span className="absolute top-3 right-3 size-6 rounded-full bg-[hsl(220,10%,70%)] text-navy flex items-center justify-center">
+                        <Check className="size-4" strokeWidth={3} />
+                      </span>
+                    )}
+                    <p className="font-serif text-lg md:text-xl text-navy mb-1">
+                      Silver — from $89
+                    </p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Signature $89 · Preserve $109
+                    </p>
+                  </button>
+                  {/* Gold */}
+                  <button
+                    onClick={() => setJewelryFinish("gold")}
+                    className={cn(
+                      "relative p-5 md:p-6 rounded-2xl bg-card border transition-all duration-300 text-left",
+                      "hover:-translate-y-0.5 hover:shadow-card",
+                      jewelryFinish === "gold"
+                        ? "border-gold ring-2 ring-gold/40 shadow-card"
+                        : "border-border/60",
+                    )}
+                  >
+                    {jewelryFinish === "gold" && <SelectedDot />}
+                    <p className="font-serif text-lg md:text-xl text-navy mb-1">
+                      Gold — from $99
+                    </p>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Signature $99 · Preserve $119
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Notice + engraving — appears after both style and finish chosen */}
+            {jewelryStyle && jewelryFinish && (
+              <div className="space-y-8 animate-fade-up">
+                <div className="rounded-xl bg-cream border border-border/60 p-5 md:p-6">
+                  <p className="text-sm leading-relaxed text-[#6B6B6B]">
+                    Your QR code is engraved on the front. Every time they scan it,
+                    your song plays. Art is not available on jewelry — the QR code
+                    is the gift.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-serif text-xl md:text-2xl text-navy mb-5">
+                    What would you like engraved on the back?
+                  </h3>
+                  <div className="space-y-5">
+                    <EngravingField
+                      label="Line 1 — Name or short phrase"
+                      required
+                      value={engravingLine1}
+                      onChange={setEngravingLine1}
+                      maxLength={20}
+                    />
+                    <EngravingField
+                      label="Line 2 — Date or second line"
+                      value={engravingLine2}
+                      onChange={setEngravingLine2}
+                      maxLength={20}
+                    />
+                  </div>
+                  <p className="mt-4 text-sm text-[#6B6B6B]">
+                    Engraving is included — no extra charge.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {selectedProduct && (
           <div className="mt-10 text-center animate-fade-up">
             <p className="font-serif text-2xl md:text-3xl text-gold">
@@ -604,99 +789,96 @@ const Start = () => {
         )}
       </StepBlock>
 
-      {/* STEP 4 */}
-      <StepBlock
-        ref={stepRefs[3]}
-        index="04"
-        title="Choose the art for your gift."
-        subtitle="This is the image that will be placed on your product."
-        unlocked={step3Done}
-        complete={step4Done}
-        collapsed={step4Done && editingStep !== 4}
-        summary={
-          step4Done
-            ? isPhoto
-              ? "🖼 Photo uploaded"
-              : isOrnament
-              ? `🖼 ${findOrnament(art)?.name}`
-              : `🖼 ${findCollection(artCollection)?.name} art`
-            : ""
-        }
-        onChange={() => changeStep(4)}
-        pulse={step3Done && !step4Done}
-      >
-        {/* Variant: ornament */}
-        {isOrnament && (
-          <div className="grid md:grid-cols-2 gap-5 md:gap-6">
-            {ornamentDesigns.map((d) => {
-              const selected = art === d.id;
-              const disabled = !d.available;
-              return (
-                <article
-                  key={d.id}
-                  className={cn(
-                    "relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
-                    !disabled && "hover:-translate-y-0.5 hover:shadow-card",
-                    selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
-                    disabled && "opacity-60",
-                  )}
-                >
-                  {selected && (
-                    <span className="absolute top-4 right-4 z-10 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
-                      <Check className="size-5" strokeWidth={3} />
-                    </span>
-                  )}
-                  <div className={cn("aspect-[16/10] overflow-hidden bg-muted", disabled && "grayscale")}>
-                    <img src={d.img} alt={d.name} loading="lazy" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="font-serif text-2xl text-navy mb-1">{d.name}</h3>
-                    <p className="text-[15px] text-navy/70 mb-2">{d.sub}</p>
-                    {d.use && <p className="text-sm text-muted-foreground mb-5">{d.use}</p>}
-                    {disabled ? (
-                      <span className="mt-auto inline-flex items-center justify-center text-xs label-eyebrow text-gold border border-gold/40 rounded-full py-3">
-                        Coming Soon
-                      </span>
-                    ) : (
-                      <Button
-                        variant={selected ? "gold" : "navy"}
-                        className="w-full mt-auto"
-                        onClick={() => handleSelectOrnament(d.id)}
-                      >
-                        {selected ? "Selected" : "Choose this design"}
-                      </Button>
+      {/* STEP 4 — hidden entirely for jewelry orders */}
+      {!isJewelry && (
+        <StepBlock
+          ref={stepRefs[3]}
+          index="04"
+          title="Choose the art for your gift."
+          subtitle="This is the image that will be placed on your product."
+          unlocked={step3Done}
+          complete={step4Done}
+          collapsed={step4Done && editingStep !== 4}
+          summary={
+            step4Done
+              ? isPhoto
+                ? "🖼 Photo uploaded"
+                : isOrnament
+                ? `🖼 ${findOrnament(art)?.name}`
+                : `🖼 ${findCollection(artCollection)?.name} art`
+              : ""
+          }
+          onChange={() => changeStep(4)}
+          pulse={step3Done && !step4Done}
+        >
+          {/* Variant: ornament */}
+          {isOrnament && (
+            <div className="grid md:grid-cols-2 gap-5 md:gap-6">
+              {ornamentDesigns.map((d) => {
+                const selected = art === d.id;
+                const disabled = !d.available;
+                return (
+                  <article
+                    key={d.id}
+                    className={cn(
+                      "relative bg-card rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col",
+                      !disabled && "hover:-translate-y-0.5 hover:shadow-card",
+                      selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+                      disabled && "opacity-60",
                     )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
+                  >
+                    {selected && (
+                      <span className="absolute top-4 right-4 z-10 size-8 rounded-full bg-gold text-navy flex items-center justify-center shadow-soft">
+                        <Check className="size-5" strokeWidth={3} />
+                      </span>
+                    )}
+                    <div className={cn("aspect-[16/10] overflow-hidden bg-muted", disabled && "grayscale")}>
+                      <img src={d.img} alt={d.name} loading="lazy" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="font-serif text-2xl text-navy mb-1">{d.name}</h3>
+                      <p className="text-[15px] text-navy/70 mb-2">{d.sub}</p>
+                      {d.use && <p className="text-sm text-muted-foreground mb-5">{d.use}</p>}
+                      {disabled ? (
+                        <span className="mt-auto inline-flex items-center justify-center text-xs label-eyebrow text-gold border border-gold/40 rounded-full py-3">
+                          Coming Soon
+                        </span>
+                      ) : (
+                        <Button
+                          variant={selected ? "gold" : "navy"}
+                          className="w-full mt-auto"
+                          onClick={() => handleSelectOrnament(d.id)}
+                        >
+                          {selected ? "Selected" : "Choose this design"}
+                        </Button>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
 
-        {/* Variant: photo upload */}
-        {isPhoto && (
-          <PhotoUpload photo={photo} onFile={handlePhoto} onClear={() => setPhoto(null)} />
-        )}
+          {/* Variant: photo upload */}
+          {isPhoto && (
+            <PhotoUpload photo={photo} onFile={handlePhoto} onClear={() => setPhoto(null)} />
+          )}
 
-        {/* Variant: art grid (digital, canvas, blanket, jewelry) */}
-        {!isOrnament && !isPhoto && product && (
-          <ArtPicker
-            currentCollectionId={artCollection ?? collection!}
-            onChangeCollection={(id) => {
-              setArtCollection(id);
-              setArt(null);
-            }}
-            selectedArt={art}
-            onSelectArt={handleSelectArt}
-            note={
-              isJewelry
-                ? "This art appears on their personalized card — included with every order."
-                : "Can't find exactly what you want? More art added regularly."
-            }
-            limit={isJewelry ? 6 : undefined}
-          />
-        )}
-      </StepBlock>
+          {/* Variant: art grid (digital, canvas, blanket) */}
+          {!isOrnament && !isPhoto && product && (
+            <ArtPicker
+              currentCollectionId={artCollection ?? collection!}
+              onChangeCollection={(id) => {
+                setArtCollection(id);
+                setArt(null);
+              }}
+              selectedArt={art}
+              onSelectArt={handleSelectArt}
+              note="Can't find exactly what you want? More art added regularly."
+            />
+          )}
+        </StepBlock>
+      )}
 
       {/* CONTINUE */}
       <div ref={ctaRef} className="container pb-32 pt-4">
@@ -968,6 +1150,47 @@ const PhotoUpload = ({
         Their photo prints full bleed on premium sherpa. A QR code sits in the corner — scan it to
         hear their song or voice.
       </p>
+    </div>
+  );
+};
+
+// EngravingField ----------------------------------------------------------
+
+const EngravingField = ({
+  label,
+  required,
+  value,
+  onChange,
+  maxLength,
+}: {
+  label: string;
+  required?: boolean;
+  value: string;
+  onChange: (v: string) => void;
+  maxLength: number;
+}) => {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2 gap-3">
+        <label className="text-sm font-medium text-navy">
+          {label}
+          {required ? (
+            <span className="text-gold ml-1">*</span>
+          ) : (
+            <span className="text-muted-foreground ml-1 font-normal">(optional)</span>
+          )}
+        </label>
+        <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+          {value.length}/{maxLength}
+        </span>
+      </div>
+      <input
+        type="text"
+        value={value}
+        maxLength={maxLength}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full h-11 rounded-md border border-input bg-background px-3 text-base md:text-sm text-navy placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:border-gold transition-colors"
+      />
     </div>
   );
 };
