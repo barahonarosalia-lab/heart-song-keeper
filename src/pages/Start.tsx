@@ -610,6 +610,20 @@ const Start = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Pre-select product from ?product= query (e.g. /start?product=gift_card)
+  useEffect(() => {
+    const productParam = searchParams.get("product");
+    if (!productParam) return;
+    const valid: ProductId[] = [
+      "digital", "canvas", "ornament", "jewelry", "blanket", "photo_blanket", "gift_card",
+    ];
+    if (valid.includes(productParam as ProductId)) {
+      setOrder((prev) => ({ ...prev, product: productParam as ProductId }));
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Default the collection from the chosen occasion when entering Step 4 —
   // only when no collection is set yet, so the customer can still change it.
   // Skipped when the customer arrived from /collections with a chosen collection.
