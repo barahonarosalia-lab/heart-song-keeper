@@ -1308,4 +1308,103 @@ const JewelryExpansion = ({
   );
 };
 
+// ----- Art gallery (horizontal swipe) -------------------------------------
+
+const ArtGallery = ({
+  collection,
+  selectedId,
+  onToggle,
+}: {
+  collection: CollectionDef;
+  selectedId: string | null;
+  onToggle: (pieceId: string) => void;
+}) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Reset to first image when the collection changes
+  useEffect(() => {
+    setActiveIndex(0);
+    if (scrollerRef.current) {
+      scrollerRef.current.scrollTo({ left: 0, behavior: "auto" });
+    }
+  }, [collection.id]);
+
+  // Track which slide is centered as the user scrolls
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const slideWidth = el.clientWidth * 0.85;
+    const idx = Math.round(el.scrollLeft / slideWidth);
+    if (idx !== activeIndex && idx >= 0 && idx < collection.pieces.length) {
+      setActiveIndex(idx);
+    }
+  };
+
+  return (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <p className="label-eyebrow text-gold">Choose their art</p>
+
+      {/* Swipe row — each slide is ~85% viewport width */}
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="-mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
+        style={{ scrollPaddingLeft: "1.5rem" }}
+      >
+        {collection.pieces.map((piece) => {
+          const selected = selectedId === piece.id;
+          return (
+            <button
+              key={piece.id}
+              type="button"
+              onClick={() => onToggle(piece.id)}
+              className={cn(
+                "snap-start shrink-0 w-[85%] sm:w-[70%] md:w-[45%] lg:w-[32%] relative rounded-2xl overflow-hidden bg-card border-2 transition-all duration-300",
+                selected
+                  ? "border-gold ring-2 ring-gold/40 shadow-card"
+                  : "border-border/60 hover:border-gold/60",
+              )}
+            >
+              <div className="aspect-square overflow-hidden bg-muted">
+                <img
+                  src={collection.cover}
+                  alt={piece.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {selected && (
+                <span className="absolute top-3 right-3 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold">
+                  <Check className="size-4" strokeWidth={3} />
+                </span>
+              )}
+              <div className="p-3 text-left">
+                <p className="font-serif text-sm md:text-base text-navy leading-tight">
+                  {piece.name}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
+        {collection.pieces.map((piece, i) => (
+          <span
+            key={piece.id}
+            className={cn(
+              "rounded-full transition-all duration-300",
+              i === activeIndex
+                ? "size-2 bg-gold"
+                : "size-1.5 bg-navy/20",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default Start;
