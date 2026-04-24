@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, UploadCloud } from "lucide-react";
+import { ArrowLeft, Check, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,10 +8,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 // ----- Types --------------------------------------------------------------
 
 type Tier = "signature" | "preserve";
+type SongVersion = "instrumental" | "humming" | "with_lyrics";
 
 interface OrderState {
   tier: Tier | null;
   occasion: string | null;
+  song_version: SongVersion | null;
   whose_audio: string;
   music_style: string | null;
   audio_url: string;
@@ -19,6 +21,12 @@ interface OrderState {
   audio_consent: boolean;
   audio_consent_at: string | null;
 }
+
+const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
+  { value: "instrumental", label: "INSTRUMENTAL", title: "Song 1" },
+  { value: "humming", label: "HUMMING", title: "Song 2" },
+  { value: "with_lyrics", label: "WITH LYRICS", title: "Song 3" },
+];
 
 const OCCASIONS = [
   "Memorial & Remembrance",
@@ -55,6 +63,7 @@ const Start = () => {
   const [order, setOrder] = useState<OrderState>({
     tier: null,
     occasion: null,
+    song_version: null,
     whose_audio: "",
     music_style: null,
     audio_url: "",
@@ -74,7 +83,11 @@ const Start = () => {
   };
 
   const handleSelectOccasion = (occasion: string) => {
-    setOrder((prev) => ({ ...prev, occasion }));
+    setOrder((prev) => ({ ...prev, occasion, song_version: null }));
+  };
+
+  const handleChangeOccasion = () => {
+    setOrder((prev) => ({ ...prev, occasion: null, song_version: null }));
   };
 
   // Reveal details once an occasion is picked
@@ -318,15 +331,51 @@ const Start = () => {
         )}
 
         {order.tier === "signature" && (
-          <section className="container py-16 md:py-20">
-            <p className="font-serif text-gold text-2xl md:text-3xl">02</p>
-            <h2 className="font-serif text-3xl md:text-4xl text-navy mt-2">
-              Choose their song
-            </h2>
-            <p className="text-muted-foreground mt-3">
-              Coming next — Signature path.
-            </p>
-          </section>
+          <Step
+            index="02"
+            title="What moment are you celebrating?"
+            subtitle="Every occasion has its own song."
+          >
+            <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-3xl">
+              {OCCASIONS.map((occ) => (
+                <OccasionCard
+                  key={occ}
+                  label={occ}
+                  selected={order.occasion === occ}
+                  onSelect={() => handleSelectOccasion(occ)}
+                />
+              ))}
+            </div>
+
+            {order.occasion && (
+              <div
+                ref={detailsRef}
+                className="max-w-5xl mt-12 md:mt-16 animate-in fade-in slide-in-from-bottom-2 duration-500"
+              >
+                <button
+                  type="button"
+                  onClick={handleChangeOccasion}
+                  className="text-xs text-muted-foreground hover:text-gold underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-gold transition-colors mb-6"
+                >
+                  Change occasion
+                </button>
+
+                <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+                  {SONG_VERSIONS.map((song) => (
+                    <SongCard
+                      key={song.value}
+                      label={song.label}
+                      title={song.title}
+                      selected={order.song_version === song.value}
+                      onSelect={() =>
+                        setOrder((prev) => ({ ...prev, song_version: song.value }))
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Step>
         )}
       </div>
     </main>
@@ -450,6 +499,65 @@ const OccasionCard = ({
       </span>
     )}
   </button>
+);
+
+// ----- Song card ----------------------------------------------------------
+
+const SongCard = ({
+  label,
+  title,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  title: string;
+  selected: boolean;
+  onSelect: () => void;
+}) => (
+  <div
+    className={cn(
+      "relative rounded-2xl bg-card p-6 border transition-all duration-300 flex flex-col",
+      selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+    )}
+  >
+    {selected && (
+      <span className="absolute top-4 right-4 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy shadow-gold">
+        <Check className="size-3.5" strokeWidth={3} />
+      </span>
+    )}
+
+    <p className="label-eyebrow text-gold mb-3">{label}</p>
+    <h3 className="font-serif text-xl md:text-2xl text-navy leading-tight mb-5 pr-8">
+      {title}
+    </h3>
+
+    {/* Player placeholder */}
+    <div className="flex items-center gap-3 mb-6">
+      <button
+        type="button"
+        aria-label={`Play ${title}`}
+        className="inline-flex items-center justify-center size-11 rounded-full bg-navy text-cream hover:bg-navy-deep transition-colors flex-shrink-0"
+      >
+        <Play className="size-4 ml-0.5" fill="currentColor" />
+      </button>
+      <div className="flex-1 h-1.5 rounded-full bg-border/60 overflow-hidden">
+        <div className="h-full w-0 bg-gold rounded-full" />
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        "mt-auto inline-flex items-center justify-center rounded-full h-11 px-5 text-sm font-medium border-2 transition-all",
+        selected
+          ? "bg-gold text-navy border-gold"
+          : "bg-transparent text-navy border-gold hover:bg-gold/10",
+      )}
+    >
+      {selected ? "Selected" : "Choose this song"}
+    </button>
+  </div>
 );
 
 export default Start;
