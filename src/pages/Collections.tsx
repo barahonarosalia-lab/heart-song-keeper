@@ -146,7 +146,16 @@ const CollectionsPage = () => {
             {artCollections.map((c) => (
               <article
                 key={c.slug}
-                className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50 h-full flex flex-col"
+                onClick={() => setActiveCollection(c)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveCollection(c);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50 h-full flex flex-col cursor-pointer transition-all hover:shadow-card hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                   <img
@@ -184,18 +193,14 @@ const CollectionsPage = () => {
                       variant="outline"
                       className={cn(
                         "border-gold text-navy hover:bg-gold hover:text-navy w-full",
-                        c.comingSoon && "opacity-50 pointer-events-none"
+                        c.comingSoon && "opacity-60"
                       )}
-                      asChild={!c.comingSoon}
-                      disabled={c.comingSoon}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveCollection(c);
+                      }}
                     >
-                      {c.comingSoon ? (
-                        <span>Explore {c.name} →</span>
-                      ) : (
-                        <a href={`/start?collection=${c.slug}`}>
-                          Explore {c.name} <ArrowRight className="size-4" />
-                        </a>
-                      )}
+                      Explore {c.name} <ArrowRight className="size-4" />
                     </Button>
                   </div>
                 </div>
