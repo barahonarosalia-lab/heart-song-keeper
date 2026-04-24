@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, Play, UploadCloud } from "lucide-react";
+import { ArrowLeft, Check, Info, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,6 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 type Tier = "signature" | "preserve";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
+type JewelryStyle = "heart" | "circle" | "dog_tag";
+type JewelryFinish = "silver" | "gold";
 
 interface OrderState {
   tier: Tier | null;
@@ -20,6 +23,14 @@ interface OrderState {
   send_link_later: boolean;
   audio_consent: boolean;
   audio_consent_at: string | null;
+  product: ProductId | null;
+  ornament_design: string | null;
+  ornament_dedication: string;
+  ornament_year: string;
+  jewelry_style: JewelryStyle | null;
+  jewelry_finish: JewelryFinish | null;
+  engraving_line_1: string;
+  engraving_line_2: string;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
@@ -57,6 +68,112 @@ const MUSIC_STYLES = [
   "No Background Music",
 ];
 
+// ----- Product pricing ----------------------------------------------------
+
+interface ProductDef {
+  id: ProductId;
+  name: string;
+  signature: number;
+  preserve: number;
+  tagline: string;
+  details: string[];
+  cta: string;
+}
+
+const PRODUCTS: ProductDef[] = [
+  {
+    id: "digital",
+    name: "Digital Download",
+    signature: 29,
+    preserve: 49,
+    tagline: "Instant. Printable. Frameable.",
+    details: [
+      "Delivered to inbox instantly",
+      "High resolution PNG + PDF",
+      "Print at home or any print shop",
+      "QR code embedded in art",
+      "Free shipping",
+    ],
+    cta: "Choose Digital",
+  },
+  {
+    id: "canvas",
+    name: "Canvas — Unframed 11x14",
+    signature: 79,
+    preserve: 99,
+    tagline: "Hang it. Scan it. Feel it again.",
+    details: [
+      "Ships in 3-5 business days",
+      "Gift-ready packaging",
+      "QR code embedded in art",
+      "Free shipping",
+    ],
+    cta: "Choose Canvas",
+  },
+  {
+    id: "ornament",
+    name: "Acrylic Ornament",
+    signature: 59,
+    preserve: 79,
+    tagline: "Scan to unwrap.",
+    details: [
+      "Gift box included",
+      "Ships in 5-7 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Ornament",
+  },
+  {
+    id: "jewelry",
+    name: "Jewelry — Heart · Circle · Dog Tag",
+    signature: 89,
+    preserve: 109,
+    tagline: "Worn every day. Scanned whenever they need it.",
+    details: [
+      "Heart · Circle · Dog Tag",
+      "Silver or Gold",
+      "Ships in 5-7 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Jewelry",
+  },
+  {
+    id: "blanket",
+    name: "Blanket",
+    signature: 119,
+    preserve: 139,
+    tagline: "Wrapped in it. Every night.",
+    details: [
+      "Sherpa 50x60",
+      "QR code woven into art",
+      "Ships in 3-5 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Blanket",
+  },
+];
+
+interface OrnamentDesign {
+  id: string;
+  name: string;
+  descriptor: string;
+  comingSoon?: boolean;
+}
+
+const ORNAMENT_DESIGNS: OrnamentDesign[] = [
+  { id: "moonlit_botanica", name: "Moonlit Botanica", descriptor: "Navy rose botanical wreath" },
+  { id: "little_luminaries", name: "Little Luminaries", descriptor: "Gold circle watercolor" },
+  { id: "pet_memorial", name: "Pet Memorial", descriptor: "Autumn botanical wreath" },
+  { id: "classic_elegant", name: "Classic & Elegant", descriptor: "Silver pinecone", comingSoon: true },
+  { id: "colorful_celebration", name: "Colorful Celebration", descriptor: "Jewel tones", comingSoon: true },
+];
+
+const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
+  { id: "heart", name: "Heart" },
+  { id: "circle", name: "Circle" },
+  { id: "dog_tag", name: "Dog Tag" },
+];
+
 // ----- Page ---------------------------------------------------------------
 
 const Start = () => {
@@ -70,9 +187,18 @@ const Start = () => {
     send_link_later: false,
     audio_consent: false,
     audio_consent_at: null,
+    product: null,
+    ornament_design: null,
+    ornament_dedication: "",
+    ornament_year: "",
+    jewelry_style: null,
+    jewelry_finish: null,
+    engraving_line_1: "",
+    engraving_line_2: "",
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
+  const step3Ref = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleSelectTier = (tier: Tier) => {
@@ -109,10 +235,45 @@ const Start = () => {
 
   const handleFileUpload = (file: File | null) => {
     if (!file) return;
-    // Placeholder local URL — wired to real upload later
     const url = URL.createObjectURL(file);
     setOrder((prev) => ({ ...prev, audio_url: url }));
   };
+
+  const handleSelectProduct = (product: ProductId) => {
+    setOrder((prev) => ({
+      ...prev,
+      product,
+      // Reset sub-selections when switching products
+      ornament_design: product === "ornament" ? prev.ornament_design : null,
+      ornament_dedication: product === "ornament" ? prev.ornament_dedication : "",
+      ornament_year: product === "ornament" ? prev.ornament_year : "",
+      jewelry_style: product === "jewelry" ? prev.jewelry_style : null,
+      jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
+      engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
+      engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
+    }));
+  };
+
+  // Determine if Step 2 is complete enough to unlock Step 3
+  const step2Complete =
+    order.tier === "signature"
+      ? !!order.song_version
+      : order.tier === "preserve"
+      ? !!order.occasion &&
+        !!order.whose_audio.trim() &&
+        !!order.music_style &&
+        (order.send_link_later || !!order.audio_url) &&
+        order.audio_consent
+      : false;
+
+  // Reveal Step 3 once Step 2 is complete
+  useEffect(() => {
+    if (step2Complete && step3Ref.current) {
+      setTimeout(() => {
+        step3Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    }
+  }, [step2Complete]);
 
   return (
     <main className="min-h-screen bg-cream text-navy">
@@ -186,7 +347,6 @@ const Start = () => {
               ))}
             </div>
 
-            {/* Reveal once an occasion is selected */}
             {order.occasion && (
               <div
                 ref={detailsRef}
@@ -194,10 +354,7 @@ const Start = () => {
               >
                 {/* Whose voice */}
                 <div className="space-y-3">
-                  <label
-                    htmlFor="whose-audio"
-                    className="label-eyebrow text-gold block"
-                  >
+                  <label htmlFor="whose-audio" className="label-eyebrow text-gold block">
                     Whose voice or audio is this?
                   </label>
                   <Input
@@ -264,18 +421,12 @@ const Start = () => {
                       </span>
                       {order.audio_url ? (
                         <>
-                          <p className="font-serif text-lg text-navy">
-                            Audio ready
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Click to replace
-                          </p>
+                          <p className="font-serif text-lg text-navy">Audio ready</p>
+                          <p className="text-sm text-muted-foreground">Click to replace</p>
                         </>
                       ) : (
                         <>
-                          <p className="font-serif text-lg text-navy">
-                            Upload their audio
-                          </p>
+                          <p className="font-serif text-lg text-navy">Upload their audio</p>
                           <p className="text-sm text-muted-foreground">
                             MP3 · WAV · M4A · up to 50MB
                           </p>
@@ -306,15 +457,12 @@ const Start = () => {
                   <label className="flex items-start gap-3 cursor-pointer">
                     <Checkbox
                       checked={order.audio_consent}
-                      onCheckedChange={(checked) =>
-                        handleConsentChange(checked === true)
-                      }
+                      onCheckedChange={(checked) => handleConsentChange(checked === true)}
                       required
                       className="mt-0.5 border-navy/40 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
                     />
                     <span className="text-sm text-navy leading-relaxed">
-                      I confirm I have the right to upload this audio and agree to
-                      the{" "}
+                      I confirm I have the right to upload this audio and agree to the{" "}
                       <a
                         href="/terms/audio-upload"
                         className="underline decoration-gold/60 underline-offset-2 hover:text-gold"
@@ -330,6 +478,7 @@ const Start = () => {
           </Step>
         )}
 
+        {/* STEP 2 — Signature path */}
         {order.tier === "signature" && (
           <Step
             index="02"
@@ -375,6 +524,31 @@ const Start = () => {
                 </div>
               </div>
             )}
+          </Step>
+        )}
+      </div>
+
+      {/* STEP 3 — Choose their gift */}
+      <div ref={step3Ref}>
+        {step2Complete && (
+          <Step
+            index="03"
+            title="What would you like to gift them?"
+            subtitle="Free shipping on every US order. 🌍 International customers pay shipping — shown before payment."
+          >
+            <div className="grid md:grid-cols-2 gap-5 md:gap-6 max-w-5xl">
+              {PRODUCTS.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  tier={order.tier!}
+                  selected={order.product === product.id}
+                  onSelect={() => handleSelectProduct(product.id)}
+                  order={order}
+                  setOrder={setOrder}
+                />
+              ))}
+            </div>
           </Step>
         )}
       </div>
@@ -434,9 +608,7 @@ const TierCard = ({
     className={cn(
       "relative text-left rounded-3xl bg-card p-7 md:p-9 border transition-all duration-300 flex flex-col",
       "hover:-translate-y-0.5 hover:shadow-card",
-      selected
-        ? "border-gold ring-2 ring-gold/40 shadow-card"
-        : "border-border/60",
+      selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
     )}
   >
     {selected && (
@@ -457,9 +629,7 @@ const TierCard = ({
       <span
         className={cn(
           "inline-flex items-center justify-center rounded-full px-5 h-11 text-sm font-medium transition-colors",
-          selected
-            ? "bg-gold text-navy"
-            : "bg-navy text-cream group-hover:bg-navy-deep",
+          selected ? "bg-gold text-navy" : "bg-navy text-cream group-hover:bg-navy-deep",
         )}
       >
         {cta}
@@ -485,9 +655,7 @@ const OccasionCard = ({
     className={cn(
       "relative text-left rounded-2xl bg-card p-4 md:p-5 border transition-all duration-200 min-h-[72px] flex items-center pr-10",
       "hover:-translate-y-0.5 hover:border-gold hover:shadow-soft",
-      selected
-        ? "border-gold ring-2 ring-gold/40 shadow-soft"
-        : "border-border/60",
+      selected ? "border-gold ring-2 ring-gold/40 shadow-soft" : "border-border/60",
     )}
   >
     <span className="font-serif text-base md:text-lg text-navy leading-snug text-balance">
@@ -531,7 +699,6 @@ const SongCard = ({
       {title}
     </h3>
 
-    {/* Player placeholder */}
     <div className="flex items-center gap-3 mb-6">
       <button
         type="button"
@@ -559,5 +726,337 @@ const SongCard = ({
     </button>
   </div>
 );
+
+// ----- Product card -------------------------------------------------------
+
+const ProductCard = ({
+  product,
+  tier,
+  selected,
+  onSelect,
+  order,
+  setOrder,
+}: {
+  product: ProductDef;
+  tier: Tier;
+  selected: boolean;
+  onSelect: () => void;
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+}) => {
+  // Dynamic price for jewelry: gold finish adds $10
+  const basePrice = tier === "signature" ? product.signature : product.preserve;
+  const displayPrice =
+    product.id === "jewelry" && order.jewelry_finish === "gold"
+      ? basePrice + 10
+      : basePrice;
+
+  return (
+    <div
+      className={cn(
+        "relative rounded-3xl bg-card p-7 md:p-9 border transition-all duration-300 flex flex-col",
+        selected ? "border-gold ring-2 ring-gold/40 shadow-card" : "border-border/60",
+      )}
+    >
+      {selected && (
+        <span className="absolute top-5 right-5 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold z-10">
+          <Check className="size-4" strokeWidth={3} />
+        </span>
+      )}
+
+      <p className="label-eyebrow text-gold mb-2">FROM ${displayPrice}</p>
+      <h3 className="font-serif text-2xl md:text-3xl text-navy leading-tight mb-2 text-balance pr-10">
+        {product.name}
+      </h3>
+      <p className="italic text-muted-foreground mb-5">{product.tagline}</p>
+
+      <ul className="space-y-2 mb-7 text-sm text-muted-foreground">
+        {product.details.map((d) => (
+          <li key={d} className="flex gap-2">
+            <span className="text-gold">·</span>
+            <span>{d}</span>
+          </li>
+        ))}
+      </ul>
+
+      {!selected && (
+        <button
+          type="button"
+          onClick={onSelect}
+          className="mt-auto inline-flex items-center justify-center rounded-full h-11 px-5 text-sm font-medium bg-navy text-cream hover:bg-navy-deep transition-colors"
+        >
+          {product.cta}
+        </button>
+      )}
+
+      {selected && product.id === "ornament" && (
+        <OrnamentExpansion order={order} setOrder={setOrder} />
+      )}
+
+      {selected && product.id === "jewelry" && (
+        <JewelryExpansion order={order} setOrder={setOrder} tier={tier} />
+      )}
+
+      {selected &&
+        product.id !== "ornament" &&
+        product.id !== "jewelry" && (
+          <div className="mt-auto inline-flex items-center justify-center rounded-full h-11 px-5 text-sm font-medium bg-gold text-navy">
+            Selected
+          </div>
+        )}
+    </div>
+  );
+};
+
+// ----- Ornament expansion -------------------------------------------------
+
+const OrnamentExpansion = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+}) => {
+  return (
+    <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* Design picker */}
+      <div className="space-y-4">
+        <p className="label-eyebrow text-gold">Choose your design</p>
+        <div className="grid grid-cols-2 gap-3">
+          {ORNAMENT_DESIGNS.map((design) => {
+            const selected = order.ornament_design === design.id;
+            const disabled = !!design.comingSoon;
+            return (
+              <button
+                key={design.id}
+                type="button"
+                disabled={disabled}
+                onClick={() =>
+                  !disabled &&
+                  setOrder((prev) => ({ ...prev, ornament_design: design.id }))
+                }
+                className={cn(
+                  "relative text-left rounded-xl border p-3 transition-all min-h-[88px]",
+                  disabled
+                    ? "border-border/40 bg-muted/30 opacity-50 cursor-not-allowed"
+                    : "bg-card hover:border-gold hover:shadow-soft cursor-pointer",
+                  selected && !disabled
+                    ? "border-gold ring-2 ring-gold/40"
+                    : "border-border/60",
+                )}
+              >
+                {selected && !disabled && (
+                  <span className="absolute top-2 right-2 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
+                )}
+                <p className="font-serif text-sm md:text-base text-navy leading-tight pr-6">
+                  {design.name}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1 leading-snug">
+                  {design.descriptor}
+                  {disabled && " (coming soon)"}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Optional fields appear once a design is selected */}
+      {order.ornament_design && (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="space-y-2">
+            <label htmlFor="ornament-dedication" className="label-eyebrow text-gold block">
+              Dedication (optional)
+            </label>
+            <Input
+              id="ornament-dedication"
+              maxLength={30}
+              value={order.ornament_dedication}
+              onChange={(e) =>
+                setOrder((prev) => ({ ...prev, ornament_dedication: e.target.value }))
+              }
+              placeholder="e.g. Loved you before you arrived"
+              className="h-11 rounded-xl bg-cream border-border/60"
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              {order.ornament_dedication.length}/30
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="ornament-year" className="label-eyebrow text-gold block">
+              Year (optional)
+            </label>
+            <Input
+              id="ornament-year"
+              inputMode="numeric"
+              maxLength={4}
+              value={order.ornament_year}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 4);
+                setOrder((prev) => ({ ...prev, ornament_year: v }));
+              }}
+              placeholder="e.g. 2024"
+              className="h-11 rounded-xl bg-cream border-border/60"
+            />
+            <p className="text-xs text-muted-foreground italic">
+              Not recommended for memorial designs.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ----- Jewelry expansion --------------------------------------------------
+
+const JewelryExpansion = ({
+  order,
+  setOrder,
+  tier,
+}: {
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+  tier: Tier;
+}) => {
+  const silverPrice = tier === "signature" ? 89 : 109;
+  const goldPrice = tier === "signature" ? 99 : 119;
+
+  return (
+    <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* Style */}
+      <div className="space-y-4">
+        <p className="label-eyebrow text-gold">Choose your style</p>
+        <div className="grid grid-cols-3 gap-3">
+          {JEWELRY_STYLES.map((style) => {
+            const selected = order.jewelry_style === style.id;
+            return (
+              <button
+                key={style.id}
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({ ...prev, jewelry_style: style.id }))
+                }
+                className={cn(
+                  "relative rounded-xl border p-3 min-h-[64px] transition-all bg-card hover:border-gold",
+                  selected
+                    ? "border-gold ring-2 ring-gold/40"
+                    : "border-border/60",
+                )}
+              >
+                {selected && (
+                  <span className="absolute top-1.5 right-1.5 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
+                )}
+                <p className="font-serif text-sm md:text-base text-navy">
+                  {style.name}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Finish */}
+      <div className="space-y-4">
+        <p className="label-eyebrow text-gold">Choose your finish</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { id: "silver" as JewelryFinish, name: "Silver", price: silverPrice },
+            { id: "gold" as JewelryFinish, name: "Gold", price: goldPrice },
+          ].map((finish) => {
+            const selected = order.jewelry_finish === finish.id;
+            return (
+              <button
+                key={finish.id}
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({ ...prev, jewelry_finish: finish.id }))
+                }
+                className={cn(
+                  "relative rounded-xl border p-4 transition-all bg-card hover:border-gold text-left",
+                  selected
+                    ? "border-gold ring-2 ring-gold/40"
+                    : "border-border/60",
+                )}
+              >
+                {selected && (
+                  <span className="absolute top-2 right-2 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
+                )}
+                <p className="font-serif text-base text-navy">{finish.name}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  ${finish.price}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Info notice */}
+      <div className="rounded-xl bg-cream border border-border/60 p-4 flex gap-3">
+        <Info className="size-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Your QR code is engraved on the front. Every time they scan it, your song
+          plays. Art is not available on jewelry — the QR code is the gift.
+        </p>
+      </div>
+
+      {/* Engraving */}
+      <div className="space-y-5">
+        <p className="label-eyebrow text-gold">
+          Engraving — what would you like engraved on the back?
+        </p>
+
+        <div className="space-y-2">
+          <label htmlFor="engrave-1" className="text-xs text-navy font-medium block">
+            Line 1 — Name or short phrase (required)
+          </label>
+          <Input
+            id="engrave-1"
+            maxLength={20}
+            required
+            value={order.engraving_line_1}
+            onChange={(e) =>
+              setOrder((prev) => ({ ...prev, engraving_line_1: e.target.value }))
+            }
+            className="h-11 rounded-xl bg-cream border-border/60"
+          />
+          <p className="text-xs text-muted-foreground text-right">
+            {order.engraving_line_1.length}/20
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="engrave-2" className="text-xs text-navy font-medium block">
+            Line 2 — Date or second line (optional)
+          </label>
+          <Input
+            id="engrave-2"
+            maxLength={20}
+            value={order.engraving_line_2}
+            onChange={(e) =>
+              setOrder((prev) => ({ ...prev, engraving_line_2: e.target.value }))
+            }
+            className="h-11 rounded-xl bg-cream border-border/60"
+          />
+          <p className="text-xs text-muted-foreground text-right">
+            {order.engraving_line_2.length}/20
+          </p>
+        </div>
+
+        <p className="text-xs text-muted-foreground italic">
+          Engraving is included — no extra charge.
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default Start;
