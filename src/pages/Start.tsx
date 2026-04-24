@@ -54,6 +54,11 @@ interface OrderState {
   photo_url: string;
   photo_quality: PhotoQuality | null;
   photo_quality_override: boolean;
+  gift_card_amount: number | null;
+  gift_card_custom_amount: number | null;
+  gift_card_recipient_name: string;
+  gift_card_gifter_name: string;
+  gift_card_note: string;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
