@@ -313,6 +313,18 @@ const Start = () => {
     // reset step 4 when switching product type
     setArt(null);
     setPhoto(null);
+    // Reset jewelry-specific state when switching away from jewelry
+    if (id !== "jewelry") {
+      setJewelryStyle(null);
+      setJewelryFinish(null);
+      setEngravingLine1("");
+      setEngravingLine2("");
+    }
+    // Jewelry has no Step 4 — keep editing on Step 3 so finish/engraving can reveal
+    if (id === "jewelry") {
+      setEditingStep(3);
+      return;
+    }
     setEditingStep(4);
     scrollToStep(4);
   };
