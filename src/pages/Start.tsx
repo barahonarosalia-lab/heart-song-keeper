@@ -1868,12 +1868,22 @@ const ArtGallery = ({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Reset to first image when the collection changes
+  // Reset/scroll when the collection changes — if a piece is already selected
+  // (e.g. came from /collections deep link), scroll to that piece instead of
+  // starting at the first image.
   useEffect(() => {
-    setActiveIndex(0);
-    if (scrollerRef.current) {
-      scrollerRef.current.scrollTo({ left: 0, behavior: "auto" });
+    const el = scrollerRef.current;
+    const selectedIdx = selectedId
+      ? collection.pieces.findIndex((p) => p.id === selectedId)
+      : -1;
+    const targetIdx = selectedIdx >= 0 ? selectedIdx : 0;
+    setActiveIndex(targetIdx);
+    if (el) {
+      const slideWidth = el.clientWidth * 0.85 + 16; // basis ~85% + gap-4
+      el.scrollTo({ left: targetIdx * slideWidth, behavior: "auto" });
     }
+    // Only react to collection change, not every selection change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection.id]);
 
   // Track which slide is centered as the user scrolls
