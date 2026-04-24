@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check, UploadCloud } from "lucide-react";
+import { ArrowLeft, Check, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,10 +8,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 // ----- Types --------------------------------------------------------------
 
 type Tier = "signature" | "preserve";
+type SongVersion = "instrumental" | "humming" | "with_lyrics";
 
 interface OrderState {
   tier: Tier | null;
   occasion: string | null;
+  song_version: SongVersion | null;
   whose_audio: string;
   music_style: string | null;
   audio_url: string;
@@ -19,6 +21,12 @@ interface OrderState {
   audio_consent: boolean;
   audio_consent_at: string | null;
 }
+
+const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
+  { value: "instrumental", label: "INSTRUMENTAL", title: "Song 1" },
+  { value: "humming", label: "HUMMING", title: "Song 2" },
+  { value: "with_lyrics", label: "WITH LYRICS", title: "Song 3" },
+];
 
 const OCCASIONS = [
   "Memorial & Remembrance",
