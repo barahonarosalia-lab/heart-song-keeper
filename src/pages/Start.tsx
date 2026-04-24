@@ -563,10 +563,17 @@ const Start = () => {
     }
   }, [order.product, order.occasion, order.collection]);
 
-  const showStep4 = !!order.product && ART_PRODUCTS.includes(order.product);
-  const step4Headline = order.product
-    ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
-    : "";
+  const showStep4 = !!order.product && STEP4_PRODUCTS.includes(order.product);
+  const step4Headline =
+    order.product === "photo_blanket"
+      ? "Upload their photo."
+      : order.product
+      ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
+      : "";
+  const step4Subtitle =
+    order.product === "photo_blanket"
+      ? "This is what will be printed full bleed on their blanket. Choose something that matters."
+      : "This is what they'll see every time they hold it.";
   const activeCollection = useMemo(
     () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
     [order.collection],
@@ -577,6 +584,12 @@ const Start = () => {
   const step3Complete = (() => {
     if (!order.product) return false;
     if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
+    if (order.product === "photo_blanket") {
+      return (
+        !!order.photo_url &&
+        (order.photo_quality !== "red" || order.photo_quality_override)
+      );
+    }
     if (order.product === "ornament") return !!order.ornament_design;
     if (order.product === "jewelry") {
       return (
