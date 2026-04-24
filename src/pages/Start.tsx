@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // ----- Types --------------------------------------------------------------
 
@@ -9,20 +11,94 @@ type Tier = "signature" | "preserve";
 
 interface OrderState {
   tier: Tier | null;
+  occasion: string | null;
+  whose_audio: string;
+  music_style: string | null;
+  audio_url: string;
+  send_link_later: boolean;
+  audio_consent: boolean;
+  audio_consent_at: string | null;
 }
+
+const OCCASIONS = [
+  "Memorial & Remembrance",
+  "Pregnancy & Infant Loss",
+  "Pet Memorial",
+  "Wedding & Anniversary",
+  "Birth & Baby",
+  "Birthday",
+  "Mother's Day",
+  "Father's Day",
+  "Military & Deployment",
+  "Graduation",
+  "Sobriety & Milestone",
+  "Friendship",
+  "Just Because",
+  "Childhood Memory",
+  "Holiday & Christmas",
+];
+
+const MUSIC_STYLES = [
+  "Soft Piano",
+  "Gentle Strings",
+  "Acoustic Guitar",
+  "Ambient Warmth",
+  "Lullaby",
+  "Soft Choir",
+  "Celtic & Folk",
+  "No Background Music",
+];
 
 // ----- Page ---------------------------------------------------------------
 
 const Start = () => {
-  const [order, setOrder] = useState<OrderState>({ tier: null });
+  const [order, setOrder] = useState<OrderState>({
+    tier: null,
+    occasion: null,
+    whose_audio: "",
+    music_style: null,
+    audio_url: "",
+    send_link_later: false,
+    audio_consent: false,
+    audio_consent_at: null,
+  });
 
   const step2Ref = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleSelectTier = (tier: Tier) => {
     setOrder((prev) => ({ ...prev, tier }));
     setTimeout(() => {
       step2Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 120);
+  };
+
+  const handleSelectOccasion = (occasion: string) => {
+    setOrder((prev) => ({ ...prev, occasion }));
+  };
+
+  // Reveal details once an occasion is picked
+  useEffect(() => {
+    if (order.occasion && detailsRef.current) {
+      setTimeout(() => {
+        detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 120);
+    }
+  }, [order.occasion]);
+
+  const handleConsentChange = (checked: boolean) => {
+    setOrder((prev) => ({
+      ...prev,
+      audio_consent: checked,
+      audio_consent_at: checked ? new Date().toISOString() : null,
+    }));
+  };
+
+  const handleFileUpload = (file: File | null) => {
+    if (!file) return;
+    // Placeholder local URL — wired to real upload later
+    const url = URL.createObjectURL(file);
+    setOrder((prev) => ({ ...prev, audio_url: url }));
   };
 
   return (
@@ -78,20 +154,177 @@ const Start = () => {
         </div>
       </Step>
 
-      {/* STEP 2 — placeholder anchor; content will be built next */}
+      {/* STEP 2 — Preserve path */}
       <div ref={step2Ref}>
-        {order.tier && (
+        {order.tier === "preserve" && (
+          <Step
+            index="02"
+            title="What moment are you celebrating?"
+            subtitle="Every voice deserves the right setting."
+          >
+            <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-3xl">
+              {OCCASIONS.map((occ) => (
+                <OccasionCard
+                  key={occ}
+                  label={occ}
+                  selected={order.occasion === occ}
+                  onSelect={() => handleSelectOccasion(occ)}
+                />
+              ))}
+            </div>
+
+            {/* Reveal once an occasion is selected */}
+            {order.occasion && (
+              <div
+                ref={detailsRef}
+                className="max-w-3xl mt-12 md:mt-16 space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500"
+              >
+                {/* Whose voice */}
+                <div className="space-y-3">
+                  <label
+                    htmlFor="whose-audio"
+                    className="label-eyebrow text-gold block"
+                  >
+                    Whose voice or audio is this?
+                  </label>
+                  <Input
+                    id="whose-audio"
+                    value={order.whose_audio}
+                    onChange={(e) =>
+                      setOrder((prev) => ({ ...prev, whose_audio: e.target.value }))
+                    }
+                    placeholder="e.g. My grandmother Ruth, our dog Cooper"
+                    className="h-12 rounded-xl bg-card border-border/60 text-base"
+                  />
+                </div>
+
+                {/* Music style */}
+                <div className="space-y-4">
+                  <p className="label-eyebrow text-gold">Background music style</p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {MUSIC_STYLES.map((style) => {
+                      const selected = order.music_style === style;
+                      return (
+                        <button
+                          key={style}
+                          type="button"
+                          onClick={() =>
+                            setOrder((prev) => ({ ...prev, music_style: style }))
+                          }
+                          className={cn(
+                            "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+                            selected
+                              ? "bg-gold text-navy border-gold shadow-gold"
+                              : "bg-card text-navy border-border/60 hover:border-gold hover:text-navy",
+                          )}
+                        >
+                          {style}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Audio upload */}
+                <div className="space-y-4">
+                  <p className="label-eyebrow text-gold">Upload their audio</p>
+                  <label
+                    htmlFor="audio-file"
+                    className={cn(
+                      "block rounded-2xl border-2 border-dashed p-8 md:p-10 text-center cursor-pointer transition-all bg-card/50",
+                      order.audio_url
+                        ? "border-gold bg-gold/5"
+                        : "border-border hover:border-gold hover:bg-gold/5",
+                      order.send_link_later && "opacity-60",
+                    )}
+                  >
+                    <input
+                      id="audio-file"
+                      type="file"
+                      accept="audio/mpeg,audio/wav,audio/x-m4a,audio/mp4,.mp3,.wav,.m4a"
+                      className="sr-only"
+                      onChange={(e) => handleFileUpload(e.target.files?.[0] ?? null)}
+                    />
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="inline-flex items-center justify-center size-12 rounded-full bg-gold/15 text-gold">
+                        <UploadCloud className="size-6" />
+                      </span>
+                      {order.audio_url ? (
+                        <>
+                          <p className="font-serif text-lg text-navy">
+                            Audio ready
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Click to replace
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="font-serif text-lg text-navy">
+                            Upload their audio
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            MP3 · WAV · M4A · up to 50MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </label>
+
+                  <label className="flex items-start gap-3 cursor-pointer pt-1">
+                    <Checkbox
+                      checked={order.send_link_later}
+                      onCheckedChange={(checked) =>
+                        setOrder((prev) => ({
+                          ...prev,
+                          send_link_later: checked === true,
+                        }))
+                      }
+                      className="mt-0.5 border-navy/30 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
+                    />
+                    <span className="text-sm text-muted-foreground leading-relaxed">
+                      I'm not ready yet — send me an upload link after checkout.
+                    </span>
+                  </label>
+                </div>
+
+                {/* Legal consent */}
+                <div className="rounded-2xl bg-card border border-border/60 p-5 md:p-6">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={order.audio_consent}
+                      onCheckedChange={(checked) =>
+                        handleConsentChange(checked === true)
+                      }
+                      required
+                      className="mt-0.5 border-navy/40 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
+                    />
+                    <span className="text-sm text-navy leading-relaxed">
+                      I confirm I have the right to upload this audio and agree to
+                      the{" "}
+                      <a
+                        href="/terms/audio-upload"
+                        className="underline decoration-gold/60 underline-offset-2 hover:text-gold"
+                      >
+                        Key of Hearts Audio Upload Terms
+                      </a>
+                      .
+                    </span>
+                  </label>
+                </div>
+              </div>
+            )}
+          </Step>
+        )}
+
+        {order.tier === "signature" && (
           <section className="container py-16 md:py-20">
             <p className="font-serif text-gold text-2xl md:text-3xl">02</p>
             <h2 className="font-serif text-3xl md:text-4xl text-navy mt-2">
               Choose their song
             </h2>
             <p className="text-muted-foreground mt-3">
-              Coming next — branches based on{" "}
-              <span className="text-navy font-medium">
-                {order.tier === "signature" ? "Signature" : "Preserve"}
-              </span>
-              .
+              Coming next — Signature path.
             </p>
           </section>
         )}
@@ -183,6 +416,39 @@ const TierCard = ({
         {cta}
       </span>
     </div>
+  </button>
+);
+
+// ----- Occasion card ------------------------------------------------------
+
+const OccasionCard = ({
+  label,
+  selected,
+  onSelect,
+}: {
+  label: string;
+  selected: boolean;
+  onSelect: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onSelect}
+    className={cn(
+      "relative text-left rounded-2xl bg-card p-4 md:p-5 border transition-all duration-200 min-h-[72px] flex items-center pr-10",
+      "hover:-translate-y-0.5 hover:border-gold hover:shadow-soft",
+      selected
+        ? "border-gold ring-2 ring-gold/40 shadow-soft"
+        : "border-border/60",
+    )}
+  >
+    <span className="font-serif text-base md:text-lg text-navy leading-snug text-balance">
+      {label}
+    </span>
+    {selected && (
+      <span className="absolute top-3 right-3 inline-flex items-center justify-center size-6 rounded-full bg-gold text-navy">
+        <Check className="size-3.5" strokeWidth={3} />
+      </span>
+    )}
   </button>
 );
 
