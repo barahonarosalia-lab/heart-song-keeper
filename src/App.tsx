@@ -14,7 +14,7 @@ import Pricing from "./pages/Pricing.tsx";
 import GiftCards from "./pages/GiftCards.tsx";
 import { Placeholder } from "./pages/Placeholder.tsx";
 import NotFound from "./pages/NotFound.tsx";
-
+import ScrollToTop from "./components/ScrollToTop.tsx";
 const queryClient = new QueryClient();
 
 const App = () => (
