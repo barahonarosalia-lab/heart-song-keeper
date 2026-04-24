@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/listen/:orderId" element={<Listen />} />
           <Route path="/upgrade" element={<Upgrade />} />
           <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
