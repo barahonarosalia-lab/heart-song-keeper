@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Info, Play, UploadCloud } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, AlertTriangle, XCircle, Info, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,8 @@ import ember from "@/assets/collection-ember.jpg";
 
 type Tier = "signature" | "preserve";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type PhotoQuality = "green" | "yellow" | "red";
 type JewelryStyle = "heart" | "circle" | "dog_tag";
 type JewelryFinish = "silver" | "gold";
 
@@ -50,6 +51,9 @@ interface OrderState {
   customer_message: string;
   dedication: string;
   use_exact_words: boolean;
+  photo_url: string;
+  photo_quality: PhotoQuality | null;
+  photo_quality_override: boolean;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
@@ -170,6 +174,21 @@ const PRODUCTS: ProductDef[] = [
     ],
     cta: "Choose Blanket",
   },
+  {
+    id: "photo_blanket",
+    name: "Photo Blanket",
+    signature: 119,
+    preserve: 139,
+    tagline: "A moment in time. Their voice. Forever.",
+    details: [
+      "Your photo full bleed",
+      "QR code woven into art",
+      "Sherpa 50x60",
+      "Ships in 3-5 business days",
+      "Free shipping",
+    ],
+    cta: "Choose Photo Blanket",
+  },
 ];
 
 interface OrnamentDesign {
@@ -277,6 +296,9 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 // Products that route through the art-picker step
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
+// Products that auto-scroll to Step 4 (art picker OR photo upload)
+const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital", "photo_blanket"];
+
 // ----- Card designs (Step 5) ---------------------------------------------
 
 interface CardDesign {
@@ -331,6 +353,8 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
       return "Included with their canvas. Frameable. Yours to keep forever.";
     case "blanket":
       return "Included with their blanket. Frameable. Yours to keep forever.";
+    case "photo_blanket":
+      return "Included with their photo blanket. Frameable. Yours to keep forever.";
     case "ornament":
       return "Included with their ornament. Frameable. Yours to keep forever.";
     case "digital":
@@ -382,6 +406,9 @@ const Start = () => {
     customer_message: "",
     dedication: "",
     use_exact_words: false,
+    photo_url: "",
+    photo_quality: null,
+    photo_quality_override: false,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -443,14 +470,55 @@ const Start = () => {
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
+      photo_url: product === "photo_blanket" ? prev.photo_url : "",
+      photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
+      photo_quality_override:
+        product === "photo_blanket" ? prev.photo_quality_override : false,
     }));
 
-    // Auto-scroll to Step 4 when an art-bearing product is selected
-    if (ART_PRODUCTS.includes(product)) {
+    // Auto-scroll to Step 4 when a product that uses it is selected
+    if (STEP4_PRODUCTS.includes(product)) {
       setTimeout(() => {
         step4Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 200);
     }
+  };
+
+  // Handle photo upload for photo blanket — checks dimensions client-side
+  const handlePhotoUpload = (file: File | null) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const shortest = Math.min(img.naturalWidth, img.naturalHeight);
+      let quality: PhotoQuality = "red";
+      if (shortest >= 3000) quality = "green";
+      else if (shortest >= 1500) quality = "yellow";
+      setOrder((prev) => ({
+        ...prev,
+        photo_url: url,
+        photo_quality: quality,
+        photo_quality_override: false,
+      }));
+    };
+    img.onerror = () => {
+      setOrder((prev) => ({
+        ...prev,
+        photo_url: url,
+        photo_quality: "red",
+        photo_quality_override: false,
+      }));
+    };
+    img.src = url;
+  };
+
+  const handleRemovePhoto = () => {
+    setOrder((prev) => ({
+      ...prev,
+      photo_url: "",
+      photo_quality: null,
+      photo_quality_override: false,
+    }));
   };
 
   // Determine if Step 2 is complete enough to unlock Step 3
@@ -497,10 +565,17 @@ const Start = () => {
     }
   }, [order.product, order.occasion, order.collection]);
 
-  const showStep4 = !!order.product && ART_PRODUCTS.includes(order.product);
-  const step4Headline = order.product
-    ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
-    : "";
+  const showStep4 = !!order.product && STEP4_PRODUCTS.includes(order.product);
+  const step4Headline =
+    order.product === "photo_blanket"
+      ? "Upload their photo."
+      : order.product
+      ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
+      : "";
+  const step4Subtitle =
+    order.product === "photo_blanket"
+      ? "This is what will be printed full bleed on their blanket. Choose something that matters."
+      : "This is what they'll see every time they hold it.";
   const activeCollection = useMemo(
     () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
     [order.collection],
@@ -511,6 +586,12 @@ const Start = () => {
   const step3Complete = (() => {
     if (!order.product) return false;
     if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
+    if (order.product === "photo_blanket") {
+      return (
+        !!order.photo_url &&
+        (order.photo_quality !== "red" || order.photo_quality_override)
+      );
+    }
     if (order.product === "ornament") return !!order.ornament_design;
     if (order.product === "jewelry") {
       return (
@@ -590,6 +671,19 @@ const Start = () => {
     summaryItems.push({
       label: "Art selected",
       value: `${activeCollection.name} — ${piece?.name ?? ""}`,
+      ref: step4Ref,
+    });
+  }
+  if (order.product === "photo_blanket" && order.photo_url) {
+    const qualityLabel =
+      order.photo_quality === "green"
+        ? "High quality"
+        : order.photo_quality === "yellow"
+        ? "Good quality"
+        : "Quality override";
+    summaryItems.push({
+      label: "Photo uploaded",
+      value: qualityLabel,
       ref: step4Ref,
     });
   }
@@ -877,61 +971,76 @@ const Start = () => {
         )}
       </div>
 
-      {/* STEP 4 — Choose their art (Canvas, Blanket, Digital only) */}
+      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) OR Photo upload (Photo Blanket) */}
       <div ref={step4Ref}>
         {showStep4 && (
           <Step
             index="04"
             title={step4Headline}
-            subtitle="This is what they'll see every time they hold it."
+            subtitle={step4Subtitle}
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
-              {/* Collection dropdown */}
-              <div className="space-y-3 max-w-md">
-                <label htmlFor="collection-select" className="label-eyebrow text-gold block">
-                  Collection
-                </label>
-                <select
-                  id="collection-select"
-                  value={order.collection ?? ""}
-                  onChange={(e) =>
-                    setOrder((prev) => ({
-                      ...prev,
-                      collection: e.target.value || null,
-                      art_selected: null,
-                    }))
-                  }
-                  className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
-                >
-                  <option value="" disabled>
-                    Choose a collection
-                  </option>
-                  {COLLECTIONS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {order.occasion &&
-                  OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
-                    <p className="text-xs text-muted-foreground italic">
-                      Suggested for "{order.occasion}" — change anytime.
-                    </p>
-                  )}
-              </div>
-
-              {/* Image gallery — horizontal swipe */}
-              {activeCollection && (
-                <ArtGallery
-                  collection={activeCollection}
-                  selectedId={order.art_selected}
-                  onToggle={(pieceId) =>
-                    setOrder((prev) => ({
-                      ...prev,
-                      art_selected: prev.art_selected === pieceId ? null : pieceId,
-                    }))
+              {order.product === "photo_blanket" ? (
+                <PhotoUpload
+                  photoUrl={order.photo_url}
+                  quality={order.photo_quality}
+                  override={order.photo_quality_override}
+                  onUpload={handlePhotoUpload}
+                  onRemove={handleRemovePhoto}
+                  onOverride={() =>
+                    setOrder((prev) => ({ ...prev, photo_quality_override: true }))
                   }
                 />
+              ) : (
+                <>
+                  {/* Collection dropdown */}
+                  <div className="space-y-3 max-w-md">
+                    <label htmlFor="collection-select" className="label-eyebrow text-gold block">
+                      Collection
+                    </label>
+                    <select
+                      id="collection-select"
+                      value={order.collection ?? ""}
+                      onChange={(e) =>
+                        setOrder((prev) => ({
+                          ...prev,
+                          collection: e.target.value || null,
+                          art_selected: null,
+                        }))
+                      }
+                      className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
+                    >
+                      <option value="" disabled>
+                        Choose a collection
+                      </option>
+                      {COLLECTIONS.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    {order.occasion &&
+                      OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
+                        <p className="text-xs text-muted-foreground italic">
+                          Suggested for "{order.occasion}" — change anytime.
+                        </p>
+                      )}
+                  </div>
+
+                  {/* Image gallery — horizontal swipe */}
+                  {activeCollection && (
+                    <ArtGallery
+                      collection={activeCollection}
+                      selectedId={order.art_selected}
+                      onToggle={(pieceId) =>
+                        setOrder((prev) => ({
+                          ...prev,
+                          art_selected: prev.art_selected === pieceId ? null : pieceId,
+                        }))
+                      }
+                    />
+                  )}
+                </>
               )}
             </div>
           </Step>
@@ -1910,6 +2019,143 @@ const CardGallery = ({
         <p className="text-xs text-muted-foreground text-center italic animate-in fade-in duration-200">
           This collection is coming soon.
         </p>
+      )}
+    </div>
+  );
+};
+
+// ----- Photo upload (Photo Blanket) --------------------------------------
+
+const PhotoUpload = ({
+  photoUrl,
+  quality,
+  override,
+  onUpload,
+  onRemove,
+  onOverride,
+}: {
+  photoUrl: string;
+  quality: PhotoQuality | null;
+  override: boolean;
+  onUpload: (file: File | null) => void;
+  onRemove: () => void;
+  onOverride: () => void;
+}) => {
+  return (
+    <div className="space-y-5 max-w-2xl">
+      {!photoUrl && (
+        <label
+          htmlFor="photo-file"
+          className="block rounded-2xl border-2 border-dashed border-border hover:border-gold hover:bg-gold/5 p-10 md:p-12 text-center cursor-pointer transition-all bg-card/50"
+        >
+          <input
+            id="photo-file"
+            type="file"
+            accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+            className="sr-only"
+            onChange={(e) => onUpload(e.target.files?.[0] ?? null)}
+          />
+          <div className="flex flex-col items-center gap-3">
+            <span className="inline-flex items-center justify-center size-14 rounded-full bg-gold/15 text-gold">
+              <UploadCloud className="size-7" />
+            </span>
+            <p className="label-eyebrow text-gold">Upload their photo</p>
+            <p className="text-sm text-muted-foreground">
+              JPG · PNG · up to 50MB
+            </p>
+          </div>
+        </label>
+      )}
+
+      {photoUrl && (
+        <div className="space-y-4">
+          <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card aspect-[4/3] max-w-md">
+            <img
+              src={photoUrl}
+              alt="Uploaded photo preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="photo-file-replace"
+              className="text-xs text-muted-foreground hover:text-gold underline underline-offset-4 cursor-pointer transition-colors"
+            >
+              Replace photo
+              <input
+                id="photo-file-replace"
+                type="file"
+                accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+                className="sr-only"
+                onChange={(e) => onUpload(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="text-xs text-muted-foreground hover:text-rose underline underline-offset-4 transition-colors"
+            >
+              Remove photo
+            </button>
+          </div>
+
+          {/* Quality feedback */}
+          {quality === "green" && (
+            <div
+              className="flex items-start gap-2.5 text-sm font-medium leading-relaxed"
+              style={{ color: "#2D6A4F" }}
+            >
+              <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
+              <span>Your photo looks great for printing.</span>
+            </div>
+          )}
+
+          {quality === "yellow" && (
+            <div className="flex items-start gap-2.5 text-sm font-medium text-gold leading-relaxed">
+              <AlertTriangle className="size-5 shrink-0 mt-0.5" />
+              <span>
+                Your photo will print well. For the sharpest result, a higher
+                resolution image gives the best quality on a large blanket.
+              </span>
+            </div>
+          )}
+
+          {quality === "red" && (
+            <div className="space-y-2">
+              <div
+                className="flex items-start gap-2.5 text-sm font-medium leading-relaxed"
+                style={{ color: "#C4796A" }}
+              >
+                <XCircle className="size-5 shrink-0 mt-0.5" />
+                <span>
+                  This photo may appear blurry when printed at blanket size.
+                  Please upload a higher resolution version for the best result.
+                  Need help? Email us at{" "}
+                  <a
+                    href="mailto:hello@keyofhearts.com"
+                    className="underline underline-offset-2"
+                  >
+                    hello@keyofhearts.com
+                  </a>
+                </span>
+              </div>
+              {!override && (
+                <button
+                  type="button"
+                  onClick={onOverride}
+                  className="text-xs text-muted-foreground hover:text-navy underline underline-offset-4 transition-colors"
+                >
+                  Continue anyway — I understand the quality may be affected.
+                </button>
+              )}
+              {override && (
+                <p className="text-xs italic text-muted-foreground">
+                  Quality override accepted — you can continue.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
