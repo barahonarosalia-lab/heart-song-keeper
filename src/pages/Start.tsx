@@ -1048,7 +1048,15 @@ const Start = () => {
                         </option>
                       ))}
                     </select>
-                    {order.occasion &&
+                    {fromCollections &&
+                      prefilledArtId &&
+                      order.art_selected === prefilledArtId && (
+                        <p className="text-xs text-gold/80 italic">
+                          You chose this art from our collections — change anytime.
+                        </p>
+                      )}
+                    {!(fromCollections && order.art_selected === prefilledArtId) &&
+                      order.occasion &&
                       OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
                         <p className="text-xs text-muted-foreground italic">
                           Suggested for "{order.occasion}" — change anytime.
