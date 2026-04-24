@@ -2,12 +2,15 @@ import { ArrowRight } from "lucide-react";
 import { Navigation } from "@/components/site/Navigation";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
+import { SwipeRow } from "@/components/site/SwipeRow";
 import { cn } from "@/lib/utils";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import botanica from "@/assets/collection-botanica.jpg";
 import fable from "@/assets/collection-fable.jpg";
 import ember from "@/assets/collection-ember.jpg";
+import blanketPhoto from "@/assets/blanket-photo.jpg";
+import blanketArt from "@/assets/blanket-art.jpg";
 
 type ArtCollection = {
   name: string;
@@ -76,6 +79,23 @@ const jewelryStyles = [
   { name: "Dog Tag", price: "Silver from $89 · Gold from $99" },
 ];
 
+const blankets = [
+  {
+    label: "PHOTO BLANKET",
+    img: blanketPhoto,
+    description: "Your photo. Full bleed. Their song behind a QR in every corner.",
+    price: "From $119",
+    note: "Upload your photo at checkout",
+  },
+  {
+    label: "KOH ART BLANKET",
+    img: blanketArt,
+    description: "Choose from our art collections. Every corner carries their QR.",
+    price: "From $119",
+    note: null,
+  },
+];
+
 const ornaments = [
   { name: "Moonlit Botanica", desc: "Navy rose botanical wreath", price: "From $59" },
   { name: "Little Luminaries", desc: "Gold circle watercolor", price: "From $59" },
@@ -105,7 +125,7 @@ const CollectionsPage = () => {
 
       {/* SECTION 1 — ART COLLECTIONS */}
       <section className="bg-cream py-20 md:py-28">
-        <div className="container max-w-4xl">
+        <div className="container max-w-6xl">
           <div className="text-center mb-14 space-y-3">
             <p className="label-eyebrow text-gold">The Collections</p>
             <h2 className="font-serif text-3xl md:text-5xl text-navy">
@@ -113,11 +133,11 @@ const CollectionsPage = () => {
             </h2>
           </div>
 
-          <div className="space-y-10 md:space-y-14">
+          <SwipeRow basis="basis-[75%] md:basis-[45%] lg:basis-[33%]">
             {artCollections.map((c) => (
               <article
                 key={c.slug}
-                className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50"
+                className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50 h-full flex flex-col"
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                   <img
@@ -127,57 +147,59 @@ const CollectionsPage = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
-                  <h3 className="absolute bottom-5 left-6 md:bottom-7 md:left-8 font-serif text-3xl md:text-4xl text-gold drop-shadow-lg">
+                  <h3 className="absolute bottom-4 left-5 font-serif text-2xl md:text-3xl text-gold drop-shadow-lg">
                     {c.name}
                   </h3>
                   {c.comingSoon && (
-                    <span className="absolute top-5 right-5 bg-cream/95 text-navy text-[11px] tracking-[0.2em] uppercase font-medium px-3 py-1.5 rounded-full">
+                    <span className="absolute top-4 right-4 bg-cream/95 text-navy text-[10px] tracking-[0.2em] uppercase font-medium px-2.5 py-1 rounded-full">
                       Coming Soon
                     </span>
                   )}
                 </div>
-                <div className="p-6 md:p-8 space-y-5">
-                  <p className="text-base md:text-[17px] text-muted-foreground leading-relaxed">
+                <div className="p-5 md:p-6 space-y-4 flex-1 flex flex-col">
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                     {c.description}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {c.occasions.map((o) => (
                       <span
                         key={o}
-                        className="text-xs md:text-[13px] text-gold border border-gold/40 rounded-full px-3 py-1"
+                        className="text-[11px] md:text-xs text-gold border border-gold/40 rounded-full px-2.5 py-0.5"
                       >
                         {o}
                       </span>
                     ))}
                   </div>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "border-gold text-navy hover:bg-gold hover:text-navy w-full md:w-auto",
-                      c.comingSoon && "opacity-50 pointer-events-none"
-                    )}
-                    asChild={!c.comingSoon}
-                    disabled={c.comingSoon}
-                  >
-                    {c.comingSoon ? (
-                      <span>Explore {c.name} →</span>
-                    ) : (
-                      <a href={`/start?collection=${c.slug}`}>
-                        Explore {c.name} <ArrowRight className="size-4" />
-                      </a>
-                    )}
-                  </Button>
+                  <div className="mt-auto pt-2">
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "border-gold text-navy hover:bg-gold hover:text-navy w-full",
+                        c.comingSoon && "opacity-50 pointer-events-none"
+                      )}
+                      asChild={!c.comingSoon}
+                      disabled={c.comingSoon}
+                    >
+                      {c.comingSoon ? (
+                        <span>Explore {c.name} →</span>
+                      ) : (
+                        <a href={`/start?collection=${c.slug}`}>
+                          Explore {c.name} <ArrowRight className="size-4" />
+                        </a>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </article>
             ))}
-          </div>
+          </SwipeRow>
         </div>
       </section>
 
       {/* SECTION 2 — JEWELRY */}
       <section className="bg-navy text-cream py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 starfield opacity-20 pointer-events-none" />
-        <div className="container relative max-w-5xl">
+        <div className="container relative max-w-6xl">
           <div className="text-center mb-14 space-y-4">
             <p className="label-eyebrow text-gold">Jewelry</p>
             <h2 className="font-serif text-3xl md:text-5xl text-cream text-balance">
@@ -188,11 +210,11 @@ const CollectionsPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 md:gap-7 mb-12">
+          <SwipeRow basis="basis-[80%] md:basis-[45%] lg:basis-[33%]">
             {jewelryStyles.map((j) => (
               <article
                 key={j.name}
-                className="bg-cream text-navy rounded-2xl border border-gold/40 overflow-hidden shadow-card"
+                className="bg-cream text-navy rounded-2xl border border-gold/40 overflow-hidden shadow-card h-full"
               >
                 {/* Front */}
                 <div className="p-5 border-b border-border/40">
@@ -225,12 +247,12 @@ const CollectionsPage = () => {
                 </div>
               </article>
             ))}
-          </div>
+          </SwipeRow>
 
-          <div className="text-center">
+          <div className="text-center mt-12">
             <Button
               variant="outline"
-              className="border-gold text-cream hover:bg-gold hover:text-navy"
+              className="bg-cream border-gold text-navy hover:bg-gold hover:text-navy hover:border-gold"
               asChild
             >
               <a href="/start?product=jewelry">
@@ -241,7 +263,64 @@ const CollectionsPage = () => {
         </div>
       </section>
 
-      {/* SECTION 3 — ORNAMENTS */}
+      {/* SECTION 3 — BLANKETS */}
+      <section className="bg-cream py-20 md:py-28">
+        <div className="container max-w-6xl">
+          <div className="text-center mb-14 space-y-3">
+            <p className="label-eyebrow text-gold">Blankets</p>
+            <h2 className="font-serif text-3xl md:text-5xl text-navy">
+              Wrapped in it. Every night.
+            </h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Sherpa 50x60 · Free shipping · QR code woven into art
+            </p>
+          </div>
+
+          <SwipeRow basis="basis-[80%] md:basis-[55%] lg:basis-[45%]">
+            {blankets.map((b) => (
+              <article
+                key={b.label}
+                className="bg-card rounded-2xl overflow-hidden border border-border/50 shadow-soft h-full flex flex-col"
+              >
+                <div className="aspect-[4/3] overflow-hidden bg-muted">
+                  <img
+                    src={b.img}
+                    alt={b.label}
+                    loading="lazy"
+                    width={1280}
+                    height={896}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6 space-y-3 flex-1 flex flex-col">
+                  <p className="text-[11px] tracking-[0.25em] uppercase text-gold font-medium">
+                    {b.label}
+                  </p>
+                  <p className="text-base text-muted-foreground leading-relaxed">{b.description}</p>
+                  <div className="mt-auto space-y-1 pt-2">
+                    <p className="font-serif text-xl text-navy">{b.price}</p>
+                    {b.note && <p className="text-xs text-muted-foreground">{b.note}</p>}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </SwipeRow>
+
+          <div className="text-center mt-12">
+            <Button
+              variant="outline"
+              className="bg-cream border-gold text-navy hover:bg-gold hover:text-navy"
+              asChild
+            >
+              <a href="/start?product=blanket">
+                Choose their blanket <ArrowRight className="size-4" />
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4 — ORNAMENTS */}
       <section className="bg-cream py-20 md:py-28">
         <div className="container max-w-4xl">
           <div className="text-center mb-14 space-y-3">
@@ -290,7 +369,7 @@ const CollectionsPage = () => {
         </div>
       </section>
 
-      {/* SECTION 4 — BOTTOM CTA */}
+      {/* SECTION 5 — BOTTOM CTA */}
       <section className="bg-navy text-cream py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 starfield opacity-25 pointer-events-none" />
         <div className="container relative text-center max-w-2xl space-y-6">
