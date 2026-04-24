@@ -40,6 +40,7 @@ interface OrderState {
   engraving_line_2: string;
   collection: string | null;
   art_selected: string | null;
+  card_design: string | null;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
@@ -267,6 +268,79 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 // Products that route through the art-picker step
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
+// ----- Card designs (Step 5) ---------------------------------------------
+
+interface CardDesign {
+  id: string;
+  collection: string;
+  name: string;
+  cover: string;
+  comingSoon?: boolean;
+}
+
+const CARD_DESIGNS: CardDesign[] = [
+  {
+    id: "card_little_luminaries",
+    collection: "Little Luminaries",
+    name: "Blush moon, pink clouds, soft stars",
+    cover: luminaries,
+  },
+  {
+    id: "card_meadow_mane",
+    collection: "Meadow & Mane",
+    name: "Warm botanical frame, gold geometric border",
+    cover: meadow,
+  },
+  {
+    id: "card_moonlit_botanica",
+    collection: "Moonlit Botanica",
+    name: "Deep navy, white rose, gold botanical line art",
+    cover: botanica,
+  },
+  {
+    id: "card_fable_fawn",
+    collection: "Fable & Fawn",
+    name: "Coming soon",
+    cover: fable,
+    comingSoon: true,
+  },
+  {
+    id: "card_ember_ivy",
+    collection: "Ember & Ivy",
+    name: "Coming soon",
+    cover: ember,
+    comingSoon: true,
+  },
+];
+
+// Step 5 dynamic subheadline based on product
+const cardSubheadlineForProduct = (product: ProductId): string => {
+  switch (product) {
+    case "jewelry":
+      return "Your card ships first — arriving before their jewelry so they know something beautiful is on its way.";
+    case "canvas":
+      return "Included with their canvas. Frameable. Yours to keep forever.";
+    case "blanket":
+      return "Included with their blanket. Frameable. Yours to keep forever.";
+    case "ornament":
+      return "Included with their ornament. Frameable. Yours to keep forever.";
+    case "digital":
+      return "Your PDF card arrives instantly by email — ready to print or frame.";
+  }
+};
+
+// Step 5 QR notice copy based on tier + Preserve audio choice
+const qrNoticeCopy = (order: OrderState): string => {
+  if (order.tier === "signature") {
+    return "Your card includes a unique QR code linked to their song. Physical cards are printed and on their way within 2 business days. Digital orders receive their card by email instantly.";
+  }
+  if (order.tier === "preserve" && order.send_link_later) {
+    return "Your card includes a unique QR code. From the moment it arrives, scanning it plays a beautiful song matched to their occasion. Send us their audio when you're ready — we'll have their voice live within 48 hours of receiving it. The card never waits. Neither does the music.";
+  }
+  // Preserve + audio uploaded
+  return "Your card includes a unique QR code. While your recording is being prepared, scanning it will play a beautiful song matched to their occasion. Once your audio is ready — within 48 hours of us receiving it — the QR updates to their voice. They'll never hold a silent key.";
+};
+
 // ----- Page ---------------------------------------------------------------
 
 const Start = () => {
@@ -292,11 +366,13 @@ const Start = () => {
     engraving_line_2: "",
     collection: null,
     art_selected: null,
+    card_design: null,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
   const step3Ref = useRef<HTMLDivElement>(null);
   const step4Ref = useRef<HTMLDivElement>(null);
+  const step5Ref = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleSelectTier = (tier: Tier) => {
@@ -413,6 +489,31 @@ const Start = () => {
     () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
     [order.collection],
   );
+
+  // Step 3 is "complete" once the customer has picked everything required for
+  // their product. This unlocks Step 5 (the card art picker).
+  const step3Complete = (() => {
+    if (!order.product) return false;
+    if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
+    if (order.product === "ornament") return !!order.ornament_design;
+    if (order.product === "jewelry") {
+      return (
+        !!order.jewelry_style &&
+        !!order.jewelry_finish &&
+        !!order.engraving_line_1.trim()
+      );
+    }
+    return false;
+  })();
+
+  // Reveal Step 5 once Step 3 is complete
+  useEffect(() => {
+    if (step3Complete && step5Ref.current) {
+      setTimeout(() => {
+        step5Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, [step3Complete]);
 
   return (
     <main className="min-h-screen bg-cream text-navy">
@@ -749,6 +850,38 @@ const Start = () => {
                   }
                 />
               )}
+            </div>
+          </Step>
+        )}
+      </div>
+
+      {/* STEP 5 — Choose the art for their card */}
+      <div ref={step5Ref}>
+        {step3Complete && order.product && (
+          <Step
+            index="05"
+            title="Choose the art for their card."
+            subtitle={cardSubheadlineForProduct(order.product)}
+          >
+            <div className="max-w-5xl space-y-8 md:space-y-10">
+              <CardGallery
+                designs={CARD_DESIGNS}
+                selectedId={order.card_design}
+                onToggle={(designId) =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    card_design: prev.card_design === designId ? null : designId,
+                  }))
+                }
+              />
+
+              {/* QR info notice */}
+              <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6 space-y-3">
+                <p className="label-eyebrow text-gold">Your QR code</p>
+                <p className="text-sm md:text-base text-navy/80 leading-relaxed">
+                  {qrNoticeCopy(order)}
+                </p>
+              </div>
             </div>
           </Step>
         )}
@@ -1403,6 +1536,121 @@ const ArtGallery = ({
           />
         ))}
       </div>
+    </div>
+  );
+};
+
+// ----- Card gallery (Step 5) ---------------------------------------------
+
+const CardGallery = ({
+  designs,
+  selectedId,
+  onToggle,
+}: {
+  designs: CardDesign[];
+  selectedId: string | null;
+  onToggle: (designId: string) => void;
+}) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [comingSoonNotice, setComingSoonNotice] = useState<string | null>(null);
+
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const slideWidth = el.clientWidth * 0.85;
+    const idx = Math.round(el.scrollLeft / slideWidth);
+    if (idx !== activeIndex && idx >= 0 && idx < designs.length) {
+      setActiveIndex(idx);
+    }
+  };
+
+  const handleClick = (design: CardDesign) => {
+    if (design.comingSoon) {
+      setComingSoonNotice(design.collection);
+      setTimeout(() => setComingSoonNotice(null), 2400);
+      return;
+    }
+    onToggle(design.id);
+  };
+
+  return (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <p className="label-eyebrow text-gold">Choose their card</p>
+
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="-mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
+        style={{ scrollPaddingLeft: "1.5rem" }}
+      >
+        {designs.map((design) => {
+          const selected = selectedId === design.id;
+          const disabled = !!design.comingSoon;
+          return (
+            <button
+              key={design.id}
+              type="button"
+              onClick={() => handleClick(design)}
+              aria-disabled={disabled}
+              className={cn(
+                "snap-start shrink-0 w-[85%] sm:w-[70%] md:w-[45%] lg:w-[32%] relative rounded-2xl overflow-hidden bg-card border-2 transition-all duration-300 text-left",
+                selected
+                  ? "border-gold ring-2 ring-gold/40 shadow-card"
+                  : "border-border/60 hover:border-gold/60",
+                disabled && "opacity-70 cursor-not-allowed hover:border-border/60",
+              )}
+            >
+              <div className="aspect-square overflow-hidden bg-muted relative">
+                <img
+                  src={design.cover}
+                  alt={design.collection}
+                  loading="lazy"
+                  className={cn(
+                    "w-full h-full object-cover",
+                    disabled && "grayscale",
+                  )}
+                />
+                {disabled && (
+                  <span className="absolute top-3 left-3 inline-flex items-center rounded-full bg-navy/80 text-cream text-[10px] tracking-[0.18em] font-medium uppercase px-3 py-1">
+                    Coming soon
+                  </span>
+                )}
+              </div>
+              {selected && !disabled && (
+                <span className="absolute top-3 right-3 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold">
+                  <Check className="size-4" strokeWidth={3} />
+                </span>
+              )}
+              <div className="p-3">
+                <p className="label-eyebrow text-gold mb-1">{design.collection}</p>
+                <p className="font-serif text-sm md:text-base text-navy leading-tight">
+                  {design.name}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
+        {designs.map((design, i) => (
+          <span
+            key={design.id}
+            className={cn(
+              "rounded-full transition-all duration-300",
+              i === activeIndex ? "size-2 bg-gold" : "size-1.5 bg-navy/20",
+            )}
+          />
+        ))}
+      </div>
+
+      {comingSoonNotice && (
+        <p className="text-xs text-muted-foreground text-center italic animate-in fade-in duration-200">
+          This collection is coming soon.
+        </p>
+      )}
     </div>
   );
 };
