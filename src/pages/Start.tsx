@@ -376,6 +376,12 @@ const Start = () => {
     collection: null,
     art_selected: null,
     card_design: null,
+    gifter_name: "",
+    recipient_name: "",
+    relationship: "",
+    customer_message: "",
+    dedication: "",
+    use_exact_words: false,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
