@@ -500,6 +500,14 @@ const Start = () => {
       photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
       photo_quality_override:
         product === "photo_blanket" ? prev.photo_quality_override : false,
+      gift_card_amount: product === "gift_card" ? prev.gift_card_amount : null,
+      gift_card_custom_amount:
+        product === "gift_card" ? prev.gift_card_custom_amount : null,
+      gift_card_recipient_name:
+        product === "gift_card" ? prev.gift_card_recipient_name : "",
+      gift_card_gifter_name:
+        product === "gift_card" ? prev.gift_card_gifter_name : "",
+      gift_card_note: product === "gift_card" ? prev.gift_card_note : "",
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
