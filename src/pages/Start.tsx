@@ -1540,4 +1540,119 @@ const ArtGallery = ({
   );
 };
 
+// ----- Card gallery (Step 5) ---------------------------------------------
+
+const CardGallery = ({
+  designs,
+  selectedId,
+  onToggle,
+}: {
+  designs: CardDesign[];
+  selectedId: string | null;
+  onToggle: (designId: string) => void;
+}) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [comingSoonNotice, setComingSoonNotice] = useState<string | null>(null);
+
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const slideWidth = el.clientWidth * 0.85;
+    const idx = Math.round(el.scrollLeft / slideWidth);
+    if (idx !== activeIndex && idx >= 0 && idx < designs.length) {
+      setActiveIndex(idx);
+    }
+  };
+
+  const handleClick = (design: CardDesign) => {
+    if (design.comingSoon) {
+      setComingSoonNotice(design.collection);
+      setTimeout(() => setComingSoonNotice(null), 2400);
+      return;
+    }
+    onToggle(design.id);
+  };
+
+  return (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <p className="label-eyebrow text-gold">Choose their card</p>
+
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="-mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
+        style={{ scrollPaddingLeft: "1.5rem" }}
+      >
+        {designs.map((design) => {
+          const selected = selectedId === design.id;
+          const disabled = !!design.comingSoon;
+          return (
+            <button
+              key={design.id}
+              type="button"
+              onClick={() => handleClick(design)}
+              aria-disabled={disabled}
+              className={cn(
+                "snap-start shrink-0 w-[85%] sm:w-[70%] md:w-[45%] lg:w-[32%] relative rounded-2xl overflow-hidden bg-card border-2 transition-all duration-300 text-left",
+                selected
+                  ? "border-gold ring-2 ring-gold/40 shadow-card"
+                  : "border-border/60 hover:border-gold/60",
+                disabled && "opacity-70 cursor-not-allowed hover:border-border/60",
+              )}
+            >
+              <div className="aspect-square overflow-hidden bg-muted relative">
+                <img
+                  src={design.cover}
+                  alt={design.collection}
+                  loading="lazy"
+                  className={cn(
+                    "w-full h-full object-cover",
+                    disabled && "grayscale",
+                  )}
+                />
+                {disabled && (
+                  <span className="absolute top-3 left-3 inline-flex items-center rounded-full bg-navy/80 text-cream text-[10px] tracking-[0.18em] font-medium uppercase px-3 py-1">
+                    Coming soon
+                  </span>
+                )}
+              </div>
+              {selected && !disabled && (
+                <span className="absolute top-3 right-3 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold">
+                  <Check className="size-4" strokeWidth={3} />
+                </span>
+              )}
+              <div className="p-3">
+                <p className="label-eyebrow text-gold mb-1">{design.collection}</p>
+                <p className="font-serif text-sm md:text-base text-navy leading-tight">
+                  {design.name}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
+        {designs.map((design, i) => (
+          <span
+            key={design.id}
+            className={cn(
+              "rounded-full transition-all duration-300",
+              i === activeIndex ? "size-2 bg-gold" : "size-1.5 bg-navy/20",
+            )}
+          />
+        ))}
+      </div>
+
+      {comingSoonNotice && (
+        <p className="text-xs text-muted-foreground text-center italic animate-in fade-in duration-200">
+          This collection is coming soon.
+        </p>
+      )}
+    </div>
+  );
+};
+
 export default Start;
