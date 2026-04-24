@@ -9,6 +9,7 @@ import Order from "./pages/Order.tsx";
 import Listen from "./pages/Listen.tsx";
 import Upgrade from "./pages/Upgrade.tsx";
 import CollectionsPage from "./pages/Collections.tsx";
+import HowItWorks from "./pages/HowItWorks.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
