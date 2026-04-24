@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Info, Play, UploadCloud } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, AlertTriangle, XCircle, Info, Play, UploadCloud, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
