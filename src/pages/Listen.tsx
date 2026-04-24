@@ -72,18 +72,37 @@ const PlayCircle = ({
   isPlaying: boolean;
   onClick: () => void;
 }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    aria-label={isPlaying ? "Pause" : "Play"}
-    className="group relative h-20 w-20 rounded-full bg-navy border-2 border-gold flex items-center justify-center shadow-[0_0_40px_hsl(var(--gold)/0.35)] transition-transform duration-300 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
-  >
-    {isPlaying ? (
-      <Pause className="h-8 w-8 text-cream" fill="currentColor" />
-    ) : (
-      <Play className="h-8 w-8 text-cream ml-1" fill="currentColor" />
+  <div className="relative inline-flex items-center justify-center">
+    {/* Heartbeat pulse ring — only while playing */}
+    {isPlaying && (
+      <>
+        <span
+          aria-hidden
+          className="absolute inset-0 rounded-full border-2 animate-[heartbeat_2s_ease-out_infinite] pointer-events-none"
+          style={{ borderColor: "rgba(201, 168, 76, 0.3)" }}
+        />
+        <style>{`
+          @keyframes heartbeat {
+            0%   { transform: scale(1);   opacity: 0.6; }
+            70%  { transform: scale(1.6); opacity: 0;   }
+            100% { transform: scale(1.6); opacity: 0;   }
+          }
+        `}</style>
+      </>
     )}
-  </button>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={isPlaying ? "Pause" : "Play"}
+      className="group relative h-20 w-20 rounded-full bg-navy border-2 border-gold flex items-center justify-center shadow-[0_0_40px_hsl(var(--gold)/0.35)] transition-transform duration-300 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+    >
+      {isPlaying ? (
+        <Pause className="h-8 w-8 text-cream" fill="currentColor" />
+      ) : (
+        <Play className="h-8 w-8 text-cream ml-1" fill="currentColor" />
+      )}
+    </button>
+  </div>
 );
 
 // ===== Progress bar =====
