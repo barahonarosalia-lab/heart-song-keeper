@@ -15,7 +15,7 @@ const overlayLinks = [
   { label: "How it works", to: "/how-it-works" },
   { label: "Collections", to: "/collections" },
   { label: "Pricing", to: "/pricing" },
-  { label: "Gift cards", to: "/start?product=gift_card" },
+  { label: "Gift cards", to: "/gift-cards" },
   { label: "Upgrade your Key", to: "/upgrade" },
 ];
 

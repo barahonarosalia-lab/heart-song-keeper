@@ -11,6 +11,7 @@ import Upgrade from "./pages/Upgrade.tsx";
 import CollectionsPage from "./pages/Collections.tsx";
 import HowItWorks from "./pages/HowItWorks.tsx";
 import Pricing from "./pages/Pricing.tsx";
+import GiftCards from "./pages/GiftCards.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/collections" element={<CollectionsPage />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/gift-cards" element={<GiftCards />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
