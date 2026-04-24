@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, AlertTriangle, XCircle, Info, Play, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -549,21 +549,50 @@ const Start = () => {
     }, 80);
   };
 
+  // Pre-fill collection + art from /collections deep link (?collection=...&art=N)
+  const [searchParams] = useSearchParams();
+  const [fromCollections, setFromCollections] = useState(false);
+  const [prefilledArtId, setPrefilledArtId] = useState<string | null>(null);
+  useEffect(() => {
+    const slug = searchParams.get("collection");
+    const artParam = searchParams.get("art");
+    if (!slug) return;
+    const collectionId = slug.replace(/-/g, "_");
+    const collectionDef = COLLECTIONS.find((c) => c.id === collectionId);
+    if (!collectionDef) return;
+    const artNum = artParam ? parseInt(artParam, 10) : NaN;
+    const piece =
+      Number.isFinite(artNum) && artNum >= 1 && artNum <= collectionDef.pieces.length
+        ? collectionDef.pieces[artNum - 1]
+        : null;
+    setOrder((prev) => ({
+      ...prev,
+      collection: collectionId,
+      art_selected: piece ? piece.id : prev.art_selected,
+    }));
+    setFromCollections(true);
+    if (piece) setPrefilledArtId(piece.id);
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Default the collection from the chosen occasion when entering Step 4 —
   // only when no collection is set yet, so the customer can still change it.
+  // Skipped when the customer arrived from /collections with a chosen collection.
   useEffect(() => {
     if (
       order.product &&
       ART_PRODUCTS.includes(order.product) &&
       order.occasion &&
-      !order.collection
+      !order.collection &&
+      !fromCollections
     ) {
       const defaultId = OCCASION_TO_COLLECTION[order.occasion];
       if (defaultId) {
         setOrder((prev) => ({ ...prev, collection: defaultId }));
       }
     }
-  }, [order.product, order.occasion, order.collection]);
+  }, [order.product, order.occasion, order.collection, fromCollections]);
 
   const showStep4 = !!order.product && STEP4_PRODUCTS.includes(order.product);
   const step4Headline =
@@ -1019,7 +1048,15 @@ const Start = () => {
                         </option>
                       ))}
                     </select>
-                    {order.occasion &&
+                    {fromCollections &&
+                      prefilledArtId &&
+                      order.art_selected === prefilledArtId && (
+                        <p className="text-xs text-gold/80 italic">
+                          You chose this art from our collections — change anytime.
+                        </p>
+                      )}
+                    {!(fromCollections && order.art_selected === prefilledArtId) &&
+                      order.occasion &&
                       OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
                         <p className="text-xs text-muted-foreground italic">
                           Suggested for "{order.occasion}" — change anytime.
@@ -1831,12 +1868,22 @@ const ArtGallery = ({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Reset to first image when the collection changes
+  // Reset/scroll when the collection changes — if a piece is already selected
+  // (e.g. came from /collections deep link), scroll to that piece instead of
+  // starting at the first image.
   useEffect(() => {
-    setActiveIndex(0);
-    if (scrollerRef.current) {
-      scrollerRef.current.scrollTo({ left: 0, behavior: "auto" });
+    const el = scrollerRef.current;
+    const selectedIdx = selectedId
+      ? collection.pieces.findIndex((p) => p.id === selectedId)
+      : -1;
+    const targetIdx = selectedIdx >= 0 ? selectedIdx : 0;
+    setActiveIndex(targetIdx);
+    if (el) {
+      const slideWidth = el.clientWidth * 0.85 + 16; // basis ~85% + gap-4
+      el.scrollTo({ left: targetIdx * slideWidth, behavior: "auto" });
     }
+    // Only react to collection change, not every selection change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection.id]);
 
   // Track which slide is centered as the user scrolls
