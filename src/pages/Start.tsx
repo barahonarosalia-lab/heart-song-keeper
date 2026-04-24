@@ -331,15 +331,51 @@ const Start = () => {
         )}
 
         {order.tier === "signature" && (
-          <section className="container py-16 md:py-20">
-            <p className="font-serif text-gold text-2xl md:text-3xl">02</p>
-            <h2 className="font-serif text-3xl md:text-4xl text-navy mt-2">
-              Choose their song
-            </h2>
-            <p className="text-muted-foreground mt-3">
-              Coming next — Signature path.
-            </p>
-          </section>
+          <Step
+            index="02"
+            title="What moment are you celebrating?"
+            subtitle="Every occasion has its own song."
+          >
+            <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-3xl">
+              {OCCASIONS.map((occ) => (
+                <OccasionCard
+                  key={occ}
+                  label={occ}
+                  selected={order.occasion === occ}
+                  onSelect={() => handleSelectOccasion(occ)}
+                />
+              ))}
+            </div>
+
+            {order.occasion && (
+              <div
+                ref={detailsRef}
+                className="max-w-5xl mt-12 md:mt-16 animate-in fade-in slide-in-from-bottom-2 duration-500"
+              >
+                <button
+                  type="button"
+                  onClick={handleChangeOccasion}
+                  className="text-xs text-muted-foreground hover:text-gold underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-gold transition-colors mb-6"
+                >
+                  Change occasion
+                </button>
+
+                <div className="grid md:grid-cols-3 gap-5 md:gap-6">
+                  {SONG_VERSIONS.map((song) => (
+                    <SongCard
+                      key={song.value}
+                      label={song.label}
+                      title={song.title}
+                      selected={order.song_version === song.value}
+                      onSelect={() =>
+                        setOrder((prev) => ({ ...prev, song_version: song.value }))
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Step>
         )}
       </div>
     </main>
