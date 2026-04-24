@@ -27,6 +27,8 @@ interface OrderState {
   ornament_design: string | null;
   ornament_dedication: string;
   ornament_year: string;
+  ornament_line_1: string;
+  ornament_line_2: string;
   jewelry_style: JewelryStyle | null;
   jewelry_finish: JewelryFinish | null;
   engraving_line_1: string;
@@ -191,6 +193,8 @@ const Start = () => {
     ornament_design: null,
     ornament_dedication: "",
     ornament_year: "",
+    ornament_line_1: "",
+    ornament_line_2: "",
     jewelry_style: null,
     jewelry_finish: null,
     engraving_line_1: "",
@@ -247,6 +251,8 @@ const Start = () => {
       ornament_design: product === "ornament" ? prev.ornament_design : null,
       ornament_dedication: product === "ornament" ? prev.ornament_dedication : "",
       ornament_year: product === "ornament" ? prev.ornament_year : "",
+      ornament_line_1: product === "ornament" ? prev.ornament_line_1 : "",
+      ornament_line_2: product === "ornament" ? prev.ornament_line_2 : "",
       jewelry_style: product === "jewelry" ? prev.jewelry_style : null,
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
@@ -866,45 +872,91 @@ const OrnamentExpansion = ({
       {/* Optional fields appear once a design is selected */}
       {order.ornament_design && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className="space-y-2">
-            <label htmlFor="ornament-dedication" className="label-eyebrow text-gold block">
-              Dedication (optional)
-            </label>
-            <Input
-              id="ornament-dedication"
-              maxLength={30}
-              value={order.ornament_dedication}
-              onChange={(e) =>
-                setOrder((prev) => ({ ...prev, ornament_dedication: e.target.value }))
-              }
-              placeholder="e.g. Loved you before you arrived"
-              className="h-11 rounded-xl bg-cream border-border/60"
-            />
-            <p className="text-xs text-muted-foreground text-right">
-              {order.ornament_dedication.length}/30
-            </p>
-          </div>
+          {(order.ornament_design === "moonlit_botanica" || order.ornament_design === "pet_memorial") && (
+            <>
+              <div className="space-y-2">
+                <label htmlFor="ornament-line-1" className="label-eyebrow text-gold block">
+                  Line 1 (optional)
+                </label>
+                <Input
+                  id="ornament-line-1"
+                  maxLength={30}
+                  value={order.ornament_line_1}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, ornament_line_1: e.target.value }))
+                  }
+                  placeholder={order.ornament_design === "moonlit_botanica" ? "e.g. His light shines on" : "e.g. Cooper"}
+                  className="h-11 rounded-xl bg-cream border-border/60"
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {order.ornament_line_1.length}/30
+                </p>
+              </div>
 
-          <div className="space-y-2">
-            <label htmlFor="ornament-year" className="label-eyebrow text-gold block">
-              Year (optional)
-            </label>
-            <Input
-              id="ornament-year"
-              inputMode="numeric"
-              maxLength={4}
-              value={order.ornament_year}
-              onChange={(e) => {
-                const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 4);
-                setOrder((prev) => ({ ...prev, ornament_year: v }));
-              }}
-              placeholder="e.g. 2024"
-              className="h-11 rounded-xl bg-cream border-border/60"
-            />
-            <p className="text-xs text-muted-foreground italic">
-              Not recommended for memorial designs.
-            </p>
-          </div>
+              <div className="space-y-2">
+                <label htmlFor="ornament-line-2" className="label-eyebrow text-gold block">
+                  Line 2 (optional)
+                </label>
+                <Input
+                  id="ornament-line-2"
+                  maxLength={30}
+                  value={order.ornament_line_2}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, ornament_line_2: e.target.value }))
+                  }
+                  placeholder={order.ornament_design === "moonlit_botanica" ? "e.g. Forever in our hearts" : "e.g. Best dog. Best friend."}
+                  className="h-11 rounded-xl bg-cream border-border/60"
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {order.ornament_line_2.length}/30
+                </p>
+              </div>
+            </>
+          )}
+
+          {order.ornament_design === "little_luminaries" && (
+            <>
+              <div className="space-y-2">
+                <label htmlFor="ornament-year" className="label-eyebrow text-gold block">
+                  Year (optional)
+                </label>
+                <Input
+                  id="ornament-year"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={order.ornament_year}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^0-9]/g, "").slice(0, 4);
+                    setOrder((prev) => ({ ...prev, ornament_year: v }));
+                  }}
+                  placeholder="e.g. 2026"
+                  className="h-11 rounded-xl bg-cream border-border/60"
+                />
+                <p className="text-xs text-muted-foreground italic">
+                  Add the year they arrived — optional but special.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="ornament-dedication" className="label-eyebrow text-gold block">
+                  Dedication (optional)
+                </label>
+                <Input
+                  id="ornament-dedication"
+                  maxLength={30}
+                  value={order.ornament_dedication}
+                  onChange={(e) =>
+                    setOrder((prev) => ({ ...prev, ornament_dedication: e.target.value }))
+                  }
+                  placeholder="e.g. Loved you before you arrived"
+                  className="h-11 rounded-xl bg-cream border-border/60"
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {order.ornament_dedication.length}/30
+                </p>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
