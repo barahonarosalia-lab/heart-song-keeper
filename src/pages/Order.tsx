@@ -22,6 +22,7 @@ interface OrderRecord {
   card_collection: string;
   recipient_name: string;
   gifter_name: string;
+  jewelry_style: string;
   audio_uploaded: boolean;
   paid: boolean;
 }
