@@ -4,7 +4,7 @@ import heroKey from "@/assets/hero-key.png";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-navy text-cream pt-20">
+    <section className="relative min-h-screen overflow-hidden bg-gradient-navy text-cream pt-8 md:pt-12">
       {/* Starfield layers */}
       <div className="absolute inset-0 starfield opacity-80 animate-twinkle" />
       <div className="absolute inset-0 starfield opacity-50" style={{ animationDelay: "1.5s" }} />
@@ -12,7 +12,7 @@ export const Hero = () => {
       {/* Soft gold glow behind key */}
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55vw] h-[55vw] max-w-[800px] max-h-[800px] rounded-full bg-gold/10 blur-3xl pointer-events-none" />
 
-      <div className="container relative z-10 py-12 md:py-16 lg:py-24 min-h-[calc(100vh-5rem)] flex items-center">
+      <div className="container relative z-10 py-8 md:py-12 lg:py-16 min-h-[calc(100vh-5rem)] flex items-center">
         <div className="w-full grid grid-cols-[1fr_auto] lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center">
           {/* Left text — vertically centered alongside the key */}
           <div className="space-y-5 sm:space-y-6 lg:space-y-8 max-w-xl animate-fade-up text-left">
@@ -40,6 +40,15 @@ export const Hero = () => {
               <Button variant="cream" size="lg" asChild>
                 <a href="#how">See how it works</a>
               </Button>
+            </div>
+
+            <div className="pt-1">
+              <a
+                href="/upgrade"
+                className="text-xs text-cream/40 hover:text-cream/70 transition-colors underline underline-offset-2"
+              >
+                Already have a Key of Hearts? Upgrade it →
+              </a>
             </div>
           </div>
 
