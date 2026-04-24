@@ -293,6 +293,7 @@ const Start = () => {
     engraving_line_2: "",
     collection: null,
     art_selected: null,
+    card_design: null,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
