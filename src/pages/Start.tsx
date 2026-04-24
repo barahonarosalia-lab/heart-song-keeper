@@ -63,6 +63,7 @@ const Start = () => {
   const [order, setOrder] = useState<OrderState>({
     tier: null,
     occasion: null,
+    song_version: null,
     whose_audio: "",
     music_style: null,
     audio_url: "",
