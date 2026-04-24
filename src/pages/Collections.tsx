@@ -107,9 +107,16 @@ const ornaments = [
 ];
 
 const CollectionsPage = () => {
+  const [activeCollection, setActiveCollection] = useState<ArtCollection | null>(null);
+
   return (
     <main className="min-h-screen bg-cream text-navy">
       <Navigation />
+
+      <CollectionGalleryOverlay
+        collection={activeCollection}
+        onClose={() => setActiveCollection(null)}
+      />
 
       {/* HEADER */}
       <section className="bg-navy text-cream pt-32 pb-20 md:pt-40 md:pb-28 relative overflow-hidden">
