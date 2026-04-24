@@ -83,7 +83,11 @@ const Start = () => {
   };
 
   const handleSelectOccasion = (occasion: string) => {
-    setOrder((prev) => ({ ...prev, occasion }));
+    setOrder((prev) => ({ ...prev, occasion, song_version: null }));
+  };
+
+  const handleChangeOccasion = () => {
+    setOrder((prev) => ({ ...prev, occasion: null, song_version: null }));
   };
 
   // Reveal details once an occasion is picked
