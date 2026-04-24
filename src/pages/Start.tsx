@@ -197,61 +197,44 @@ interface CollectionDef {
   pieces: ArtPiece[];
 }
 
+// Generate 10 placeholder art slots per collection.
+// Real art images will be swapped in before launch.
+const makePlaceholders = (collectionId: string, count = 10): ArtPiece[] =>
+  Array.from({ length: count }, (_, i) => ({
+    id: `${collectionId}_art_${i + 1}`,
+    name: `Art ${i + 1}`,
+  }));
+
 const COLLECTIONS: CollectionDef[] = [
   {
     id: "little_luminaries",
     name: "Little Luminaries",
     cover: luminaries,
-    pieces: [
-      { id: "punch_lullaby", name: "Punch & Lullaby" },
-      { id: "first_breath", name: "First Breath" },
-      { id: "moonlit_crib", name: "Moonlit Crib" },
-      { id: "tiny_hands", name: "Tiny Hands" },
-    ],
+    pieces: makePlaceholders("little_luminaries"),
   },
   {
     id: "moonlit_botanica",
     name: "Moonlit Botanica",
     cover: botanica,
-    pieces: [
-      { id: "candlelit_wreath", name: "Candlelit Wreath" },
-      { id: "evening_rose", name: "Evening Rose" },
-      { id: "quiet_reverence", name: "Quiet Reverence" },
-      { id: "midnight_garden", name: "Midnight Garden" },
-    ],
+    pieces: makePlaceholders("moonlit_botanica"),
   },
   {
     id: "meadow_mane",
     name: "Meadow & Mane",
     cover: meadow,
-    pieces: [
-      { id: "wide_skies", name: "Wide Skies" },
-      { id: "golden_field", name: "Golden Field" },
-      { id: "rugged_ridge", name: "Rugged Ridge" },
-      { id: "lone_stag", name: "Lone Stag" },
-    ],
+    pieces: makePlaceholders("meadow_mane"),
   },
   {
     id: "fable_fawn",
     name: "Fable & Fawn",
     cover: fable,
-    pieces: [
-      { id: "moonlit_fox", name: "Moonlit Fox" },
-      { id: "glowing_cottage", name: "Glowing Cottage" },
-      { id: "enchanted_grove", name: "Enchanted Grove" },
-      { id: "starlit_path", name: "Starlit Path" },
-    ],
+    pieces: makePlaceholders("fable_fawn"),
   },
   {
     id: "ember_ivy",
     name: "Ember & Ivy",
     cover: ember,
-    pieces: [
-      { id: "candlelit_garden", name: "Candlelit Garden" },
-      { id: "paired_foxes", name: "Paired Foxes" },
-      { id: "cottage_roses", name: "Cottage Roses" },
-      { id: "warm_hearth", name: "Warm Hearth" },
-    ],
+    pieces: makePlaceholders("ember_ivy"),
   },
 ];
 
@@ -369,6 +352,13 @@ const Start = () => {
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
     }));
+
+    // Auto-scroll to Step 4 when an art-bearing product is selected
+    if (ART_PRODUCTS.includes(product)) {
+      setTimeout(() => {
+        step4Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
   };
 
   // Determine if Step 2 is complete enough to unlock Step 3
@@ -746,51 +736,18 @@ const Start = () => {
                   )}
               </div>
 
-              {/* Image gallery */}
+              {/* Image gallery — horizontal swipe */}
               {activeCollection && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <p className="label-eyebrow text-gold">Choose their art</p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-                    {activeCollection.pieces.map((piece) => {
-                      const selected = order.art_selected === piece.id;
-                      return (
-                        <button
-                          key={piece.id}
-                          type="button"
-                          onClick={() =>
-                            setOrder((prev) => ({ ...prev, art_selected: piece.id }))
-                          }
-                          className={cn(
-                            "relative group text-left rounded-2xl overflow-hidden bg-card border transition-all duration-300",
-                            "hover:-translate-y-0.5 hover:shadow-card",
-                            selected
-                              ? "border-gold ring-2 ring-gold/40 shadow-card"
-                              : "border-border/60",
-                          )}
-                        >
-                          <div className="aspect-square overflow-hidden bg-muted">
-                            <img
-                              src={activeCollection.cover}
-                              alt={piece.name}
-                              loading="lazy"
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                          </div>
-                          {selected && (
-                            <span className="absolute top-2.5 right-2.5 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy shadow-gold">
-                              <Check className="size-3.5" strokeWidth={3} />
-                            </span>
-                          )}
-                          <div className="p-3">
-                            <p className="font-serif text-sm md:text-base text-navy leading-tight">
-                              {piece.name}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <ArtGallery
+                  collection={activeCollection}
+                  selectedId={order.art_selected}
+                  onToggle={(pieceId) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      art_selected: prev.art_selected === pieceId ? null : pieceId,
+                    }))
+                  }
+                />
               )}
             </div>
           </Step>
@@ -1046,14 +1003,9 @@ const ProductCard = ({
       {selected &&
         product.id !== "ornament" &&
         product.id !== "jewelry" && (
-          <button
-            type="button"
-            onClick={onChooseArt}
-            className="mt-auto inline-flex items-center justify-center gap-2 rounded-full h-11 px-5 text-sm font-medium border-2 bg-transparent text-navy border-gold hover:bg-gold/10 transition-colors"
-          >
-            Choose their art
-            <ArrowRight className="size-4" />
-          </button>
+          <p className="text-xs text-muted-foreground italic">
+            Choose their art below ↓
+          </p>
         )}
     </div>
   );
@@ -1351,6 +1303,105 @@ const JewelryExpansion = ({
         <p className="text-xs text-muted-foreground italic">
           Engraving is included — no extra charge.
         </p>
+      </div>
+    </div>
+  );
+};
+
+// ----- Art gallery (horizontal swipe) -------------------------------------
+
+const ArtGallery = ({
+  collection,
+  selectedId,
+  onToggle,
+}: {
+  collection: CollectionDef;
+  selectedId: string | null;
+  onToggle: (pieceId: string) => void;
+}) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Reset to first image when the collection changes
+  useEffect(() => {
+    setActiveIndex(0);
+    if (scrollerRef.current) {
+      scrollerRef.current.scrollTo({ left: 0, behavior: "auto" });
+    }
+  }, [collection.id]);
+
+  // Track which slide is centered as the user scrolls
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const slideWidth = el.clientWidth * 0.85;
+    const idx = Math.round(el.scrollLeft / slideWidth);
+    if (idx !== activeIndex && idx >= 0 && idx < collection.pieces.length) {
+      setActiveIndex(idx);
+    }
+  };
+
+  return (
+    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <p className="label-eyebrow text-gold">Choose their art</p>
+
+      {/* Swipe row — each slide is ~85% viewport width */}
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="-mx-6 px-6 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth"
+        style={{ scrollPaddingLeft: "1.5rem" }}
+      >
+        {collection.pieces.map((piece) => {
+          const selected = selectedId === piece.id;
+          return (
+            <button
+              key={piece.id}
+              type="button"
+              onClick={() => onToggle(piece.id)}
+              className={cn(
+                "snap-start shrink-0 w-[85%] sm:w-[70%] md:w-[45%] lg:w-[32%] relative rounded-2xl overflow-hidden bg-card border-2 transition-all duration-300",
+                selected
+                  ? "border-gold ring-2 ring-gold/40 shadow-card"
+                  : "border-border/60 hover:border-gold/60",
+              )}
+            >
+              <div className="aspect-square overflow-hidden bg-muted">
+                <img
+                  src={collection.cover}
+                  alt={piece.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {selected && (
+                <span className="absolute top-3 right-3 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold">
+                  <Check className="size-4" strokeWidth={3} />
+                </span>
+              )}
+              <div className="p-3 text-left">
+                <p className="font-serif text-sm md:text-base text-navy leading-tight">
+                  {piece.name}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
+        {collection.pieces.map((piece, i) => (
+          <span
+            key={piece.id}
+            className={cn(
+              "rounded-full transition-all duration-300",
+              i === activeIndex
+                ? "size-2 bg-gold"
+                : "size-1.5 bg-navy/20",
+            )}
+          />
+        ))}
       </div>
     </div>
   );
