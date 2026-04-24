@@ -194,6 +194,22 @@ const PRODUCTS: ProductDef[] = [
     ],
     cta: "Choose Photo Blanket",
   },
+  {
+    id: "gift_card",
+    name: "Gift Card",
+    signature: 29,
+    preserve: 29,
+    tagline: "The perfect gift when you're not sure what they'd love.",
+    details: [
+      "Choose any amount from $29",
+      "Delivered instantly by email",
+      "Beautiful PDF — print or forward",
+      "Redeemable at keyofhearts.com/redeem",
+      "Never expires",
+      "Free",
+    ],
+    cta: "Choose Gift Card",
+  },
 ];
 
 interface OrnamentDesign {
