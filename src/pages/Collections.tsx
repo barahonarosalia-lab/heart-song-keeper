@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Navigation } from "@/components/site/Navigation";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
 import { SwipeRow } from "@/components/site/SwipeRow";
+import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
 import { cn } from "@/lib/utils";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
