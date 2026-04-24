@@ -447,13 +447,13 @@ const Start = () => {
 
           <div className="mt-10 max-w-md">
             <div className="flex items-center justify-between text-xs text-cream/60 mb-2">
-              <span>Step {currentStep} of {TOTAL_STEPS}</span>
-              <span>{completedCount}/{TOTAL_STEPS} complete</span>
+              <span>Step {currentStep} of {totalSteps}</span>
+              <span>{completedCount}/{totalSteps} complete</span>
             </div>
             <div className="h-1 rounded-full bg-cream/10 overflow-hidden">
               <div
                 className="h-full bg-gradient-gold transition-all duration-500"
-                style={{ width: `${(completedCount / TOTAL_STEPS) * 100}%` }}
+                style={{ width: `${(completedCount / totalSteps) * 100}%` }}
               />
             </div>
           </div>
