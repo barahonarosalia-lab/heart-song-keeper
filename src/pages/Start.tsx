@@ -549,21 +549,50 @@ const Start = () => {
     }, 80);
   };
 
+  // Pre-fill collection + art from /collections deep link (?collection=...&art=N)
+  const [searchParams] = useSearchParams();
+  const [fromCollections, setFromCollections] = useState(false);
+  const [prefilledArtId, setPrefilledArtId] = useState<string | null>(null);
+  useEffect(() => {
+    const slug = searchParams.get("collection");
+    const artParam = searchParams.get("art");
+    if (!slug) return;
+    const collectionId = slug.replace(/-/g, "_");
+    const collectionDef = COLLECTIONS.find((c) => c.id === collectionId);
+    if (!collectionDef) return;
+    const artNum = artParam ? parseInt(artParam, 10) : NaN;
+    const piece =
+      Number.isFinite(artNum) && artNum >= 1 && artNum <= collectionDef.pieces.length
+        ? collectionDef.pieces[artNum - 1]
+        : null;
+    setOrder((prev) => ({
+      ...prev,
+      collection: collectionId,
+      art_selected: piece ? piece.id : prev.art_selected,
+    }));
+    setFromCollections(true);
+    if (piece) setPrefilledArtId(piece.id);
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Default the collection from the chosen occasion when entering Step 4 —
   // only when no collection is set yet, so the customer can still change it.
+  // Skipped when the customer arrived from /collections with a chosen collection.
   useEffect(() => {
     if (
       order.product &&
       ART_PRODUCTS.includes(order.product) &&
       order.occasion &&
-      !order.collection
+      !order.collection &&
+      !fromCollections
     ) {
       const defaultId = OCCASION_TO_COLLECTION[order.occasion];
       if (defaultId) {
         setOrder((prev) => ({ ...prev, collection: defaultId }));
       }
     }
-  }, [order.product, order.occasion, order.collection]);
+  }, [order.product, order.occasion, order.collection, fromCollections]);
 
   const showStep4 = !!order.product && STEP4_PRODUCTS.includes(order.product);
   const step4Headline =
