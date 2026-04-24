@@ -183,6 +183,107 @@ const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
   { id: "dog_tag", name: "Dog Tag" },
 ];
 
+// ----- Collections (art) --------------------------------------------------
+
+interface ArtPiece {
+  id: string;
+  name: string;
+}
+
+interface CollectionDef {
+  id: string;
+  name: string;
+  cover: string;
+  pieces: ArtPiece[];
+}
+
+const COLLECTIONS: CollectionDef[] = [
+  {
+    id: "little_luminaries",
+    name: "Little Luminaries",
+    cover: luminaries,
+    pieces: [
+      { id: "punch_lullaby", name: "Punch & Lullaby" },
+      { id: "first_breath", name: "First Breath" },
+      { id: "moonlit_crib", name: "Moonlit Crib" },
+      { id: "tiny_hands", name: "Tiny Hands" },
+    ],
+  },
+  {
+    id: "moonlit_botanica",
+    name: "Moonlit Botanica",
+    cover: botanica,
+    pieces: [
+      { id: "candlelit_wreath", name: "Candlelit Wreath" },
+      { id: "evening_rose", name: "Evening Rose" },
+      { id: "quiet_reverence", name: "Quiet Reverence" },
+      { id: "midnight_garden", name: "Midnight Garden" },
+    ],
+  },
+  {
+    id: "meadow_mane",
+    name: "Meadow & Mane",
+    cover: meadow,
+    pieces: [
+      { id: "wide_skies", name: "Wide Skies" },
+      { id: "golden_field", name: "Golden Field" },
+      { id: "rugged_ridge", name: "Rugged Ridge" },
+      { id: "lone_stag", name: "Lone Stag" },
+    ],
+  },
+  {
+    id: "fable_fawn",
+    name: "Fable & Fawn",
+    cover: fable,
+    pieces: [
+      { id: "moonlit_fox", name: "Moonlit Fox" },
+      { id: "glowing_cottage", name: "Glowing Cottage" },
+      { id: "enchanted_grove", name: "Enchanted Grove" },
+      { id: "starlit_path", name: "Starlit Path" },
+    ],
+  },
+  {
+    id: "ember_ivy",
+    name: "Ember & Ivy",
+    cover: ember,
+    pieces: [
+      { id: "candlelit_garden", name: "Candlelit Garden" },
+      { id: "paired_foxes", name: "Paired Foxes" },
+      { id: "cottage_roses", name: "Cottage Roses" },
+      { id: "warm_hearth", name: "Warm Hearth" },
+    ],
+  },
+];
+
+// Map an occasion (Step 2) to a default collection (Step 4)
+const OCCASION_TO_COLLECTION: Record<string, string> = {
+  "Birth & Baby": "little_luminaries",
+  "Mother's Day": "little_luminaries",
+  "Father's Day": "meadow_mane",
+  "Memorial & Remembrance": "moonlit_botanica",
+  "Pregnancy & Infant Loss": "moonlit_botanica",
+  "Pet Memorial": "moonlit_botanica",
+  "Military & Deployment": "meadow_mane",
+  "Graduation": "meadow_mane",
+  "Sobriety & Milestone": "meadow_mane",
+  "Childhood Memory": "meadow_mane",
+  "Birthday": "meadow_mane",
+  "Just Because": "meadow_mane",
+  "Friendship": "fable_fawn",
+  "Wedding & Anniversary": "ember_ivy",
+  "Holiday & Christmas": "fable_fawn",
+};
+
+// Map a product to the Step 4 headline noun
+const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
+  canvas: "canvas",
+  blanket: "blanket",
+  digital: "digital download",
+};
+
+// Products that route through the art-picker step
+const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
+
 // ----- Page ---------------------------------------------------------------
 
 const Start = () => {
@@ -206,10 +307,13 @@ const Start = () => {
     jewelry_finish: null,
     engraving_line_1: "",
     engraving_line_2: "",
+    collection: null,
+    art_selected: null,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
   const step3Ref = useRef<HTMLDivElement>(null);
+  const step4Ref = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const handleSelectTier = (tier: Tier) => {
