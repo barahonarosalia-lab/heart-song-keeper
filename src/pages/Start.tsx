@@ -268,6 +268,79 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 // Products that route through the art-picker step
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
+// ----- Card designs (Step 5) ---------------------------------------------
+
+interface CardDesign {
+  id: string;
+  collection: string;
+  name: string;
+  cover: string;
+  comingSoon?: boolean;
+}
+
+const CARD_DESIGNS: CardDesign[] = [
+  {
+    id: "card_little_luminaries",
+    collection: "Little Luminaries",
+    name: "Blush moon, pink clouds, soft stars",
+    cover: luminaries,
+  },
+  {
+    id: "card_meadow_mane",
+    collection: "Meadow & Mane",
+    name: "Warm botanical frame, gold geometric border",
+    cover: meadow,
+  },
+  {
+    id: "card_moonlit_botanica",
+    collection: "Moonlit Botanica",
+    name: "Deep navy, white rose, gold botanical line art",
+    cover: botanica,
+  },
+  {
+    id: "card_fable_fawn",
+    collection: "Fable & Fawn",
+    name: "Coming soon",
+    cover: fable,
+    comingSoon: true,
+  },
+  {
+    id: "card_ember_ivy",
+    collection: "Ember & Ivy",
+    name: "Coming soon",
+    cover: ember,
+    comingSoon: true,
+  },
+];
+
+// Step 5 dynamic subheadline based on product
+const cardSubheadlineForProduct = (product: ProductId): string => {
+  switch (product) {
+    case "jewelry":
+      return "Your card ships first — arriving before their jewelry so they know something beautiful is on its way.";
+    case "canvas":
+      return "Included with their canvas. Frameable. Yours to keep forever.";
+    case "blanket":
+      return "Included with their blanket. Frameable. Yours to keep forever.";
+    case "ornament":
+      return "Included with their ornament. Frameable. Yours to keep forever.";
+    case "digital":
+      return "Your PDF card arrives instantly by email — ready to print or frame.";
+  }
+};
+
+// Step 5 QR notice copy based on tier + Preserve audio choice
+const qrNoticeCopy = (order: OrderState): string => {
+  if (order.tier === "signature") {
+    return "Your card includes a unique QR code linked to their song. Physical cards are printed and on their way within 2 business days. Digital orders receive their card by email instantly.";
+  }
+  if (order.tier === "preserve" && order.send_link_later) {
+    return "Your card includes a unique QR code. From the moment it arrives, scanning it plays a beautiful song matched to their occasion. Send us their audio when you're ready — we'll have their voice live within 48 hours of receiving it. The card never waits. Neither does the music.";
+  }
+  // Preserve + audio uploaded
+  return "Your card includes a unique QR code. While your recording is being prepared, scanning it will play a beautiful song matched to their occasion. Once your audio is ready — within 48 hours of us receiving it — the QR updates to their voice. They'll never hold a silent key.";
+};
+
 // ----- Page ---------------------------------------------------------------
 
 const Start = () => {
