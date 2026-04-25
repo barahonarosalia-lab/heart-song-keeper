@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { priceIdForOrder } from "@/lib/pricing";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
@@ -417,6 +419,31 @@ const Start = () => {
   const step5Ref = useRef<HTMLDivElement>(null);
   const step6Ref = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
+
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
+  const handleCheckout = () => {
+    if (!order.product || !order.tier) return;
+    const priceId = priceIdForOrder({
+      product: order.product,
+      tier: order.tier,
+      jewelryFinish: order.jewelry_finish,
+    });
+    if (!priceId) return;
+    openCheckout({
+      priceId,
+      metadata: {
+        flow: "start",
+        recipient_name: order.recipient_name || "",
+        gifter_name: order.gifter_name || "",
+        occasion: order.occasion || "",
+        product: order.product,
+        tier: order.tier,
+      },
+      returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
+    });
+  };
+
 
   const handleSelectTier = (tier: Tier) => {
     setOrder((prev) => ({ ...prev, tier }));
@@ -1297,8 +1324,11 @@ const Start = () => {
                 disabled={
                   !order.gifter_name.trim() ||
                   !order.recipient_name.trim() ||
-                  !order.relationship.trim()
+                  !order.relationship.trim() ||
+                  !order.product ||
+                  !order.tier
                 }
+                onClick={handleCheckout}
               >
                 Continue to checkout →
               </Button>
@@ -1306,6 +1336,7 @@ const Start = () => {
           </Step>
         )}
       </div>
+      {checkoutElement}
     </main>
   );
 };

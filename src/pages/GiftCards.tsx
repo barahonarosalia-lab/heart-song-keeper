@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { giftCardPriceId } from "@/lib/pricing";
 
 const PRESETS = [29, 49, 59, 89, 119];
 const NOTE_MAX = 150;
@@ -17,23 +19,33 @@ const GiftCards = () => {
   const [note, setNote] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmed] = useState(false);
 
   const finalAmount = amount;
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const ready = finalAmount !== null && finalAmount >= 29 && emailValid;
 
-  const handleCheckout = async () => {
-    if (!ready) return;
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
+  const handleCheckout = () => {
+    if (!ready || finalAmount === null) return;
+    const priceId = giftCardPriceId(finalAmount);
+    if (!priceId) return;
     setSubmitting(true);
-    // Stripe checkout integration would go here.
-    // For now, simulate success and reveal confirmation state.
-    setTimeout(() => {
-      setSubmitting(false);
-      setConfirmed(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 600);
+    openCheckout({
+      priceId,
+      customerEmail: email,
+      metadata: {
+        flow: "gift_card",
+        amount: String(finalAmount),
+        recipient_name: recipient || "",
+        from_name: from || "",
+        note: note || "",
+      },
+      returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
+    });
+    setTimeout(() => setSubmitting(false), 800);
   };
 
   return (
@@ -249,6 +261,7 @@ const GiftCards = () => {
           · Key of Hearts by Life With Art Co.
         </div>
       </footer>
+      {checkoutElement}
     </div>
   );
 };

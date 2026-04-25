@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/site/Footer";
 import { Navigation } from "@/components/site/Navigation";
+import { supabase } from "@/integrations/supabase/client";
 
 // ----- Types -----
 type Tier = "signature" | "preserve";
@@ -308,26 +309,222 @@ const UploadRecording = ({ orderId }: { orderId: string }) => {
   );
 };
 
+interface StripeOrderRow {
+  stripe_session_id: string;
+  customer_email: string | null;
+  price_id: string | null;
+  amount_total: number | null;
+  currency: string | null;
+  status: string;
+  metadata: Record<string, string> | null;
+  created_at: string;
+}
+
+const PRICE_LABEL: Record<string, string> = {
+  digital_signature: "Digital Download — Signature",
+  digital_preserve: "Digital Download — Preserve",
+  canvas_signature: "Canvas 11x14 — Signature",
+  canvas_preserve: "Canvas 11x14 — Preserve",
+  ornament_signature: "Acrylic Ornament — Signature",
+  ornament_preserve: "Acrylic Ornament — Preserve",
+  jewelry_silver_signature: "Jewelry Silver — Signature",
+  jewelry_silver_preserve: "Jewelry Silver — Preserve",
+  jewelry_gold_signature: "Jewelry Gold — Signature",
+  jewelry_gold_preserve: "Jewelry Gold — Preserve",
+  blanket_signature: "Blanket — Signature",
+  blanket_preserve: "Blanket — Preserve",
+  photo_blanket_signature: "Photo Blanket — Signature",
+  photo_blanket_preserve: "Photo Blanket — Preserve",
+  upgrade_key: "Upgrade Your Key",
+  gift_card_29: "Gift Card $29",
+  gift_card_49: "Gift Card $49",
+  gift_card_59: "Gift Card $59",
+  gift_card_89: "Gift Card $89",
+  gift_card_119: "Gift Card $119",
+};
+
+const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
+  const amount = row.amount_total != null ? `$${(row.amount_total / 100).toFixed(2)}` : "";
+  const dateStr = new Date(row.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const productLabel = row.price_id ? PRICE_LABEL[row.price_id] ?? row.price_id : "Your order";
+  const meta = row.metadata ?? {};
+  return (
+    <div className="min-h-screen bg-cream">
+      <Navigation />
+      <header className="bg-navy-deep text-cream relative overflow-hidden pt-20">
+        <div className="absolute inset-0 starfield opacity-30" />
+        <div className="container relative py-20 md:py-28 text-center">
+          <p className="label-eyebrow text-gold mb-6">Key of Hearts</p>
+          <h1 className="font-serif text-5xl md:text-7xl text-cream mb-6 text-balance">
+            It's on its way.
+          </h1>
+          <p className="text-cream/70 text-sm md:text-base">
+            Order {row.stripe_session_id.slice(-12).toUpperCase()} · {dateStr}
+          </p>
+        </div>
+      </header>
+
+      <section className="container py-16 md:py-20">
+        <div className="max-w-2xl mx-auto">
+          <p className="label-eyebrow text-gold mb-6 text-center">Your Order</p>
+          <div className="bg-card rounded-2xl shadow-card p-8 md:p-10 border border-gold/20">
+            <SummaryRow label="Item" value={productLabel} />
+            {amount && <SummaryRow label="Total" value={amount} />}
+            {row.customer_email && <SummaryRow label="Email" value={row.customer_email} />}
+            {meta.recipient_name && <SummaryRow label="Recipient" value={meta.recipient_name} />}
+            {meta.gifter_name && <SummaryRow label="From" value={meta.gifter_name} />}
+            {meta.from_name && <SummaryRow label="From" value={meta.from_name} />}
+            {meta.occasion && <SummaryRow label="Occasion" value={meta.occasion} />}
+            {meta.note && <SummaryRow label="Note" value={meta.note} />}
+            <SummaryRow label="Status" value={row.status === "paid" ? "Paid" : row.status} />
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-20 bg-cream-warm">
+        <div className="container max-w-2xl">
+          <h2 className="font-serif text-3xl md:text-5xl text-navy mb-8 text-balance">
+            What happens next.
+          </h2>
+          <p className="text-navy/80 text-lg leading-relaxed font-light">
+            We'll email a confirmation to {row.customer_email || "you"} shortly. Physical
+            items ship within the timeframe noted on the product. Digital items arrive in
+            your inbox within minutes.
+          </p>
+        </div>
+      </section>
+
+      <section className="container py-16 md:py-20">
+        <div className="max-w-2xl mx-auto">
+          <div className="h-px bg-gold/20 mb-12" />
+          <div className="text-center space-y-5">
+            <p className="label-eyebrow text-gold">Have another someone special?</p>
+            <h2 className="font-serif text-3xl md:text-4xl text-navy">Start another Key →</h2>
+            <div className="pt-4">
+              <Button asChild variant="outline" size="xl" className="border-gold text-gold hover:bg-gold hover:text-navy font-serif">
+                <Link to="/start">Find their Key →</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container pb-20 text-center space-y-2">
+        <p className="text-navy/70 text-sm">
+          Questions?{" "}
+          <a href="mailto:hello@keyofhearts.com" className="text-gold hover:underline">
+            hello@keyofhearts.com
+          </a>
+        </p>
+        <p className="text-navy/40 text-xs">Key of Hearts by Life With Art Co.</p>
+      </section>
+      <Footer />
+    </div>
+  );
+};
+
 const Order = () => {
   const { orderId = "" } = useParams();
   const [searchParams] = useSearchParams();
 
-  const order = useMemo(() => loadOrder(orderId, searchParams), [orderId, searchParams]);
+  const isStripeSession = orderId.startsWith("cs_");
 
-  // Track confirmation view (placeholder — wire to backend / Sheets later)
+  // Stripe session lookup
+  const [stripeRow, setStripeRow] = useState<StripeOrderRow | null>(null);
+  const [stripeLoading, setStripeLoading] = useState(isStripeSession);
+  const [stripeError, setStripeError] = useState(false);
+
+  useEffect(() => {
+    if (!isStripeSession) return;
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 8;
+    const tick = async () => {
+      attempts += 1;
+      const { data, error } = await supabase
+        .from("orders")
+        .select("stripe_session_id, customer_email, price_id, amount_total, currency, status, metadata, created_at")
+        .eq("stripe_session_id", orderId)
+        .maybeSingle();
+      if (cancelled) return;
+      if (data) {
+        setStripeRow(data as unknown as StripeOrderRow);
+        setStripeLoading(false);
+        return;
+      }
+      if (error || attempts >= maxAttempts) {
+        setStripeError(true);
+        setStripeLoading(false);
+        return;
+      }
+      setTimeout(tick, 1500);
+    };
+    tick();
+    return () => {
+      cancelled = true;
+    };
+  }, [isStripeSession, orderId]);
+
+  // Legacy mock-order path (used by existing dev links with query params)
+  const order = useMemo(
+    () => (isStripeSession ? null : loadOrder(orderId, searchParams)),
+    [isStripeSession, orderId, searchParams],
+  );
+
   useEffect(() => {
     if (!order || !order.paid) return;
     const key = `confirmation_viewed_${order.order_id}`;
     if (sessionStorage.getItem(key)) return;
     sessionStorage.setItem(key, "true");
-    // In production: POST { confirmation_page_viewed: true, confirmation_viewed_at: new Date().toISOString() }
-    console.log("[order] confirmation_page_viewed", {
-      order_id: order.order_id,
-      confirmation_viewed_at: new Date().toISOString(),
-    });
   }, [order]);
 
-  // Redirect on invalid / unpaid orders
+  if (isStripeSession) {
+    if (stripeLoading) {
+      return (
+        <div className="min-h-screen bg-cream flex flex-col">
+          <Navigation />
+          <div className="flex-1 flex items-center justify-center px-6">
+            <div className="max-w-md text-center space-y-4">
+              <p className="label-eyebrow text-gold">Confirming your order</p>
+              <h1 className="font-serif text-3xl text-navy">Just a moment…</h1>
+              <p className="text-navy/70">We're recording your purchase.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (stripeRow) {
+      return <StripeOrderConfirmation row={stripeRow} />;
+    }
+    if (stripeError) {
+      return (
+        <div className="min-h-screen bg-cream flex flex-col">
+          <Navigation />
+          <div className="flex-1 flex items-center justify-center px-6">
+            <div className="max-w-md text-center space-y-6">
+              <p className="label-eyebrow text-gold">Key of Hearts</p>
+              <h1 className="font-serif text-3xl md:text-4xl text-navy">
+                Your payment is processing.
+              </h1>
+              <p className="text-navy/70">
+                We received your payment but the confirmation is still syncing. Please
+                check your email shortly, or reach out at{" "}
+                <a href="mailto:hello@keyofhearts.com" className="text-gold hover:underline">
+                  hello@keyofhearts.com
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+
   if (!order || !order.paid) {
     return (
       <div className="min-h-screen bg-cream flex flex-col">
