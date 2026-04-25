@@ -34,7 +34,24 @@ const Terms = () => {
             </section>
 
             <section>
-              <h2 className="font-serif text-2xl text-navy mb-3">Audio Upload Terms</h2>
+              <h2 className="font-serif text-2xl text-navy mb-3">Refunds & Replacements</h2>
+              <p>
+                Every Key of Hearts is made to order and personalized for one person.
+                Because production begins immediately after payment, we are unable to offer
+                refunds or cancellations once your order is placed.
+              </p>
+              <p>
+                If your order arrives damaged or defective, please contact{" "}
+                <a
+                  href="mailto:hello@keyofhearts.com"
+                  className="text-gold hover:text-gold-deep underline-offset-4 hover:underline"
+                >
+                  hello@keyofhearts.com
+                </a>{" "}
+                within 30 days of delivery with a photo of the issue. We will make it right —
+                either a replacement or a resolution, at our discretion.
+              </p>
+            </section>
               <p>
                 By uploading audio to Key of Hearts, you confirm you have the right to
                 use and share this recording. Key of Hearts will use your audio solely
