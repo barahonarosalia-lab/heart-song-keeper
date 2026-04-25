@@ -3,7 +3,12 @@ import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-type Tier = { label: string; price: string; note?: string };
+type Tier = {
+  label: string;
+  price?: string;
+  note?: string;
+  options?: { price: string; material: string }[];
+};
 type ProductRow = {
   category: string;
   tagline: string;
