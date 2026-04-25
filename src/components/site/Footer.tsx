@@ -122,7 +122,7 @@ export const Footer = () => {
         <div className="h-px bg-cream/10 mb-8" />
 
         <div className="text-center text-xs md:text-sm text-cream/50 space-y-2">
-          <p>© 2026 Life With Art Co. · Key of Hearts™</p>
+          <p>© 2026 Key of Hearts™</p>
           <p>🇺🇸 Free US shipping on every order. · 🌍 International shipping calculated at checkout.</p>
         </div>
       </div>
