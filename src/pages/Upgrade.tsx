@@ -117,7 +117,6 @@ const Upgrade = () => {
       setWhoseVoice("");
       setMusicStyle(null);
       setConsent(false);
-      setConfirmed(false);
     }
   };
 
@@ -424,6 +423,7 @@ const Upgrade = () => {
         </p>
         <p className="text-xs opacity-70">Key of Hearts by Life With Art Co.</p>
       </footer>
+      {checkoutElement}
     </main>
   );
 };
