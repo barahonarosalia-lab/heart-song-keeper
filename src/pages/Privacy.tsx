@@ -17,7 +17,7 @@ const Privacy = () => {
 
           <div className="space-y-8 text-navy/80 leading-relaxed text-lg">
             <p>
-              Key of Hearts by Life With Art Co. collects only the information
+              Key of Hearts collects only the information
               necessary to fulfill your order: your name, email, shipping address,
               and any content you voluntarily provide.
             </p>

@@ -19,8 +19,7 @@ const Terms = () => {
             <section>
               <h2 className="font-serif text-2xl text-navy mb-3">Overview</h2>
               <p>
-                These Terms of Service govern your use of Key of Hearts, a product of
-                Life With Art Co. By placing an order, you agree to these terms.
+                These Terms of Service govern your use of Key of Hearts. By placing an order, you agree to these terms.
               </p>
             </section>
 
