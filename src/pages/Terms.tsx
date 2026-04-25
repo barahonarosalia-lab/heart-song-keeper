@@ -42,6 +42,10 @@ const Terms = () => {
                 within 30 days of delivery with a photo of the issue. We will make it right —
                 either a replacement or a resolution, at our discretion.
               </p>
+              <p>
+                If you are not happy with your Signature song, contact us. We will switch it
+                to another Signature song of your choosing.
+              </p>
             </section>
 
             <section>
