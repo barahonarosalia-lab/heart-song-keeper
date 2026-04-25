@@ -138,9 +138,20 @@ const TierBlock = ({
     >
       {tier.label}
     </p>
-    <p className="font-serif text-3xl md:text-4xl text-navy leading-none">
-      {tier.price}
-    </p>
+    {tier.options ? (
+      <div className="space-y-1.5">
+        {tier.options.map((opt, i) => (
+          <p key={i} className="font-serif text-xl md:text-2xl text-navy leading-none">
+            {opt.price}{" "}
+            <span className="text-sm font-sans text-navy/60 not-italic">— {opt.material}</span>
+          </p>
+        ))}
+      </div>
+    ) : (
+      <p className="font-serif text-3xl md:text-4xl text-navy leading-none">
+        {tier.price}
+      </p>
+    )}
     {tier.note && (
       <p className="mt-2 text-xs text-navy/50 italic">{tier.note}</p>
     )}
