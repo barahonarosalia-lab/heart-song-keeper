@@ -15,6 +15,7 @@ import GiftCards from "./pages/GiftCards.tsx";
 import { Placeholder } from "./pages/Placeholder.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
+import { PaymentTestModeBanner } from "./components/PaymentTestModeBanner.tsx";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -24,6 +25,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <PaymentTestModeBanner />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/start" element={<Start />} />
