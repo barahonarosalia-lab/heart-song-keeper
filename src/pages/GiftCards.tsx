@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 import { Navigation } from "@/components/site/Navigation";
@@ -12,8 +12,6 @@ const NOTE_MAX = 150;
 
 const GiftCards = () => {
   const [amount, setAmount] = useState<number | null>(null);
-  const [isCustom, setIsCustom] = useState(false);
-  const [customAmount, setCustomAmount] = useState<number | null>(null);
   const [recipient, setRecipient] = useState("");
   const [from, setFrom] = useState("");
   const [note, setNote] = useState("");
@@ -21,10 +19,7 @@ const GiftCards = () => {
   const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
-  const finalAmount = useMemo(() => {
-    if (isCustom) return customAmount && customAmount >= 29 ? customAmount : null;
-    return amount;
-  }, [amount, isCustom, customAmount]);
+  const finalAmount = amount;
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const ready = finalAmount !== null && finalAmount >= 29 && emailValid;
@@ -81,14 +76,13 @@ const GiftCards = () => {
                 <p className="label-eyebrow text-gold">Choose their amount</p>
                 <div className="grid grid-cols-2 gap-3">
                   {PRESETS.map((amt) => {
-                    const selected = !isCustom && amount === amt;
+                    const selected = amount === amt;
                     return (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => {
                           setAmount(amt);
-                          setIsCustom(false);
                         }}
                         className={cn(
                           "relative rounded-2xl h-14 text-lg font-serif border-2 transition-all",
@@ -104,52 +98,7 @@ const GiftCards = () => {
                       </button>
                     );
                   })}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsCustom(true);
-                      setAmount(null);
-                    }}
-                    className={cn(
-                      "relative col-span-2 rounded-2xl h-14 text-lg font-serif border-2 transition-all",
-                      isCustom
-                        ? "bg-gold text-navy border-gold shadow-gold"
-                        : "bg-card text-navy border-border/60 hover:border-gold",
-                    )}
-                  >
-                    Custom
-                    {isCustom && (
-                      <Check className="absolute top-2 right-2 size-4" />
-                    )}
-                  </button>
                 </div>
-
-                {isCustom && (
-                  <div className="space-y-3 animate-in fade-in slide-in-from-bottom-1 duration-300">
-                    <label htmlFor="gc-custom" className="label-eyebrow text-gold block">
-                      Enter amount
-                    </label>
-                    <Input
-                      id="gc-custom"
-                      type="number"
-                      min={29}
-                      inputMode="numeric"
-                      value={customAmount ?? ""}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        const num = v === "" ? null : Math.max(0, parseInt(v, 10) || 0);
-                        setCustomAmount(num);
-                      }}
-                      placeholder="e.g. $75"
-                      className="h-12 rounded-xl bg-card border-border/60 text-base"
-                    />
-                    {customAmount !== null && customAmount < 29 && (
-                      <p className="text-xs italic text-rose">
-                        Minimum gift card amount is $29.
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Step 2 — Personal */}
