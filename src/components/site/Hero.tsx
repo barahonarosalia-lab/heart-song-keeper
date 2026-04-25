@@ -16,8 +16,6 @@ export const Hero = () => {
         <div className="w-full grid grid-cols-[1fr_auto] lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center">
           {/* Left text — vertically centered alongside the key */}
           <div className="space-y-5 sm:space-y-6 lg:space-y-8 max-w-xl animate-fade-up text-left">
-            <p className="label-eyebrow text-gold">Life With Art Co.</p>
-
             <h1 className="font-serif text-[clamp(1.75rem,7vw,5.5rem)] leading-[1.02] text-cream tracking-tight text-balance">
               The key to their{" "}
               <span className="italic text-gold">heart.</span>

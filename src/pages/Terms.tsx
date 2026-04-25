@@ -76,7 +76,7 @@ const Terms = () => {
               <h2 className="font-serif text-2xl text-navy mb-3">Intellectual Property</h2>
               <p>
                 The Key of Hearts brand, design, and original artwork are the property
-                of Life With Art Co. Your personalized Key remains yours — made once,
+                of Key of Hearts. Your personalized Key remains yours — made once,
                 for one person, forever.
               </p>
             </section>
