@@ -12,28 +12,78 @@ function getSupabase() {
   return _supabase;
 }
 
+async function forwardToN8n(payload: Record<string, unknown>) {
+  const url = Deno.env.get("N8N_FULFILLMENT_WEBHOOK_URL");
+  if (!url) {
+    console.warn("N8N_FULFILLMENT_WEBHOOK_URL not configured; skipping n8n forward");
+    return;
+  }
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      console.error(`n8n webhook failed [${res.status}]: ${text}`);
+    } else {
+      console.log(`n8n webhook delivered [${res.status}]`);
+    }
+  } catch (err) {
+    console.error("n8n webhook error:", err);
+  }
+}
+
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   const lineItem = session?.line_items?.data?.[0];
   const priceId = session?.metadata?.priceId || lineItem?.price?.metadata?.lovable_external_id;
   const productId = lineItem?.price?.product || null;
+  const customerEmail = session.customer_email ?? session.customer_details?.email ?? null;
+  const status = session.payment_status === "paid" ? "paid" : (session.payment_status ?? "pending");
 
   await (getSupabase().from("orders") as any).upsert(
     {
       stripe_session_id: session.id,
       stripe_payment_intent: session.payment_intent ?? null,
       stripe_customer_id: session.customer ?? null,
-      customer_email: session.customer_email ?? session.customer_details?.email ?? null,
+      customer_email: customerEmail,
       price_id: priceId ?? null,
       product_id: productId,
       amount_total: session.amount_total ?? null,
       currency: session.currency ?? "usd",
-      status: session.payment_status === "paid" ? "paid" : (session.payment_status ?? "pending"),
+      status,
       environment: env,
       metadata: session.metadata ?? {},
       updated_at: new Date().toISOString(),
     },
     { onConflict: "stripe_session_id" },
   );
+
+  // Only fire fulfillment for successful payments
+  if (status === "paid") {
+    await forwardToN8n({
+      event: "order.paid",
+      environment: env,
+      order: {
+        stripe_session_id: session.id,
+        stripe_payment_intent: session.payment_intent ?? null,
+        stripe_customer_id: session.customer ?? null,
+        customer_email: customerEmail,
+        customer_details: session.customer_details ?? null,
+        shipping_details: session.shipping_details ?? session.collected_information?.shipping_details ?? null,
+        price_id: priceId ?? null,
+        product_id: productId,
+        amount_total: session.amount_total ?? null,
+        amount_subtotal: session.amount_subtotal ?? null,
+        currency: session.currency ?? "usd",
+        status,
+        metadata: session.metadata ?? {},
+        line_items: session.line_items?.data ?? [],
+      },
+      occurred_at: new Date().toISOString(),
+    });
+  }
 }
 
 Deno.serve(async (req) => {
