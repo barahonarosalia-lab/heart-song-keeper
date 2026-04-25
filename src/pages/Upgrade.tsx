@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Navigation } from "@/components/site/Navigation";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { UPGRADE_PRICE_ID } from "@/lib/pricing";
 
 // ----- Types -----
 type Tier = "signature" | "preserve";
@@ -87,8 +89,10 @@ const Upgrade = () => {
   const [whoseVoice, setWhoseVoice] = useState("");
   const [musicStyle, setMusicStyle] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
+  const [isPaying] = useState(false);
+  const [confirmed] = useState(false);
+
+  const { openCheckout, checkoutElement } = useStripeCheckout();
 
   const needsMusicStyle = foundOrder && !foundOrder.music_style;
   const wasSignature = foundOrder?.tier === "signature";
@@ -122,17 +126,18 @@ const Upgrade = () => {
     setAudioUrl(URL.createObjectURL(file));
   };
 
-  const handlePay = async () => {
+  const handlePay = () => {
     if (!canSubmit || !foundOrder) return;
-    setIsPaying(true);
-    // Simulated Stripe flow + n8n KH-6 webhook trigger.
-    // Stored fields (mock): upgrade_audio_url, upgrade_whose_voice,
-    // upgrade_music_style (if new), upgrade_paid_at, upgrade_amount: 20,
-    // upgraded_from_signature: wasSignature
-    await new Promise((r) => setTimeout(r, 900));
-    setIsPaying(false);
-    setConfirmed(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    openCheckout({
+      priceId: UPGRADE_PRICE_ID,
+      metadata: {
+        flow: "upgrade",
+        original_order_id: foundOrder.order_id,
+        whose_voice: whoseVoice,
+        music_style: musicStyle ?? foundOrder.music_style ?? "",
+      },
+      returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}?upgrade=${encodeURIComponent(foundOrder.order_id)}`,
+    });
   };
 
   // ----- CONFIRMED STATE -----
