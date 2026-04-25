@@ -27,15 +27,6 @@ const Terms = () => {
             <section>
               <h2 className="font-serif text-2xl text-navy mb-3">Orders & Fulfillment</h2>
               <p>
-                Every Key of Hearts is made to order. Once production begins, orders
-                cannot be cancelled or refunded. Please review your order carefully
-                before checkout.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-serif text-2xl text-navy mb-3">Refunds & Replacements</h2>
-              <p>
                 Every Key of Hearts is made to order and personalized for one person.
                 Because production begins immediately after payment, we are unable to offer
                 refunds or cancellations once your order is placed.
@@ -50,6 +41,22 @@ const Terms = () => {
                 </a>{" "}
                 within 30 days of delivery with a photo of the issue. We will make it right —
                 either a replacement or a resolution, at our discretion.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-serif text-2xl text-navy mb-3">Blanket Care & QR Codes</h2>
+              <p>
+                Your blanket includes four QR codes — one in each corner — so your song
+                remains scannable even with regular use and washing. Over time, repeated
+                washing may affect print quality, including the QR codes. We recommend
+                gentle machine wash, cold water, tumble dry low.
+              </p>
+              <p>
+                Every Key of Hearts order includes a Keepsake Card with your QR code
+                printed on archival-quality card stock. Your song is always accessible
+                through your card, regardless of blanket wear. The audio behind your Key
+                lives at a permanent URL — it does not expire.
               </p>
             </section>
 
