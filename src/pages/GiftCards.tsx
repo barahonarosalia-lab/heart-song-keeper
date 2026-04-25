@@ -22,8 +22,6 @@ const GiftCards = () => {
   const finalAmount = amount;
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const ready = finalAmount !== null && finalAmount >= 29 && emailValid;
 
   const handleCheckout = async () => {
