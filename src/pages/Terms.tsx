@@ -52,6 +52,9 @@ const Terms = () => {
                 either a replacement or a resolution, at our discretion.
               </p>
             </section>
+
+            <section>
+              <h2 className="font-serif text-2xl text-navy mb-3">Audio Upload Terms</h2>
               <p>
                 By uploading audio to Key of Hearts, you confirm you have the right to
                 use and share this recording. Key of Hearts will use your audio solely
