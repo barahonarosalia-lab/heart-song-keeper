@@ -3,7 +3,12 @@ import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-type Tier = { label: string; price: string; note?: string };
+type Tier = {
+  label: string;
+  price?: string;
+  note?: string;
+  options?: { price: string; material: string }[];
+};
 type ProductRow = {
   category: string;
   tagline: string;
@@ -33,8 +38,20 @@ const rows: ProductRow[] = [
   {
     category: "Jewelry",
     tagline: "Worn every day. Scanned anytime.",
-    signature: { label: "Signature", price: "$89", note: "Silver · Gold +$30" },
-    preserve: { label: "Preserve", price: "$109", note: "Silver · Gold +$30" },
+    signature: {
+      label: "Signature",
+      options: [
+        { price: "$89", material: "Silver" },
+        { price: "$99", material: "Gold" },
+      ],
+    },
+    preserve: {
+      label: "Preserve",
+      options: [
+        { price: "$109", material: "Silver" },
+        { price: "$119", material: "Gold" },
+      ],
+    },
   },
   {
     category: "Sherpa Blankets",
@@ -121,9 +138,20 @@ const TierBlock = ({
     >
       {tier.label}
     </p>
-    <p className="font-serif text-3xl md:text-4xl text-navy leading-none">
-      {tier.price}
-    </p>
+    {tier.options ? (
+      <div className="space-y-1.5">
+        {tier.options.map((opt, i) => (
+          <p key={i} className="font-serif text-xl md:text-2xl text-navy leading-none">
+            {opt.price}{" "}
+            <span className="text-sm font-sans text-navy/60 not-italic">— {opt.material}</span>
+          </p>
+        ))}
+      </div>
+    ) : (
+      <p className="font-serif text-3xl md:text-4xl text-navy leading-none">
+        {tier.price}
+      </p>
+    )}
     {tier.note && (
       <p className="mt-2 text-xs text-navy/50 italic">{tier.note}</p>
     )}
