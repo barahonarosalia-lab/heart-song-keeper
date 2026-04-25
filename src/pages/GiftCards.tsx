@@ -261,6 +261,7 @@ const GiftCards = () => {
           · Key of Hearts by Life With Art Co.
         </div>
       </footer>
+      {checkoutElement}
     </div>
   );
 };
