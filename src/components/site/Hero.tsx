@@ -49,7 +49,7 @@ export const Hero = () => {
             <div className="pt-1">
               <a
                 href="/upgrade"
-                className="text-xs text-cream/40 hover:text-cream/70 transition-colors underline underline-offset-2"
+                className="text-xs italic text-cream/70 hover:text-cream transition-colors underline underline-offset-2"
               >
                 Already have a Key of Hearts? Upgrade it →
               </a>
