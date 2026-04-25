@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { giftCardPriceId } from "@/lib/pricing";
 
 const PRESETS = [29, 49, 59, 89, 119];
 const NOTE_MAX = 150;
