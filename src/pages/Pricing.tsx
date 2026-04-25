@@ -38,8 +38,20 @@ const rows: ProductRow[] = [
   {
     category: "Jewelry",
     tagline: "Worn every day. Scanned anytime.",
-    signature: { label: "Signature", price: "$89", note: "Silver · Gold +$30" },
-    preserve: { label: "Preserve", price: "$109", note: "Silver · Gold +$30" },
+    signature: {
+      label: "Signature",
+      options: [
+        { price: "$89", material: "Silver" },
+        { price: "$99", material: "Gold" },
+      ],
+    },
+    preserve: {
+      label: "Preserve",
+      options: [
+        { price: "$109", material: "Silver" },
+        { price: "$119", material: "Gold" },
+      ],
+    },
   },
   {
     category: "Sherpa Blankets",
