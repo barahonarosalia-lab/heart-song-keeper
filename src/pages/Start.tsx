@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { priceIdForOrder } from "@/lib/pricing";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
