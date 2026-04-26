@@ -69,7 +69,7 @@ export const Footer = () => {
         </div>
 
         {/* Link columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14 max-w-4xl mx-auto">
           {cols.map((c) => (
             <div key={c.title}>
               <p className="label-eyebrow text-gold mb-4">{c.title}</p>
