@@ -122,15 +122,7 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
       </div>
 
       {expandedIndex === null ? (
-        <GalleryView
-          images={images}
-          onSelect={setExpandedIndex}
-          note={
-            collection.slug === "little-luminaries"
-              ? "This blanket is designed as a keepsake to be treasured for years to come. In keeping with safe sleep guidelines, loose blankets are not recommended for infants under 12 months in sleep spaces."
-              : null
-          }
-        />
+        <GalleryView images={images} onSelect={setExpandedIndex} />
       ) : (
         <ExpandedView
           collection={collection}
