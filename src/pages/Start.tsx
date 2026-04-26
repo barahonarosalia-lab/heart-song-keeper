@@ -554,6 +554,7 @@ const Start = () => {
       photo_url: "",
       photo_quality: null,
       photo_quality_override: false,
+      photo_reviewed: false,
     }));
   };
 
