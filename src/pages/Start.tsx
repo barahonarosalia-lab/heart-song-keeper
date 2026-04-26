@@ -505,6 +505,9 @@ const Start = () => {
       photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
       photo_quality_override:
         product === "photo_blanket" ? prev.photo_quality_override : false,
+      blanket_orientation:
+        product === "photo_blanket" ? prev.blanket_orientation : "portrait",
+      photo_reviewed: product === "photo_blanket" ? prev.photo_reviewed : false,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
