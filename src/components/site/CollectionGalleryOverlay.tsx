@@ -135,9 +135,53 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
   );
 };
 
-// ---------------- Gallery (grid of swipeable images) ----------------
+// ---------------- Gallery (mobile carousel + desktop grid) ----------------
 
 const GalleryView = ({
+  images,
+  onSelect,
+}: {
+  images: { src: string; index: number }[];
+  onSelect: (i: number) => void;
+}) => {
+  return (
+    <div className="relative flex-1 flex flex-col min-h-0">
+      {/* Mobile: swipe carousel */}
+      <div className="md:hidden flex-1 flex flex-col justify-center pb-8">
+        <MobileGallery images={images} onSelect={onSelect} />
+      </div>
+
+      {/* Desktop: scrollable grid */}
+      <div className="hidden md:block flex-1 overflow-y-auto px-8 pb-12">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onSelect(i)}
+              className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-2xl"
+              aria-label={`View art ${img.index}`}
+            >
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
+                <img
+                  src={img.src}
+                  alt={`Art ${img.index}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <p className="mt-3 text-center text-[11px] tracking-[0.25em] uppercase text-gold/80 group-hover:text-gold transition-colors">
+                Art {img.index}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MobileGallery = ({
   images,
   onSelect,
 }: {
@@ -164,7 +208,7 @@ const GalleryView = ({
   }, [emblaApi]);
 
   return (
-    <div className="relative flex-1 flex flex-col justify-center pb-8">
+    <>
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex gap-3">
           {images.map((img, i) => (
@@ -207,7 +251,7 @@ const GalleryView = ({
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -242,38 +286,67 @@ const ExpandedView = ({
 
   const artNumber = images[current]?.index ?? current + 1;
 
+  const goPrev = () => emblaApi?.scrollPrev();
+  const goNext = () => emblaApi?.scrollNext();
+
   return (
-    <div className="relative flex-1 flex flex-col">
-      <div ref={emblaRef} className="overflow-hidden flex-1">
-        <div className="flex h-full">
-          {images.map((img, i) => (
-            <div key={i} className="min-w-0 shrink-0 basis-full h-full flex items-center justify-center px-5">
-              <img
-                src={img.src}
-                alt={`Art ${img.index}`}
-                className="max-w-full max-h-full object-contain rounded-xl"
-              />
-            </div>
-          ))}
+    <div className="relative flex-1 flex flex-col md:flex-row min-h-0">
+      {/* Image area */}
+      <div className="relative flex-1 min-h-0 flex items-center">
+        <div ref={emblaRef} className="overflow-hidden flex-1 h-full">
+          <div className="flex h-full">
+            {images.map((img, i) => (
+              <div
+                key={i}
+                className="min-w-0 shrink-0 basis-full h-full flex items-center justify-center px-5 md:px-10 py-4"
+              >
+                <img
+                  src={img.src}
+                  alt={`Art ${img.index}`}
+                  className="max-w-full max-h-full object-contain rounded-xl"
+                />
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Desktop arrow controls */}
+        <button
+          type="button"
+          onClick={goPrev}
+          aria-label="Previous art"
+          className="hidden md:flex absolute left-4 lg:left-6 top-1/2 -translate-y-1/2 size-11 rounded-full bg-cream/10 hover:bg-cream/20 border border-cream/20 items-center justify-center text-cream backdrop-blur transition-colors"
+        >
+          <ArrowLeft className="size-5" />
+        </button>
+        <button
+          type="button"
+          onClick={goNext}
+          aria-label="Next art"
+          className="hidden md:flex absolute right-4 lg:right-6 top-1/2 -translate-y-1/2 size-11 rounded-full bg-cream/10 hover:bg-cream/20 border border-cream/20 items-center justify-center text-cream backdrop-blur transition-colors"
+        >
+          <ArrowRight className="size-5" />
+        </button>
       </div>
 
-      {/* Slide-up info card — ~25% screen height */}
-      <div className="bg-cream text-navy rounded-t-3xl shadow-2xl px-6 pt-5 pb-6 animate-slide-up-card">
-        <div className="max-w-md mx-auto space-y-3">
-          <div className="flex items-center justify-between">
+      {/* Info card — bottom sheet on mobile, side panel on desktop */}
+      <div className="bg-cream text-navy shadow-2xl px-6 pt-5 pb-6 animate-slide-up-card rounded-t-3xl md:rounded-none md:rounded-l-3xl md:w-[360px] lg:w-[420px] md:shrink-0 md:flex md:flex-col md:justify-center md:py-12 md:px-10 md:animate-none">
+        <div className="max-w-md mx-auto md:mx-0 space-y-3 md:space-y-5 w-full">
+          <div className="flex items-center justify-between md:flex-col md:items-start md:gap-2">
             <p className="label-eyebrow text-gold">{collection.name}</p>
             <p className="text-[11px] tracking-[0.25em] uppercase text-navy/60">
-              Art {artNumber}
+              Art {artNumber} of {images.length}
             </p>
           </div>
-          <p className="font-serif text-lg text-navy">From $29 · Signature or Preserve</p>
+          <p className="font-serif text-lg md:text-2xl text-navy">
+            From $29 · Signature or Preserve
+          </p>
           <Button variant="gold" className="w-full" asChild>
             <a href={`/start?collection=${collection.slug}&art=${artNumber}`}>
               Use this art <ArrowRight className="size-4" />
             </a>
           </Button>
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center md:text-left">
             You'll choose your product and personalize next
           </p>
         </div>
