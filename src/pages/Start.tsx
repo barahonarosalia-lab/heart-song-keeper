@@ -56,6 +56,8 @@ interface OrderState {
   photo_url: string;
   photo_quality: PhotoQuality | null;
   photo_quality_override: boolean;
+  blanket_orientation: "portrait" | "landscape";
+  photo_reviewed: boolean;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
