@@ -669,7 +669,8 @@ const Start = () => {
     if (order.product === "photo_blanket") {
       return (
         !!order.photo_url &&
-        (order.photo_quality !== "red" || order.photo_quality_override)
+        (order.photo_quality !== "red" || order.photo_quality_override) &&
+        order.photo_reviewed
       );
     }
     if (order.product === "ornament") return !!order.ornament_design;
