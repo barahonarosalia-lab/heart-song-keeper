@@ -16,8 +16,13 @@ const cols: { title: string; links: FooterLink[] }[] = [
     title: "Learn",
     links: [
       { label: "How it works", to: "/how-it-works" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
       { label: "FAQ", to: "/faq" },
-      { label: "Contact", href: "mailto:hello@keyofhearts.com" },
+      { label: "Contact us", href: "mailto:hello@keyofhearts.com" },
     ],
   },
   {
@@ -64,7 +69,7 @@ export const Footer = () => {
         </div>
 
         {/* Link columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14 max-w-4xl mx-auto">
           {cols.map((c) => (
             <div key={c.title}>
               <p className="label-eyebrow text-gold mb-4">{c.title}</p>
