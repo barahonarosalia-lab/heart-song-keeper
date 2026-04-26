@@ -1066,10 +1066,18 @@ const Start = () => {
                   photoUrl={order.photo_url}
                   quality={order.photo_quality}
                   override={order.photo_quality_override}
+                  orientation={order.blanket_orientation}
+                  reviewed={order.photo_reviewed}
                   onUpload={handlePhotoUpload}
                   onRemove={handleRemovePhoto}
                   onOverride={() =>
                     setOrder((prev) => ({ ...prev, photo_quality_override: true }))
+                  }
+                  onOrientationChange={(o) =>
+                    setOrder((prev) => ({ ...prev, blanket_orientation: o }))
+                  }
+                  onReviewedChange={(checked) =>
+                    setOrder((prev) => ({ ...prev, photo_reviewed: checked }))
                   }
                 />
               ) : (
