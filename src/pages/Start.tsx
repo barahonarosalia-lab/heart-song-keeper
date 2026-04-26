@@ -413,6 +413,8 @@ const Start = () => {
     photo_url: "",
     photo_quality: null,
     photo_quality_override: false,
+    blanket_orientation: "portrait",
+    photo_reviewed: false,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
