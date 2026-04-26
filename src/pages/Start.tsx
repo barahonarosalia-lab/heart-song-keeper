@@ -533,6 +533,7 @@ const Start = () => {
         photo_url: url,
         photo_quality: quality,
         photo_quality_override: false,
+        photo_reviewed: false,
       }));
     };
     img.onerror = () => {
@@ -541,6 +542,7 @@ const Start = () => {
         photo_url: url,
         photo_quality: "red",
         photo_quality_override: false,
+        photo_reviewed: false,
       }));
     };
     img.src = url;
