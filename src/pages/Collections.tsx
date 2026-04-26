@@ -288,6 +288,9 @@ const CollectionsPage = () => {
             <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Sherpa 50x60 · Free shipping · QR code woven into art
             </p>
+            <p className="font-sans text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed pt-2">
+              This blanket is designed as a keepsake to be treasured for years to come. In keeping with safe sleep guidelines, loose blankets are not recommended for infants under 12 months in sleep spaces.
+            </p>
           </div>
 
           <SwipeRow basis="basis-[80%] md:basis-[55%] lg:basis-[45%]">
