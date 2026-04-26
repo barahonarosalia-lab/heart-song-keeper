@@ -2148,17 +2148,31 @@ const PhotoUpload = ({
   photoUrl,
   quality,
   override,
+  orientation,
+  reviewed,
   onUpload,
   onRemove,
   onOverride,
+  onOrientationChange,
+  onReviewedChange,
 }: {
   photoUrl: string;
   quality: PhotoQuality | null;
   override: boolean;
+  orientation: "portrait" | "landscape";
+  reviewed: boolean;
   onUpload: (file: File | null) => void;
   onRemove: () => void;
   onOverride: () => void;
+  onOrientationChange: (o: "portrait" | "landscape") => void;
+  onReviewedChange: (checked: boolean) => void;
 }) => {
+  const qualityOk = !!photoUrl && (quality !== "red" || override);
+  const previewAspect =
+    orientation === "portrait" ? "aspect-[4/5]" : "aspect-[5/4]";
+  const previewMaxWidth =
+    orientation === "portrait" ? "max-w-[280px]" : "max-w-md";
+
   return (
     <div className="space-y-5 max-w-2xl">
       {!photoUrl && (
@@ -2186,8 +2200,14 @@ const PhotoUpload = ({
       )}
 
       {photoUrl && (
-        <div className="space-y-4">
-          <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card aspect-[4/3] max-w-md">
+        <div className="space-y-6">
+          <div
+            className={cn(
+              "relative rounded-2xl overflow-hidden border border-border/60 bg-card transition-all",
+              previewAspect,
+              previewMaxWidth,
+            )}
+          >
             <img
               src={photoUrl}
               alt="Uploaded photo preview"
@@ -2273,11 +2293,91 @@ const PhotoUpload = ({
               )}
             </div>
           )}
+
+          {/* Orientation selector — appears once a photo is uploaded and quality is acceptable */}
+          {qualityOk && (
+            <div className="space-y-3 pt-2 border-t border-border/40">
+              <p className="label-eyebrow text-gold pt-4">
+                How would you like your blanket oriented?
+              </p>
+              <div className="grid grid-cols-2 gap-3 max-w-md">
+                <OrientationOption
+                  label="Portrait"
+                  sublabel="Taller than wide"
+                  selected={orientation === "portrait"}
+                  onSelect={() => onOrientationChange("portrait")}
+                  variant="portrait"
+                />
+                <OrientationOption
+                  label="Landscape"
+                  sublabel="Wider than tall"
+                  selected={orientation === "landscape"}
+                  onSelect={() => onOrientationChange("landscape")}
+                  variant="landscape"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Reviewed confirmation checkbox */}
+          {qualityOk && (
+            <label className="flex items-start gap-3 cursor-pointer pt-2">
+              <input
+                type="checkbox"
+                checked={reviewed}
+                onChange={(e) => onReviewedChange(e.target.checked)}
+                className="mt-1 size-4 rounded border-border text-gold focus:ring-gold cursor-pointer accent-[hsl(var(--gold))]"
+              />
+              <span className="text-sm text-navy leading-relaxed">
+                I've reviewed my photo and confirm it's the one I want printed
+                on my blanket.
+              </span>
+            </label>
+          )}
         </div>
       )}
     </div>
   );
 };
+
+const OrientationOption = ({
+  label,
+  sublabel,
+  selected,
+  onSelect,
+  variant,
+}: {
+  label: string;
+  sublabel: string;
+  selected: boolean;
+  onSelect: () => void;
+  variant: "portrait" | "landscape";
+}) => (
+  <button
+    type="button"
+    onClick={onSelect}
+    aria-pressed={selected}
+    className={cn(
+      "flex flex-col items-center gap-2 rounded-xl border-2 bg-card px-4 py-4 transition-all text-center",
+      selected
+        ? "border-gold bg-gold/5 shadow-soft"
+        : "border-border/60 hover:border-gold/60",
+    )}
+  >
+    <span
+      className={cn(
+        "block rounded-md border-2 transition-colors",
+        selected ? "border-gold bg-gold/10" : "border-navy/40 bg-navy/5",
+        variant === "portrait" ? "w-6 h-9" : "w-9 h-6",
+      )}
+      aria-hidden
+    />
+    <span className="text-sm font-medium text-navy">{label}</span>
+    <span className="text-[11px] text-muted-foreground leading-tight">
+      {sublabel}
+    </span>
+  </button>
+);
 
 
 export default Start;
