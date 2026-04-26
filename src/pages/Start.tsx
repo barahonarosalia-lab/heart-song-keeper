@@ -56,6 +56,8 @@ interface OrderState {
   photo_url: string;
   photo_quality: PhotoQuality | null;
   photo_quality_override: boolean;
+  blanket_orientation: "portrait" | "landscape";
+  photo_reviewed: boolean;
 }
 
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
@@ -411,6 +413,8 @@ const Start = () => {
     photo_url: "",
     photo_quality: null,
     photo_quality_override: false,
+    blanket_orientation: "portrait",
+    photo_reviewed: false,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -439,6 +443,9 @@ const Start = () => {
         occasion: order.occasion || "",
         product: order.product,
         tier: order.tier,
+        ...(order.product === "photo_blanket"
+          ? { blanket_orientation: order.blanket_orientation }
+          : {}),
       },
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
     });
@@ -501,6 +508,9 @@ const Start = () => {
       photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
       photo_quality_override:
         product === "photo_blanket" ? prev.photo_quality_override : false,
+      blanket_orientation:
+        product === "photo_blanket" ? prev.blanket_orientation : "portrait",
+      photo_reviewed: product === "photo_blanket" ? prev.photo_reviewed : false,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
@@ -526,6 +536,7 @@ const Start = () => {
         photo_url: url,
         photo_quality: quality,
         photo_quality_override: false,
+        photo_reviewed: false,
       }));
     };
     img.onerror = () => {
@@ -534,6 +545,7 @@ const Start = () => {
         photo_url: url,
         photo_quality: "red",
         photo_quality_override: false,
+        photo_reviewed: false,
       }));
     };
     img.src = url;
@@ -545,6 +557,7 @@ const Start = () => {
       photo_url: "",
       photo_quality: null,
       photo_quality_override: false,
+      photo_reviewed: false,
     }));
   };
 
@@ -659,7 +672,8 @@ const Start = () => {
     if (order.product === "photo_blanket") {
       return (
         !!order.photo_url &&
-        (order.photo_quality !== "red" || order.photo_quality_override)
+        (order.photo_quality !== "red" || order.photo_quality_override) &&
+        order.photo_reviewed
       );
     }
     if (order.product === "ornament") return !!order.ornament_design;
@@ -1055,10 +1069,18 @@ const Start = () => {
                   photoUrl={order.photo_url}
                   quality={order.photo_quality}
                   override={order.photo_quality_override}
+                  orientation={order.blanket_orientation}
+                  reviewed={order.photo_reviewed}
                   onUpload={handlePhotoUpload}
                   onRemove={handleRemovePhoto}
                   onOverride={() =>
                     setOrder((prev) => ({ ...prev, photo_quality_override: true }))
+                  }
+                  onOrientationChange={(o) =>
+                    setOrder((prev) => ({ ...prev, blanket_orientation: o }))
+                  }
+                  onReviewedChange={(checked) =>
+                    setOrder((prev) => ({ ...prev, photo_reviewed: checked }))
                   }
                 />
               ) : (
@@ -2129,17 +2151,31 @@ const PhotoUpload = ({
   photoUrl,
   quality,
   override,
+  orientation,
+  reviewed,
   onUpload,
   onRemove,
   onOverride,
+  onOrientationChange,
+  onReviewedChange,
 }: {
   photoUrl: string;
   quality: PhotoQuality | null;
   override: boolean;
+  orientation: "portrait" | "landscape";
+  reviewed: boolean;
   onUpload: (file: File | null) => void;
   onRemove: () => void;
   onOverride: () => void;
+  onOrientationChange: (o: "portrait" | "landscape") => void;
+  onReviewedChange: (checked: boolean) => void;
 }) => {
+  const qualityOk = !!photoUrl && (quality !== "red" || override);
+  const previewAspect =
+    orientation === "portrait" ? "aspect-[4/5]" : "aspect-[5/4]";
+  const previewMaxWidth =
+    orientation === "portrait" ? "max-w-[280px]" : "max-w-md";
+
   return (
     <div className="space-y-5 max-w-2xl">
       {!photoUrl && (
@@ -2167,8 +2203,14 @@ const PhotoUpload = ({
       )}
 
       {photoUrl && (
-        <div className="space-y-4">
-          <div className="relative rounded-2xl overflow-hidden border border-border/60 bg-card aspect-[4/3] max-w-md">
+        <div className="space-y-6">
+          <div
+            className={cn(
+              "relative rounded-2xl overflow-hidden border border-border/60 bg-card transition-all",
+              previewAspect,
+              previewMaxWidth,
+            )}
+          >
             <img
               src={photoUrl}
               alt="Uploaded photo preview"
@@ -2254,11 +2296,91 @@ const PhotoUpload = ({
               )}
             </div>
           )}
+
+          {/* Orientation selector — appears once a photo is uploaded and quality is acceptable */}
+          {qualityOk && (
+            <div className="space-y-3 pt-2 border-t border-border/40">
+              <p className="label-eyebrow text-gold pt-4">
+                How would you like your blanket oriented?
+              </p>
+              <div className="grid grid-cols-2 gap-3 max-w-md">
+                <OrientationOption
+                  label="Portrait"
+                  sublabel="Taller than wide"
+                  selected={orientation === "portrait"}
+                  onSelect={() => onOrientationChange("portrait")}
+                  variant="portrait"
+                />
+                <OrientationOption
+                  label="Landscape"
+                  sublabel="Wider than tall"
+                  selected={orientation === "landscape"}
+                  onSelect={() => onOrientationChange("landscape")}
+                  variant="landscape"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Reviewed confirmation checkbox */}
+          {qualityOk && (
+            <label className="flex items-start gap-3 cursor-pointer pt-2">
+              <input
+                type="checkbox"
+                checked={reviewed}
+                onChange={(e) => onReviewedChange(e.target.checked)}
+                className="mt-1 size-4 rounded border-border text-gold focus:ring-gold cursor-pointer accent-[hsl(var(--gold))]"
+              />
+              <span className="text-sm text-navy leading-relaxed">
+                I've reviewed my photo and confirm it's the one I want printed
+                on my blanket.
+              </span>
+            </label>
+          )}
         </div>
       )}
     </div>
   );
 };
+
+const OrientationOption = ({
+  label,
+  sublabel,
+  selected,
+  onSelect,
+  variant,
+}: {
+  label: string;
+  sublabel: string;
+  selected: boolean;
+  onSelect: () => void;
+  variant: "portrait" | "landscape";
+}) => (
+  <button
+    type="button"
+    onClick={onSelect}
+    aria-pressed={selected}
+    className={cn(
+      "flex flex-col items-center gap-2 rounded-xl border-2 bg-card px-4 py-4 transition-all text-center",
+      selected
+        ? "border-gold bg-gold/5 shadow-soft"
+        : "border-border/60 hover:border-gold/60",
+    )}
+  >
+    <span
+      className={cn(
+        "block rounded-md border-2 transition-colors",
+        selected ? "border-gold bg-gold/10" : "border-navy/40 bg-navy/5",
+        variant === "portrait" ? "w-6 h-9" : "w-9 h-6",
+      )}
+      aria-hidden
+    />
+    <span className="text-sm font-medium text-navy">{label}</span>
+    <span className="text-[11px] text-muted-foreground leading-tight">
+      {sublabel}
+    </span>
+  </button>
+);
 
 
 export default Start;
