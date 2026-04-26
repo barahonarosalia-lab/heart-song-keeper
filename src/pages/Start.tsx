@@ -443,6 +443,9 @@ const Start = () => {
         occasion: order.occasion || "",
         product: order.product,
         tier: order.tier,
+        ...(order.product === "photo_blanket"
+          ? { blanket_orientation: order.blanket_orientation }
+          : {}),
       },
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
     });
