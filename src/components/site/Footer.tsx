@@ -16,8 +16,13 @@ const cols: { title: string; links: FooterLink[] }[] = [
     title: "Learn",
     links: [
       { label: "How it works", to: "/how-it-works" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
       { label: "FAQ", to: "/faq" },
-      { label: "Contact", href: "mailto:hello@keyofhearts.com" },
+      { label: "Contact us", href: "mailto:hello@keyofhearts.com" },
     ],
   },
   {

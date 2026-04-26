@@ -122,7 +122,15 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
       </div>
 
       {expandedIndex === null ? (
-        <GalleryView images={images} onSelect={setExpandedIndex} />
+        <GalleryView
+          images={images}
+          onSelect={setExpandedIndex}
+          note={
+            collection.slug === "little-luminaries"
+              ? "This blanket is designed as a keepsake to be treasured for years to come. In keeping with safe sleep guidelines, loose blankets are not recommended for infants under 12 months in sleep spaces."
+              : null
+          }
+        />
       ) : (
         <ExpandedView
           collection={collection}
@@ -140,12 +148,22 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
 const GalleryView = ({
   images,
   onSelect,
+  note,
 }: {
   images: { src: string; index: number }[];
   onSelect: (i: number) => void;
+  note?: string | null;
 }) => {
   return (
     <div className="relative flex-1 flex flex-col min-h-0">
+      {note && (
+        <div className="px-6 md:px-8 pb-3 md:pb-4 shrink-0">
+          <p className="max-w-3xl mx-auto text-center text-xs md:text-sm font-sans text-cream/60 leading-relaxed">
+            {note}
+          </p>
+        </div>
+      )}
+
       {/* Mobile: swipe carousel */}
       <div className="md:hidden flex-1 flex flex-col justify-center pb-8">
         <MobileGallery images={images} onSelect={onSelect} />
