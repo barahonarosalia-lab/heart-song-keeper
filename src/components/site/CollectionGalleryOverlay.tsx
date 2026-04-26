@@ -103,15 +103,15 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
   }));
 
   return (
-    <div className="fixed inset-0 z-[100] bg-navy text-cream overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-[100] bg-navy text-cream flex flex-col overflow-hidden">
       <div className="absolute inset-0 starfield opacity-20 pointer-events-none" />
 
       {/* Header */}
-      <div className="relative pt-5 pb-4 px-5 flex items-center justify-between">
+      <div className="relative pt-5 pb-4 px-5 md:px-8 flex items-center justify-between shrink-0">
         <button
           type="button"
           onClick={() => (expandedIndex !== null ? setExpandedIndex(null) : onClose())}
-          className="inline-flex items-center gap-1.5 text-sm text-cream/80 hover:text-cream transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-cream/80 hover:text-cream transition-colors z-10"
         >
           <ArrowLeft className="size-4" /> Back
         </button>
