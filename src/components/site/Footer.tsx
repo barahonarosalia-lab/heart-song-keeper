@@ -22,6 +22,7 @@ const cols: { title: string; links: FooterLink[] }[] = [
     title: "Support",
     links: [
       { label: "FAQ", to: "/faq" },
+      { label: "Giving back", to: "/giving" },
       { label: "Contact us", href: "mailto:hello@keyofhearts.com" },
     ],
   },
