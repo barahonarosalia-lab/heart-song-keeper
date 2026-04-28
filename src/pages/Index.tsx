@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Navigation } from "@/components/site/Navigation";
 import { Hero } from "@/components/site/Hero";
 import { CardSection } from "@/components/site/CardSection";
@@ -15,6 +16,16 @@ const Index = () => {
     <main className="min-h-screen bg-cream text-navy">
       <Navigation />
       <Hero />
+      <div className="bg-cream border-y border-gold/20">
+        <div className="container py-3 text-center">
+          <Link
+            to="/giving"
+            className="text-xs md:text-sm text-gold hover:text-gold-deep transition-colors"
+          >
+            🤍 A portion of every purchase supports causes as meaningful as the moments we preserve. Learn more →
+          </Link>
+        </div>
+      </div>
       <CardSection />
       <ForEveryLove />
       <Collections />
@@ -29,3 +40,4 @@ const Index = () => {
 };
 
 export default Index;
+
