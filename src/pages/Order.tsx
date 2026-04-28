@@ -352,6 +352,21 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
   });
   const productLabel = row.price_id ? PRICE_LABEL[row.price_id] ?? row.price_id : "Your order";
   const meta = row.metadata ?? {};
+
+  // Fire Meta Pixel Purchase event once per session for paid orders
+  useEffect(() => {
+    if (row.status !== "paid" || row.amount_total == null) return;
+    const key = `fbq_purchase_${row.stripe_session_id}`;
+    if (sessionStorage.getItem(key)) return;
+    const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
+    if (typeof fbq === "function") {
+      fbq("track", "Purchase", {
+        value: row.amount_total / 100,
+        currency: (row.currency ?? "usd").toUpperCase(),
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [row.stripe_session_id, row.status, row.amount_total, row.currency]);
   return (
     <div className="min-h-screen bg-cream">
       <Navigation />
