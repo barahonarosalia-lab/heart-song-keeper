@@ -41,7 +41,7 @@ export const Navigation = () => {
     <>
       <header
         className={cn(
-          "fixed top-0 inset-x-0 z-50 transition-all duration-500",
+          "fixed top-11 inset-x-0 z-50 transition-all duration-500",
           scrolled
             ? "bg-navy/85 backdrop-blur-md border-b border-cream/10"
             : "bg-transparent"
@@ -84,7 +84,7 @@ export const Navigation = () => {
       {/* Full-screen overlay menu */}
       <div
         className={cn(
-          "lg:hidden fixed inset-0 z-[55] bg-navy transition-all duration-500",
+          "lg:hidden fixed inset-x-0 top-11 bottom-0 z-[55] bg-navy transition-all duration-500",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         aria-hidden={!open}
