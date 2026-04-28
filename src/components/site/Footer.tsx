@@ -127,8 +127,8 @@ export const Footer = () => {
         <div className="h-px bg-cream/10 mb-8" />
 
         <div className="text-center text-xs md:text-sm text-cream/50 space-y-2">
-          <p>© 2026 Key of Hearts™</p>
           <p>🇺🇸 Free US shipping on every order. · 🌍 International shipping calculated at checkout.</p>
+          <p className="text-cream/40">© 2026 Key of Hearts. All rights reserved.</p>
         </div>
       </div>
     </footer>

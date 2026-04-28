@@ -36,6 +36,10 @@ export function useStripeCheckout() {
           <DialogTitle className="font-serif text-navy text-2xl">Complete your order</DialogTitle>
         </DialogHeader>
         {isOpen && options && <StripeEmbeddedCheckout {...options} />}
+        <p className="text-xs text-muted-foreground italic text-center px-2 pt-2">
+          By completing your purchase you agree to receive order updates and occasional
+          emails from Key of Hearts. Unsubscribe anytime.
+        </p>
       </DialogContent>
     </Dialog>
   );

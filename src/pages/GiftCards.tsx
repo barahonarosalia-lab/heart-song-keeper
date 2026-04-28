@@ -179,6 +179,10 @@ const GiftCards = () => {
                 <p className="text-xs text-muted-foreground italic">
                   Your gift card PDF arrives here instantly. Forward it, print it, or save it for the right moment.
                 </p>
+                <p className="text-xs text-muted-foreground italic">
+                  By completing your purchase you agree to receive order updates and
+                  occasional emails from Key of Hearts. Unsubscribe anytime.
+                </p>
               </div>
 
               {/* Price */}
@@ -253,12 +257,15 @@ const GiftCards = () => {
 
       {/* Mini footer */}
       <footer className="bg-navy-deep py-8">
-        <div className="container text-center text-cream/50 text-xs md:text-sm">
-          Questions?{" "}
-          <a href="mailto:hello@keyofhearts.com" className="hover:text-gold transition-colors">
-            hello@keyofhearts.com
-          </a>{" "}
-          · Key of Hearts by Life With Art Co.
+        <div className="container text-center text-cream/50 text-xs md:text-sm space-y-2">
+          <p>
+            Questions?{" "}
+            <a href="mailto:hello@keyofhearts.com" className="hover:text-gold transition-colors">
+              hello@keyofhearts.com
+            </a>{" "}
+            · Key of Hearts by Life With Art Co.
+          </p>
+          <p className="text-cream/40">© 2026 Key of Hearts. All rights reserved.</p>
         </div>
       </footer>
       {checkoutElement}

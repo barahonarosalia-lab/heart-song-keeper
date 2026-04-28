@@ -25,6 +25,32 @@ const Privacy = () => {
               We do not sell your data. We do not share your data with third parties
               except as required to fulfill your order.
             </p>
+
+            <h2 className="font-serif text-2xl md:text-3xl text-navy pt-4">
+              Cookies & Tracking
+            </h2>
+            <p>
+              This site uses cookies and tracking technologies to improve your experience
+              and for advertising purposes. By using keyofhearts.com you consent to our
+              use of cookies. We use Meta, TikTok, and Pinterest tracking pixels to
+              improve our advertising. No personal data is sold to third parties.
+            </p>
+
+            <h2 className="font-serif text-2xl md:text-3xl text-navy pt-4">
+              Your California Privacy Rights
+            </h2>
+            <p>
+              California residents may request access to or deletion of their personal
+              data by contacting{" "}
+              <a
+                href="mailto:hello@keyofhearts.com"
+                className="text-gold hover:text-gold-deep underline-offset-4 hover:underline"
+              >
+                hello@keyofhearts.com
+              </a>
+              .
+            </p>
+
             <p>
               Questions? Reach us at{" "}
               <a
