@@ -50,8 +50,8 @@ const PinterestIcon = ({ className }: { className?: string }) => (
 const socials = [
   { label: "Instagram", href: "https://instagram.com/keyofhearts.co", Icon: Instagram },
   { label: "TikTok", href: "https://tiktok.com/@keyofhearts.co", Icon: Music2 },
-  { label: "YouTube", href: "https://youtube.com/@keyofhearts.co", Icon: Youtube },
-  { label: "Pinterest", href: "https://pinterest.com/keyofhearts.co", Icon: PinterestIcon },
+  { label: "YouTube", href: "https://www.youtube.com/@KeyOfHearts", Icon: Youtube },
+  { label: "Pinterest", href: "https://pinterest.com/keyofheartsco", Icon: PinterestIcon },
 ];
 
 export const Footer = () => {
