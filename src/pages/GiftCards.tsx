@@ -257,12 +257,15 @@ const GiftCards = () => {
 
       {/* Mini footer */}
       <footer className="bg-navy-deep py-8">
-        <div className="container text-center text-cream/50 text-xs md:text-sm">
-          Questions?{" "}
-          <a href="mailto:hello@keyofhearts.com" className="hover:text-gold transition-colors">
-            hello@keyofhearts.com
-          </a>{" "}
-          · Key of Hearts by Life With Art Co.
+        <div className="container text-center text-cream/50 text-xs md:text-sm space-y-2">
+          <p>
+            Questions?{" "}
+            <a href="mailto:hello@keyofhearts.com" className="hover:text-gold transition-colors">
+              hello@keyofhearts.com
+            </a>{" "}
+            · Key of Hearts by Life With Art Co.
+          </p>
+          <p className="text-cream/40">© 2026 Key of Hearts. All rights reserved.</p>
         </div>
       </footer>
       {checkoutElement}
