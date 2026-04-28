@@ -20,6 +20,7 @@ import { Placeholder } from "./pages/Placeholder.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
 import { PaymentTestModeBanner } from "./components/PaymentTestModeBanner.tsx";
+import { GivingBanner } from "./components/site/GivingBanner.tsx";
 const queryClient = new QueryClient();
 
 const App = () => (
