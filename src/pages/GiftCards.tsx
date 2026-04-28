@@ -179,6 +179,10 @@ const GiftCards = () => {
                 <p className="text-xs text-muted-foreground italic">
                   Your gift card PDF arrives here instantly. Forward it, print it, or save it for the right moment.
                 </p>
+                <p className="text-xs text-muted-foreground italic">
+                  By completing your purchase you agree to receive order updates and
+                  occasional emails from Key of Hearts. Unsubscribe anytime.
+                </p>
               </div>
 
               {/* Price */}
