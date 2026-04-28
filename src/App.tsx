@@ -30,6 +30,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <GivingBanner />
         <PaymentTestModeBanner />
         <Routes>
           <Route path="/" element={<Index />} />
