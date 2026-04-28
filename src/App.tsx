@@ -12,6 +12,7 @@ import CollectionsPage from "./pages/Collections.tsx";
 import HowItWorks from "./pages/HowItWorks.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import GiftCards from "./pages/GiftCards.tsx";
+import Giving from "./pages/Giving.tsx";
 import Faq from "./pages/Faq.tsx";
 import Terms from "./pages/Terms.tsx";
 import Privacy from "./pages/Privacy.tsx";
