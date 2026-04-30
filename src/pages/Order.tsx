@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/site/Footer";
 import { Navigation } from "@/components/site/Navigation";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { DIGITAL_ADDON_PRICE_ID } from "@/lib/pricing";
 import { supabase } from "@/integrations/supabase/client";
 
 // ----- Types -----
@@ -336,6 +338,8 @@ const PRICE_LABEL: Record<string, string> = {
   photo_blanket_signature: "Photo Blanket — Signature",
   photo_blanket_preserve: "Photo Blanket — Preserve",
   upgrade_key: "Upgrade Your Key",
+  digital_addon: "Digital Download Add-On",
+  art_companion_digital: "Art Companion — Digital",
   gift_card_29: "Gift Card $29",
   gift_card_49: "Gift Card $49",
   gift_card_59: "Gift Card $59",
@@ -397,6 +401,14 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
             {meta.note && <SummaryRow label="Note" value={meta.note} />}
             <SummaryRow label="Status" value={row.status === "paid" ? "Paid" : row.status} />
           </div>
+
+          {row.price_id && /^(canvas|blanket|photo_blanket)_/.test(row.price_id) && (
+            <DigitalAddOnCard
+              orderId={row.stripe_session_id}
+              recipientName={meta.recipient_name ?? null}
+              customerEmail={row.customer_email}
+            />
+          )}
         </div>
       </section>
 
@@ -438,6 +450,56 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
         <p className="text-navy/40 text-xs">Key of Hearts by Life With Art Co.</p>
       </section>
       <Footer />
+    </div>
+  );
+};
+
+const DigitalAddOnCard = ({
+  orderId,
+  recipientName,
+  customerEmail,
+}: {
+  orderId: string;
+  recipientName: string | null;
+  customerEmail: string | null;
+}) => {
+  const [checked, setChecked] = useState(false);
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
+  return (
+    <div className="mt-8 rounded-2xl border border-gold/30 bg-cream-warm p-6 md:p-8">
+      <p className="label-eyebrow text-gold mb-3">Optional Add-On</p>
+      <h3 className="font-serif text-xl md:text-2xl text-navy mb-4 leading-snug">
+        Want to keep a digital copy too?
+      </h3>
+      <p className="text-sm text-navy/70 mb-5 leading-relaxed">
+        A high-resolution download of {recipientName ? `${recipientName}'s` : "their"} art —
+        for printing again, sharing, or keeping safe.
+      </p>
+      <label className="flex items-start gap-3 cursor-pointer">
+        <Checkbox
+          checked={checked}
+          onCheckedChange={(c) => setChecked(c === true)}
+          className="mt-0.5"
+        />
+        <span className="text-sm text-navy font-medium">Add a digital copy — $10</span>
+      </label>
+      <Button
+        variant="gold"
+        size="lg"
+        className="mt-6 w-full font-serif"
+        disabled={!checked}
+        onClick={() =>
+          openCheckout({
+            priceId: DIGITAL_ADDON_PRICE_ID,
+            customerEmail: customerEmail ?? undefined,
+            metadata: { parent_order_id: orderId, addon: "digital_addon" },
+          })
+        }
+      >
+        Add to my order →
+      </Button>
+      {checkoutElement}
     </div>
   );
 };
@@ -565,6 +627,7 @@ const Order = () => {
 
   const showUpload = order.tier === "preserve" && !order.audio_uploaded;
   const startUrl = `/start?tier=${order.tier}&occasion=${encodeURIComponent(order.occasion)}`;
+  const showDigitalAddon = order.product === "canvas" || order.product === "blanket" || order.product === "photo_blanket";
 
   return (
     <div className="min-h-screen bg-cream">
@@ -596,6 +659,14 @@ const Order = () => {
             <SummaryRow label="Recipient" value={order.recipient_name} />
             <SummaryRow label="From" value={order.gifter_name} />
           </div>
+
+          {showDigitalAddon && (
+            <DigitalAddOnCard
+              orderId={order.order_id}
+              recipientName={order.recipient_name}
+              customerEmail={null}
+            />
+          )}
         </div>
       </section>
 

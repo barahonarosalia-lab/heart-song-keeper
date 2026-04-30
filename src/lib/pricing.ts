@@ -39,3 +39,11 @@ export function giftCardPriceId(amount: number): string | null {
 }
 
 export const UPGRADE_PRICE_ID = "upgrade_key";
+
+// Optional add-on: digital copy bundled with a physical product (canvas/blanket).
+// $10 one-time. Surfaced as a checkbox on the Order review step.
+export const DIGITAL_ADDON_PRICE_ID = "digital_addon";
+
+// Standalone post-purchase upsell linked from the jewelry confirmation email.
+// $15 one-time. Sold via the /art-companion page only.
+export const ART_COMPANION_PRICE_ID = "art_companion_digital";
