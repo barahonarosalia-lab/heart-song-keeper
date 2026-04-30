@@ -454,6 +454,56 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
   );
 };
 
+const DigitalAddOnCard = ({
+  orderId,
+  recipientName,
+  customerEmail,
+}: {
+  orderId: string;
+  recipientName: string | null;
+  customerEmail: string | null;
+}) => {
+  const [checked, setChecked] = useState(false);
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+
+  return (
+    <div className="mt-8 rounded-2xl border border-gold/30 bg-cream-warm p-6 md:p-8">
+      <p className="label-eyebrow text-gold mb-3">Optional Add-On</p>
+      <h3 className="font-serif text-xl md:text-2xl text-navy mb-4 leading-snug">
+        Want to keep a digital copy too?
+      </h3>
+      <p className="text-sm text-navy/70 mb-5 leading-relaxed">
+        A high-resolution download of {recipientName ? `${recipientName}'s` : "their"} art —
+        for printing again, sharing, or keeping safe.
+      </p>
+      <label className="flex items-start gap-3 cursor-pointer">
+        <Checkbox
+          checked={checked}
+          onCheckedChange={(c) => setChecked(c === true)}
+          className="mt-0.5"
+        />
+        <span className="text-sm text-navy font-medium">Add a digital copy — $10</span>
+      </label>
+      <Button
+        variant="gold"
+        size="lg"
+        className="mt-6 w-full font-serif"
+        disabled={!checked}
+        onClick={() =>
+          openCheckout({
+            priceId: DIGITAL_ADDON_PRICE_ID,
+            customerEmail: customerEmail ?? undefined,
+            metadata: { parent_order_id: orderId, addon: "digital_addon" },
+          })
+        }
+      >
+        Add to my order →
+      </Button>
+      {checkoutElement}
+    </div>
+  );
+};
+
 const Order = () => {
   const { orderId = "" } = useParams();
   const [searchParams] = useSearchParams();
