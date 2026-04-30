@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,14 @@ type Props = {
 };
 
 export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
+  const navigate = useNavigate();
+
+  const handleSelectArt = (artNumber: number) => {
+    if (!collection) return;
+    onClose();
+    navigate(`/start?collection=${collection.slug}&art=${artNumber}`);
+  };
+
   // Lock body scroll while open
   useEffect(() => {
     if (!collection) return;
