@@ -653,7 +653,30 @@ const Start = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Default the collection from the chosen occasion when entering Step 4 —
+  // Persist photo blanket orientation across navigations (back/forward, reloads).
+  // The uploaded photo itself uses object URLs and can't be persisted reliably,
+  // but the orientation choice is restored so the customer doesn't lose it.
+  const ORIENTATION_KEY = "koh_blanket_orientation";
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(ORIENTATION_KEY);
+      if (stored === "portrait" || stored === "landscape") {
+        setOrder((prev) => ({ ...prev, blanket_orientation: stored }));
+      }
+    } catch {
+      /* sessionStorage unavailable */
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(ORIENTATION_KEY, order.blanket_orientation);
+    } catch {
+      /* ignore */
+    }
+  }, [order.blanket_orientation]);
   // only when no collection is set yet, so the customer can still change it.
   // Skipped when the customer arrived from /collections with a chosen collection.
   useEffect(() => {
