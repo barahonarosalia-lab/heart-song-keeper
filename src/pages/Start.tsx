@@ -1083,6 +1083,7 @@ const Start = () => {
                   quality={order.photo_quality}
                   override={order.photo_quality_override}
                   orientation={order.blanket_orientation}
+                  naturalOrientation={order.photo_natural_orientation}
                   reviewed={order.photo_reviewed}
                   onUpload={handlePhotoUpload}
                   onRemove={handleRemovePhoto}
