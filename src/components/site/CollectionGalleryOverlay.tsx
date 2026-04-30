@@ -335,11 +335,13 @@ const ExpandedView = ({
   images,
   startIndex,
   onChangeIndex,
+  onSelectArt,
 }: {
   collection: Collection;
   images: { src: string; index: number }[];
   startIndex: number;
   onChangeIndex: (i: number) => void;
+  onSelectArt: (artNumber: number) => void;
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", startIndex, loop: false });
   const [current, setCurrent] = useState(startIndex);
@@ -414,10 +416,13 @@ const ExpandedView = ({
           <p className="font-serif text-lg md:text-2xl text-navy">
             From $29 · Signature or Preserve
           </p>
-          <Button variant="gold" className="w-full" asChild>
-            <a href={`/start?collection=${collection.slug}&art=${artNumber}`}>
-              Use this art <ArrowRight className="size-4" />
-            </a>
+          <Button
+            type="button"
+            variant="gold"
+            className="w-full"
+            onClick={() => onSelectArt(artNumber)}
+          >
+            <Check className="size-4" /> Select this art
           </Button>
           <p className="text-xs text-muted-foreground text-center md:text-left">
             You'll choose your product and personalize next
