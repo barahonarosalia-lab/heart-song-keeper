@@ -13,6 +13,7 @@ import HowItWorks from "./pages/HowItWorks.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import GiftCards from "./pages/GiftCards.tsx";
 import ArtCompanion from "./pages/ArtCompanion.tsx";
+import Upload from "./pages/Upload.tsx";
 import Giving from "./pages/Giving.tsx";
 import Faq from "./pages/Faq.tsx";
 import Terms from "./pages/Terms.tsx";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/gift-cards" element={<GiftCards />} />
           <Route path="/art-companion" element={<ArtCompanion />} />
+          <Route path="/upload" element={<Upload />} />
           <Route path="/giving" element={<Giving />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/privacy" element={<Privacy />} />
