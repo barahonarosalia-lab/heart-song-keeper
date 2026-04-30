@@ -401,6 +401,14 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
             {meta.note && <SummaryRow label="Note" value={meta.note} />}
             <SummaryRow label="Status" value={row.status === "paid" ? "Paid" : row.status} />
           </div>
+
+          {row.price_id && /^(canvas|blanket|photo_blanket)_/.test(row.price_id) && (
+            <DigitalAddOnCard
+              orderId={row.stripe_session_id}
+              recipientName={meta.recipient_name ?? null}
+              customerEmail={row.customer_email}
+            />
+          )}
         </div>
       </section>
 
