@@ -57,6 +57,7 @@ interface OrderState {
   photo_quality: PhotoQuality | null;
   photo_quality_override: boolean;
   blanket_orientation: "portrait" | "landscape";
+  photo_natural_orientation: "portrait" | "landscape" | "square" | null;
   photo_reviewed: boolean;
 }
 
@@ -414,6 +415,7 @@ const Start = () => {
     photo_quality: null,
     photo_quality_override: false,
     blanket_orientation: "portrait",
+    photo_natural_orientation: null,
     photo_reviewed: false,
   });
 
@@ -531,11 +533,18 @@ const Start = () => {
       let quality: PhotoQuality = "red";
       if (shortest >= 3000) quality = "green";
       else if (shortest >= 1500) quality = "yellow";
+      const natural: "portrait" | "landscape" | "square" =
+        img.naturalWidth > img.naturalHeight
+          ? "landscape"
+          : img.naturalHeight > img.naturalWidth
+          ? "portrait"
+          : "square";
       setOrder((prev) => ({
         ...prev,
         photo_url: url,
         photo_quality: quality,
         photo_quality_override: false,
+        photo_natural_orientation: natural,
         photo_reviewed: false,
       }));
     };
@@ -545,6 +554,7 @@ const Start = () => {
         photo_url: url,
         photo_quality: "red",
         photo_quality_override: false,
+        photo_natural_orientation: null,
         photo_reviewed: false,
       }));
     };
