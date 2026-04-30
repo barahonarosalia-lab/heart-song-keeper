@@ -1361,6 +1361,34 @@ const Start = () => {
                 </ul>
               </div>
 
+              {/* Optional digital copy add-on (canvas / blanket / photo blanket) */}
+              {digitalAddonEligible && (
+                <label
+                  htmlFor="digital-addon"
+                  className={cn(
+                    "flex items-start gap-3 rounded-2xl border p-5 cursor-pointer transition-all",
+                    addDigitalCopy
+                      ? "border-gold bg-gold/5 shadow-soft"
+                      : "border-border/60 bg-card hover:border-gold/60",
+                  )}
+                >
+                  <Checkbox
+                    id="digital-addon"
+                    checked={addDigitalCopy}
+                    onCheckedChange={(c) => setAddDigitalCopy(c === true)}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-serif text-navy text-base md:text-lg">
+                      Add a digital copy — $10
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-1">
+                      A high-resolution PNG + PDF of their art, delivered to your inbox. Print at home, share, or keep as a backup.
+                    </p>
+                  </div>
+                </label>
+              )}
+
               {/* Final CTA */}
               <Button
                 type="button"
