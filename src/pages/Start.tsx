@@ -427,6 +427,12 @@ const Start = () => {
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const { openCheckout, checkoutElement } = useStripeCheckout();
+  const [addDigitalCopy, setAddDigitalCopy] = useState(false);
+
+  const digitalAddonEligible =
+    order.product === "canvas" ||
+    order.product === "blanket" ||
+    order.product === "photo_blanket";
 
   const handleCheckout = () => {
     if (!order.product || !order.tier) return;
@@ -436,6 +442,7 @@ const Start = () => {
       jewelryFinish: order.jewelry_finish,
     });
     if (!priceId) return;
+    const wantsAddon = digitalAddonEligible && addDigitalCopy;
     openCheckout({
       priceId,
       metadata: {
@@ -447,6 +454,9 @@ const Start = () => {
         tier: order.tier,
         ...(order.product === "photo_blanket"
           ? { blanket_orientation: order.blanket_orientation }
+          : {}),
+        ...(wantsAddon
+          ? { addon: "digital_addon", addon_price_id: DIGITAL_ADDON_PRICE_ID }
           : {}),
       },
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
