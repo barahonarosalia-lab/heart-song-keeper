@@ -2325,24 +2325,39 @@ const PhotoUpload = ({
           {qualityOk && (
             <div className="space-y-3 pt-2 border-t border-border/40">
               <p className="label-eyebrow text-gold pt-4">
-                How would you like your blanket oriented?
+                How would you like your photo oriented?
               </p>
               <div className="grid grid-cols-2 gap-3 max-w-md">
                 <OrientationOption
-                  label="Portrait"
+                  label="Portrait (vertical)"
                   sublabel="Taller than wide"
                   selected={orientation === "portrait"}
                   onSelect={() => onOrientationChange("portrait")}
                   variant="portrait"
                 />
                 <OrientationOption
-                  label="Landscape"
+                  label="Landscape (horizontal)"
                   sublabel="Wider than tall"
                   selected={orientation === "landscape"}
                   onSelect={() => onOrientationChange("landscape")}
                   variant="landscape"
                 />
               </div>
+
+              {/* Crop warning — fires when the chosen orientation forces a crop.
+                  Most commonly: a landscape photo placed into a portrait blanket. */}
+              {(orientation === "landscape" || willBeCropped) && (
+                <div
+                  className="flex items-start gap-2.5 text-sm font-medium leading-relaxed pt-3"
+                  style={{ color: "#C4796A" }}
+                >
+                  <AlertTriangle className="size-5 shrink-0 mt-0.5" />
+                  <span>
+                    Your photo will be cropped to fit. We'll show you a preview
+                    before your order is confirmed.
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
