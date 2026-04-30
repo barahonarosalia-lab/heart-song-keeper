@@ -569,6 +569,7 @@ const Order = () => {
 
   const showUpload = order.tier === "preserve" && !order.audio_uploaded;
   const startUrl = `/start?tier=${order.tier}&occasion=${encodeURIComponent(order.occasion)}`;
+  const showDigitalAddon = order.product === "canvas" || order.product === "blanket" || order.product === "photo_blanket";
 
   return (
     <div className="min-h-screen bg-cream">
@@ -600,6 +601,14 @@ const Order = () => {
             <SummaryRow label="Recipient" value={order.recipient_name} />
             <SummaryRow label="From" value={order.gifter_name} />
           </div>
+
+          {showDigitalAddon && (
+            <DigitalAddOnCard
+              orderId={order.order_id}
+              recipientName={order.recipient_name}
+              customerEmail={null}
+            />
+          )}
         </div>
       </section>
 
