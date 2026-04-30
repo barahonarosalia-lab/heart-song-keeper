@@ -512,6 +512,8 @@ const Start = () => {
         product === "photo_blanket" ? prev.photo_quality_override : false,
       blanket_orientation:
         product === "photo_blanket" ? prev.blanket_orientation : "portrait",
+      photo_natural_orientation:
+        product === "photo_blanket" ? prev.photo_natural_orientation : null,
       photo_reviewed: product === "photo_blanket" ? prev.photo_reviewed : false,
     }));
 
@@ -567,6 +569,7 @@ const Start = () => {
       photo_url: "",
       photo_quality: null,
       photo_quality_override: false,
+      photo_natural_orientation: null,
       photo_reviewed: false,
     }));
   };
