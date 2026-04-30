@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Footer } from "@/components/site/Footer";
 import { Navigation } from "@/components/site/Navigation";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { DIGITAL_ADDON_PRICE_ID } from "@/lib/pricing";
 import { supabase } from "@/integrations/supabase/client";
 
 // ----- Types -----
