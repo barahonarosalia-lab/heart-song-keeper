@@ -336,6 +336,8 @@ const PRICE_LABEL: Record<string, string> = {
   photo_blanket_signature: "Photo Blanket — Signature",
   photo_blanket_preserve: "Photo Blanket — Preserve",
   upgrade_key: "Upgrade Your Key",
+  digital_addon: "Digital Download Add-On",
+  art_companion_digital: "Art Companion — Digital",
   gift_card_29: "Gift Card $29",
   gift_card_49: "Gift Card $49",
   gift_card_59: "Gift Card $59",
