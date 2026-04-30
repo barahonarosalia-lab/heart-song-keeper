@@ -2166,6 +2166,7 @@ const PhotoUpload = ({
   quality,
   override,
   orientation,
+  naturalOrientation,
   reviewed,
   onUpload,
   onRemove,
@@ -2177,6 +2178,7 @@ const PhotoUpload = ({
   quality: PhotoQuality | null;
   override: boolean;
   orientation: "portrait" | "landscape";
+  naturalOrientation: "portrait" | "landscape" | "square" | null;
   reviewed: boolean;
   onUpload: (file: File | null) => void;
   onRemove: () => void;
@@ -2189,6 +2191,14 @@ const PhotoUpload = ({
     orientation === "portrait" ? "aspect-[4/5]" : "aspect-[5/4]";
   const previewMaxWidth =
     orientation === "portrait" ? "max-w-[280px]" : "max-w-md";
+  // Cropping happens whenever the user's chosen orientation doesn't match the
+  // photo's natural orientation. A landscape photo forced into portrait (or
+  // vice-versa) will be cropped to fit.
+  const willBeCropped =
+    !!photoUrl &&
+    naturalOrientation !== null &&
+    naturalOrientation !== "square" &&
+    naturalOrientation !== orientation;
 
   return (
     <div className="space-y-5 max-w-2xl">
