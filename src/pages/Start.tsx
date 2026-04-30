@@ -677,6 +677,8 @@ const Start = () => {
       /* ignore */
     }
   }, [order.blanket_orientation]);
+
+  // Default the collection from the chosen occasion when entering Step 4 —
   // only when no collection is set yet, so the customer can still change it.
   // Skipped when the customer arrived from /collections with a chosen collection.
   useEffect(() => {
