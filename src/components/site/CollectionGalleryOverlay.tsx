@@ -131,13 +131,18 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
       </div>
 
       {expandedIndex === null ? (
-        <GalleryView images={images} onSelect={setExpandedIndex} />
+        <GalleryView
+          images={images}
+          onPreview={setExpandedIndex}
+          onSelectArt={handleSelectArt}
+        />
       ) : (
         <ExpandedView
           collection={collection}
           images={images}
           startIndex={expandedIndex}
           onChangeIndex={setExpandedIndex}
+          onSelectArt={handleSelectArt}
         />
       )}
     </div>
@@ -148,41 +153,73 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
 
 const GalleryView = ({
   images,
-  onSelect,
+  onPreview,
+  onSelectArt,
 }: {
   images: { src: string; index: number }[];
-  onSelect: (i: number) => void;
+  onPreview: (i: number) => void;
+  onSelectArt: (artNumber: number) => void;
 }) => {
   return (
     <div className="relative flex-1 flex flex-col min-h-0">
       {/* Mobile: swipe carousel */}
       <div className="md:hidden flex-1 flex flex-col justify-center pb-8">
-        <MobileGallery images={images} onSelect={onSelect} />
+        <MobileGallery images={images} onPreview={onPreview} onSelectArt={onSelectArt} />
       </div>
 
       {/* Desktop: scrollable grid */}
       <div className="hidden md:block flex-1 overflow-y-auto px-8 pb-12">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
           {images.map((img, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onSelect(i)}
-              className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-2xl"
-              aria-label={`View art ${img.index}`}
-            >
-              <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
-                <img
-                  src={img.src}
-                  alt={`Art ${img.index}`}
-                  loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
+            <div key={i} className="group">
+              <button
+                type="button"
+                onClick={() => onSelectArt(img.index)}
+                className="block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-2xl"
+                aria-label={`Select art ${img.index}`}
+              >
+                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
+                  <img
+                    src={img.src}
+                    alt={`Art ${img.index}`}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {/* Preview chip — opens expanded view without selecting */}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onPreview(i);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        onPreview(i);
+                      }
+                    }}
+                    className="absolute top-3 right-3 text-[10px] tracking-[0.2em] uppercase px-2.5 py-1 rounded-full bg-navy/70 text-cream/90 backdrop-blur border border-cream/20 hover:bg-navy/90 cursor-pointer"
+                  >
+                    Preview
+                  </span>
+                </div>
+              </button>
               <p className="mt-3 text-center text-[11px] tracking-[0.25em] uppercase text-gold/80 group-hover:text-gold transition-colors">
                 Art {img.index}
               </p>
-            </button>
+              <Button
+                type="button"
+                variant="gold"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => onSelectArt(img.index)}
+              >
+                <Check className="size-4" /> Select this art
+              </Button>
+            </div>
           ))}
         </div>
       </div>
@@ -192,10 +229,12 @@ const GalleryView = ({
 
 const MobileGallery = ({
   images,
-  onSelect,
+  onPreview,
+  onSelectArt,
 }: {
   images: { src: string; index: number }[];
-  onSelect: (i: number) => void;
+  onPreview: (i: number) => void;
+  onSelectArt: (artNumber: number) => void;
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", containScroll: "trimSnaps" });
   const [selected, setSelected] = useState(0);
@@ -221,25 +260,50 @@ const MobileGallery = ({
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex gap-3">
           {images.map((img, i) => (
-            <button
+            <div
               key={i}
-              type="button"
-              onClick={() => onSelect(i)}
-              className="min-w-0 shrink-0 basis-[85%] first:pl-[7.5%] last:pr-[7.5%] focus:outline-none"
-              aria-label={`View art ${img.index}`}
+              className="min-w-0 shrink-0 basis-[85%] first:pl-[7.5%] last:pr-[7.5%]"
             >
-              <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
-                <img
-                  src={img.src}
-                  alt={`Art ${img.index}`}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <button
+                type="button"
+                onClick={() => onSelectArt(img.index)}
+                className="block w-full focus:outline-none"
+                aria-label={`Select art ${img.index}`}
+              >
+                <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
+                  <img
+                    src={img.src}
+                    alt={`Art ${img.index}`}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onPreview(i);
+                    }}
+                    className="absolute top-3 right-3 text-[10px] tracking-[0.2em] uppercase px-2.5 py-1 rounded-full bg-navy/70 text-cream/90 backdrop-blur border border-cream/20"
+                  >
+                    Preview
+                  </span>
+                </div>
+              </button>
               <p className="mt-3 text-center text-[11px] tracking-[0.25em] uppercase text-gold/80">
                 Art {img.index}
               </p>
-            </button>
+              <Button
+                type="button"
+                variant="gold"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => onSelectArt(img.index)}
+              >
+                <Check className="size-4" /> Select this art
+              </Button>
+            </div>
           ))}
         </div>
       </div>
