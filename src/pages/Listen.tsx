@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,28 +17,40 @@ interface ListenRecord {
   song_title: string;
   audio_url: string;
   duration_seconds: number;
-  preserve_status: "approved" | "pending"; // only used when tier=preserve
+  preserve_status: "approved" | "pending";
   paid: boolean;
 }
 
-// Mock loader — reads overrides from query params for testing.
-const loadListen = (orderId: string, params: URLSearchParams): ListenRecord | null => {
-  if (!orderId || orderId.length < 4) return null;
+interface Manifest {
+  order_id: string;
+  recipient_name: string;
+  occasion: string;
+  song_title: string;
+  audio_url: string;
+  card_message: string;
+  is_story?: boolean;
+  is_voice?: boolean;
+  is_memory?: boolean;
+  lyrics?: string;
+  lyrics_synced?: unknown;
+  gifter_name?: string;
+}
+
+const mapManifest = (m: Manifest): ListenRecord => {
+  const tier: Tier = m.is_voice || m.is_memory ? "preserve" : "signature";
   return {
-    order_id: orderId.toUpperCase(),
-    tier: (params.get("tier") as Tier) ?? "signature",
-    occasion: params.get("occasion") ?? "Anniversary & Wedding",
-    recipient_name: params.get("recipient") ?? "Sarah",
-    collection: params.get("collection") ?? "Moonlit Botanica",
-    art_name: params.get("art") ?? "Evening Bloom",
-    card_message:
-      params.get("message") ??
-      "From the very first day, you have been my whole sky. Every song I'll ever know already belongs to you.",
-    song_title: params.get("song") ?? "The First Light",
-    audio_url: params.get("audio_url") ?? "",
-    duration_seconds: Number(params.get("duration") ?? 184),
-    preserve_status: (params.get("status") as "approved" | "pending") ?? "approved",
-    paid: params.get("paid") !== "false",
+    order_id: m.order_id,
+    tier,
+    occasion: m.occasion ?? "",
+    recipient_name: m.recipient_name ?? "",
+    collection: "",
+    art_name: "",
+    card_message: m.card_message ?? "",
+    song_title: m.song_title ?? "",
+    audio_url: m.audio_url ?? "",
+    duration_seconds: 0,
+    preserve_status: "approved",
+    paid: true,
   };
 };
 
@@ -147,20 +159,47 @@ const ProgressBar = ({
 
 const Listen = () => {
   const { orderId = "" } = useParams<{ orderId: string }>();
-  const [params] = useSearchParams();
-  const record = useMemo(() => loadListen(orderId, params), [orderId, params]);
+  const [record, setRecord] = useState<ListenRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(record?.duration_seconds ?? 0);
+  const [duration, setDuration] = useState(0);
   const [needsTap, setNeedsTap] = useState(false);
+
+  // Fetch manifest from Cloudflare Worker
+  useEffect(() => {
+    if (!orderId) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://keyofhearts.com/listen/${orderId}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data: Manifest = await res.json();
+        if (cancelled) return;
+        setRecord(mapManifest(data));
+      } catch {
+        if (!cancelled) setError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId]);
 
   // Log scan once per page load
   useEffect(() => {
     if (!record || !record.paid) return;
-    // TODO: POST to scan_log endpoint
-    // { order_id, timestamp, device_type, scan_count++, last_scan_date }
     // eslint-disable-next-line no-console
     console.log("[scan_log]", {
       order_id: record.order_id,
@@ -186,8 +225,15 @@ const Listen = () => {
     tryPlay();
   }, [record]);
 
-  // ----- Invalid / unpaid -----
-  if (!record || !record.paid) return <NotFound />;
+  // ----- Loading / Invalid / unpaid -----
+  if (loading) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
+        <p className="font-serif italic text-gold text-base">Loading…</p>
+      </main>
+    );
+  }
+  if (error || !record || !record.paid) return <NotFound />;
 
   const togglePlay = async () => {
     const a = audioRef.current;
