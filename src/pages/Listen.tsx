@@ -159,20 +159,47 @@ const ProgressBar = ({
 
 const Listen = () => {
   const { orderId = "" } = useParams<{ orderId: string }>();
-  const [params] = useSearchParams();
-  const record = useMemo(() => loadListen(orderId, params), [orderId, params]);
+  const [record, setRecord] = useState<ListenRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(record?.duration_seconds ?? 0);
+  const [duration, setDuration] = useState(0);
   const [needsTap, setNeedsTap] = useState(false);
+
+  // Fetch manifest from Cloudflare Worker
+  useEffect(() => {
+    if (!orderId) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://keyofhearts.com/listen/${orderId}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data: Manifest = await res.json();
+        if (cancelled) return;
+        setRecord(mapManifest(data));
+      } catch {
+        if (!cancelled) setError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId]);
 
   // Log scan once per page load
   useEffect(() => {
     if (!record || !record.paid) return;
-    // TODO: POST to scan_log endpoint
-    // { order_id, timestamp, device_type, scan_count++, last_scan_date }
     // eslint-disable-next-line no-console
     console.log("[scan_log]", {
       order_id: record.order_id,
@@ -198,8 +225,15 @@ const Listen = () => {
     tryPlay();
   }, [record]);
 
-  // ----- Invalid / unpaid -----
-  if (!record || !record.paid) return <NotFound />;
+  // ----- Loading / Invalid / unpaid -----
+  if (loading) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
+        <p className="font-serif italic text-gold text-base">Loading…</p>
+      </main>
+    );
+  }
+  if (error || !record || !record.paid) return <NotFound />;
 
   const togglePlay = async () => {
     const a = audioRef.current;
