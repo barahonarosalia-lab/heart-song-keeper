@@ -179,7 +179,7 @@ const Listen = () => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`https://keyofhearts.com/listen/${orderId}`, {
+        const res = await fetch(`https://koh-listen.barahonarosalia.workers.dev/${orderId}`, {
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(String(res.status));
