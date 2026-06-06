@@ -9,6 +9,7 @@ import { Navigation } from "@/components/site/Navigation";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { DIGITAL_ADDON_PRICE_ID } from "@/lib/pricing";
 import { supabase } from "@/integrations/supabase/client";
+import { trackTikTokEvent } from "@/lib/tiktokEvents";
 
 // ----- Types -----
 type Tier = "signature" | "preserve";
@@ -362,15 +363,39 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
     if (row.status !== "paid" || row.amount_total == null) return;
     const key = `fbq_purchase_${row.stripe_session_id}`;
     if (sessionStorage.getItem(key)) return;
+    const value = row.amount_total / 100;
+    const currency = (row.currency ?? "usd").toUpperCase();
     const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
     if (typeof fbq === "function") {
-      fbq("track", "Purchase", {
-        value: row.amount_total / 100,
-        currency: (row.currency ?? "usd").toUpperCase(),
-      });
-      sessionStorage.setItem(key, "1");
+      fbq("track", "Purchase", { value, currency });
     }
-  }, [row.stripe_session_id, row.status, row.amount_total, row.currency]);
+    // TikTok: browser pixel + server-side mirror via webhook
+    void trackTikTokEvent({
+      eventName: "CompletePayment",
+      eventId: row.stripe_session_id,
+      value,
+      currency,
+      contents: row.price_id
+        ? [{
+            content_id: row.price_id,
+            content_name: PRICE_LABEL[row.price_id] ?? row.price_id,
+            content_type: "product",
+            quantity: 1,
+            price: value,
+          }]
+        : undefined,
+      user: {
+        email: row.customer_email ?? undefined,
+        external_id: row.stripe_session_id,
+      },
+      custom: {
+        order_id: row.stripe_session_id,
+        recipient_name: meta.recipient_name,
+        occasion: meta.occasion,
+      },
+    });
+    sessionStorage.setItem(key, "1");
+  }, [row.stripe_session_id, row.status, row.amount_total, row.currency, row.price_id, row.customer_email, meta.recipient_name, meta.occasion]);
   return (
     <div className="min-h-screen bg-cream">
       <Navigation />
