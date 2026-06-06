@@ -14,6 +14,7 @@ interface ListenRecord {
   collection: string;
   art_name: string;
   card_message: string;
+  dedication: string;
   song_title: string;
   audio_url: string;
   duration_seconds: number;
@@ -28,6 +29,7 @@ interface Manifest {
   song_title: string;
   audio_url: string;
   card_message: string;
+  dedication?: string;
   is_story?: boolean;
   is_voice?: boolean;
   is_memory?: boolean;
@@ -46,6 +48,7 @@ const mapManifest = (m: Manifest): ListenRecord => {
     collection: "",
     art_name: "",
     card_message: m.card_message ?? "",
+    dedication: m.dedication ?? "",
     song_title: m.song_title ?? "",
     audio_url: m.audio_url ?? "",
     duration_seconds: 0,
@@ -308,10 +311,16 @@ const Listen = () => {
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-16">
         <div className="w-full max-w-md flex flex-col items-center text-center gap-6">
           {/* Recipient */}
-          <div className="flex flex-col items-center gap-2">
-            <p className="label-eyebrow text-gold">For {record.recipient_name}</p>
-            <p className="text-cream/60 text-sm font-light tracking-wide">{record.occasion}</p>
-          </div>
+          {(record.recipient_name || record.occasion) && (
+            <div className="flex flex-col items-center gap-2">
+              {record.recipient_name && (
+                <p className="label-eyebrow text-gold">For {record.recipient_name}</p>
+              )}
+              {record.occasion && (
+                <p className="text-cream/60 text-sm font-light tracking-wide">{record.occasion}</p>
+              )}
+            </div>
+          )}
 
           {/* Play button */}
           <div className="my-2">
@@ -319,6 +328,11 @@ const Listen = () => {
             {needsTap && (
               <p className="mt-4 font-serif italic text-gold text-sm animate-fade-in">
                 Tap to hear their song
+              </p>
+            )}
+            {record.dedication && (
+              <p className="mt-4 font-serif italic text-gold text-base">
+                {record.dedication}
               </p>
             )}
           </div>
