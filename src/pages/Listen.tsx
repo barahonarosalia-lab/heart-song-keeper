@@ -314,7 +314,12 @@ const Listen = () => {
           {(record.recipient_name || record.occasion) && (
             <div className="flex flex-col items-center gap-2">
               {record.recipient_name && (
-                <p className="label-eyebrow text-gold">For {record.recipient_name}</p>
+                <p
+                  className="font-serif text-gold"
+                  style={{ fontSize: "20px", letterSpacing: "2px" }}
+                >
+                  For {record.recipient_name}
+                </p>
               )}
               {record.occasion && (
                 <p className="text-cream/60 text-sm font-light tracking-wide">{record.occasion}</p>
@@ -330,8 +335,11 @@ const Listen = () => {
                 Tap to hear their song
               </p>
             )}
-            {record.dedication && (
-              <p className="mt-4 font-serif italic text-gold text-base">
+            {record.dedication && record.dedication.trim() && (
+              <p
+                className="mt-4 font-serif italic text-gold"
+                style={{ fontSize: "15px" }}
+              >
                 {record.dedication}
               </p>
             )}
