@@ -28,6 +28,7 @@ interface Manifest {
   song_title: string;
   audio_url: string;
   card_message: string;
+  dedication?: string;
   is_story?: boolean;
   is_voice?: boolean;
   is_memory?: boolean;
