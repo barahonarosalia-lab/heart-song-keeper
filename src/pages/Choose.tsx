@@ -1,0 +1,123 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
+interface Manifest {
+  song_a_url?: string;
+  song_b_url?: string;
+  recipient_name?: string;
+}
+
+const N8N_CHOICE = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-choice";
+const N8N_REGEN = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-regenerate";
+
+const Choose = () => {
+  const [params] = useSearchParams();
+  const order = params.get("order") || "";
+  const [manifest, setManifest] = useState<Manifest | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!order) {
+      setLoading(false);
+      setError(true);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://koh-listen.barahonarosalia.workers.dev/${order}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data: Manifest = await res.json();
+        if (!cancelled) setManifest(data);
+      } catch {
+        if (!cancelled) setError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [order]);
+
+  const choose = (choice: "A" | "B") => {
+    window.location.href = `${N8N_CHOICE}?order=${encodeURIComponent(order)}&choice=${choice}`;
+  };
+  const regenerate = () => {
+    window.location.href = `${N8N_REGEN}?order=${encodeURIComponent(order)}`;
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
+        <p className="font-serif italic text-gold text-base">Loading…</p>
+      </main>
+    );
+  }
+
+  if (error || !manifest?.song_a_url || !manifest?.song_b_url) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <p className="font-serif text-cream text-lg max-w-md">
+          Something went wrong — email us at{" "}
+          <a href="mailto:hello@keyofhearts.com" className="text-gold underline-offset-4 hover:underline">
+            hello@keyofhearts.com
+          </a>
+        </p>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen w-full bg-navy text-cream px-6 py-16">
+      <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-12">
+        <div className="flex flex-col items-center gap-3">
+          <p className="label-eyebrow text-gold">Story Song</p>
+          <h1 className="font-serif text-cream text-3xl md:text-4xl">
+            Two versions. Choose the one that feels like them.
+          </h1>
+          {manifest.recipient_name && (
+            <p className="text-cream/70 text-sm font-light tracking-wide">
+              For {manifest.recipient_name}
+            </p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+          {(["A", "B"] as const).map((v) => {
+            const url = v === "A" ? manifest.song_a_url! : manifest.song_b_url!;
+            return (
+              <div
+                key={v}
+                className="flex flex-col items-center gap-5 p-8 rounded-2xl border border-gold/30 bg-navy-deep/40"
+              >
+                <h2 className="font-serif text-cream text-2xl">Version {v}</h2>
+                <audio controls src={url} preload="metadata" className="w-full" />
+                <button
+                  type="button"
+                  onClick={() => choose(v)}
+                  className="mt-2 px-8 py-3 rounded-full bg-gradient-gold text-navy font-semibold shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.6)] hover:shadow-[0_12px_32px_-8px_hsl(var(--gold)/0.8)] hover:-translate-y-0.5 transition-all"
+                >
+                  This one — Version {v}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={regenerate}
+          className="font-serif italic text-gold text-sm underline-offset-4 hover:underline"
+        >
+          Neither feels right — write them a new one
+        </button>
+      </div>
+    </main>
+  );
+};
+
+export default Choose;
