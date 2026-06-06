@@ -85,6 +85,20 @@ const Choose = () => {
     );
   }
 
+  if (chosen) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <div className="flex flex-col items-center gap-6 max-w-md">
+          <HeartIcon />
+          <h1 className="font-serif text-cream text-5xl md:text-6xl">Perfect.</h1>
+          <p className="text-cream/80 text-base md:text-lg font-light leading-relaxed">
+            We're putting the finishing touches on their gift. You'll receive a link to share when the moment is right.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen w-full bg-navy text-cream px-6 py-16">
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-12">
