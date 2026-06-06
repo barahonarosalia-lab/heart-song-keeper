@@ -4,7 +4,8 @@
 // server-side using your access token.
 //
 // 👉 INSERT YOUR WEBHOOK URL HERE:
-export const TIKTOK_EVENTS_WEBHOOK_URL = "";
+export const TIKTOK_EVENTS_WEBHOOK_URL =
+  "https://newbuildnewbies.app.n8n.cloud/webhook-test/koh-order";
 
 declare global {
   interface Window {
