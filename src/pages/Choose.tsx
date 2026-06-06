@@ -1,4 +1,3 @@
-Replace the entire contents of src/pages/Choose.tsx with this code:
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
