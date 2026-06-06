@@ -48,6 +48,7 @@ const mapManifest = (m: Manifest): ListenRecord => {
     collection: "",
     art_name: "",
     card_message: m.card_message ?? "",
+    dedication: m.dedication ?? "",
     song_title: m.song_title ?? "",
     audio_url: m.audio_url ?? "",
     duration_seconds: 0,
