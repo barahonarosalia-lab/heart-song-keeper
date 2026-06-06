@@ -1,3 +1,5 @@
+Replace the entire contents of src/pages/Choose.tsx with this code:
+
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -23,6 +25,7 @@ const Choose = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [chosen, setChosen] = useState<"A" | "B" | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!order) {
@@ -45,23 +48,30 @@ const Choose = () => {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [order]);
 
-  const choose = (choice: "A" | "B") => {
-    setChosen(choice);
+  const choose = async (choice: "A" | "B") => {
+    if (submitting) return;
+    setSubmitting(true);
     try {
-      fetch(`${N8N_CHOICE}?order=${encodeURIComponent(order)}&choice=${choice}`, {
+      await fetch(N8N_CHOICE, {
         method: "POST",
-        mode: "no-cors",
-        keepalive: true,
-      }).catch(() => {});
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order_id: order, choice }),
+      });
     } catch {}
+    setChosen(choice);
+    setSubmitting(false);
   };
+
   const regenerate = () => {
-    window.location.href = `${N8N_REGEN}?order=${encodeURIComponent(order)}`;
+    fetch(N8N_REGEN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ order_id: order }),
+    }).catch(() => {});
+    window.location.href = "/";
   };
 
   if (loading) {
@@ -127,9 +137,10 @@ const Choose = () => {
                 <button
                   type="button"
                   onClick={() => choose(v)}
-                  className="mt-2 px-8 py-3 rounded-full bg-gradient-gold text-navy font-semibold shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.6)] hover:shadow-[0_12px_32px_-8px_hsl(var(--gold)/0.8)] hover:-translate-y-0.5 transition-all"
+                  disabled={submitting}
+                  className="mt-2 px-8 py-3 rounded-full bg-gradient-gold text-navy font-semibold shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.6)] hover:shadow-[0_12px_32px_-8px_hsl(var(--gold)/0.8)] hover:-translate-y-0.5 transition-all disabled:opacity-50"
                 >
-                  This one — Version {v}
+                  {submitting ? "Saving…" : `This one — Version ${v}`}
                 </button>
               </div>
             );
