@@ -10,12 +10,19 @@ interface Manifest {
 const N8N_CHOICE = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-choice";
 const N8N_REGEN = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-regenerate";
 
+const HeartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-gold" aria-hidden="true">
+    <path d="M12 21s-7.5-4.6-10-9.3C.3 8.2 2.2 4 6.2 4c2.2 0 3.8 1.2 4.8 2.7C12 5.2 13.6 4 15.8 4c4 0 5.9 4.2 4.2 7.7C19.5 16.4 12 21 12 21z" />
+  </svg>
+);
+
 const Choose = () => {
   const [params] = useSearchParams();
   const order = params.get("order") || "";
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [chosen, setChosen] = useState<"A" | "B" | null>(null);
 
   useEffect(() => {
     if (!order) {
@@ -44,7 +51,14 @@ const Choose = () => {
   }, [order]);
 
   const choose = (choice: "A" | "B") => {
-    window.location.href = `${N8N_CHOICE}?order=${encodeURIComponent(order)}&choice=${choice}`;
+    setChosen(choice);
+    try {
+      fetch(`${N8N_CHOICE}?order=${encodeURIComponent(order)}&choice=${choice}`, {
+        method: "POST",
+        mode: "no-cors",
+        keepalive: true,
+      }).catch(() => {});
+    } catch {}
   };
   const regenerate = () => {
     window.location.href = `${N8N_REGEN}?order=${encodeURIComponent(order)}`;
@@ -67,6 +81,20 @@ const Choose = () => {
             hello@keyofhearts.com
           </a>
         </p>
+      </main>
+    );
+  }
+
+  if (chosen) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <div className="flex flex-col items-center gap-6 max-w-md">
+          <HeartIcon />
+          <h1 className="font-serif text-cream text-5xl md:text-6xl">Perfect.</h1>
+          <p className="text-cream/80 text-base md:text-lg font-light leading-relaxed">
+            We're putting the finishing touches on their gift. You'll receive a link to share when the moment is right.
+          </p>
+        </div>
       </main>
     );
   }
