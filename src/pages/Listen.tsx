@@ -14,6 +14,7 @@ interface ListenRecord {
   collection: string;
   art_name: string;
   card_message: string;
+  dedication: string;
   song_title: string;
   audio_url: string;
   duration_seconds: number;
