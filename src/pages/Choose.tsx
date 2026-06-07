@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -47,7 +46,9 @@ const Choose = () => {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [order]);
 
   const choose = async (choice: "A" | "B") => {
@@ -117,9 +118,7 @@ const Choose = () => {
             Two versions. Choose the one that feels like them.
           </h1>
           {manifest.recipient_name && (
-            <p className="text-cream/70 text-sm font-light tracking-wide">
-              For {manifest.recipient_name}
-            </p>
+            <p className="text-cream/70 text-sm font-light tracking-wide">For {manifest.recipient_name}</p>
           )}
         </div>
 
