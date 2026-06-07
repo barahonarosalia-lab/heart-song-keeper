@@ -8,8 +8,8 @@ interface Manifest {
   recipient_name?: string;
 }
 
-const N8N_CHOICE = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-choice";
-const N8N_REGEN = "https://newbuildnewbies.app.n8n.cloud/webhook/koh-story-regenerate";
+const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
+const N8N_REGEN = "https://koh-choice-proxy.barahonarosalia.workers.dev/regenerate";
 
 const HeartIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-gold" aria-hidden="true">
