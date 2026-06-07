@@ -72,7 +72,7 @@ const Choose = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ order_id: order }),
     }).catch(() => {});
-    window.location.href = "/";
+    setRegenerated(true);
   };
 
   if (loading) {
