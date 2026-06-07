@@ -23,6 +23,7 @@ const Choose = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [chosen, setChosen] = useState<"A" | "B" | null>(null);
+  const [regenerated, setRegenerated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
