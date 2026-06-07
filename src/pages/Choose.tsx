@@ -23,6 +23,7 @@ const Choose = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [chosen, setChosen] = useState<"A" | "B" | null>(null);
+  const [regenerated, setRegenerated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const Choose = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ order_id: order }),
     }).catch(() => {});
-    window.location.href = "/";
+    setRegenerated(true);
   };
 
   if (loading) {
@@ -91,6 +92,20 @@ const Choose = () => {
             hello@keyofhearts.com
           </a>
         </p>
+      </main>
+    );
+  }
+
+  if (regenerated) {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <div className="flex flex-col items-center gap-6 max-w-md">
+          <HeartIcon />
+          <h1 className="font-serif text-cream text-5xl md:text-6xl">We're starting over.</h1>
+          <p className="text-cream/80 text-base md:text-lg font-light leading-relaxed">
+            We want this to feel exactly like them. We're writing something new — you'll receive a fresh set of songs to choose from shortly.
+          </p>
+        </div>
       </main>
     );
   }
