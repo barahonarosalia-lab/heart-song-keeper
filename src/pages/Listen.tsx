@@ -36,10 +36,16 @@ interface Manifest {
   lyrics?: string;
   lyrics_synced?: unknown;
   gifter_name?: string;
+  qr_state?: string;
+  display_title?: string;
 }
 
 const mapManifest = (m: Manifest): ListenRecord => {
   const tier: Tier = m.is_voice || m.is_memory ? "preserve" : "signature";
+  const title =
+    m.qr_state === "activated" && m.display_title
+      ? m.display_title
+      : m.song_title ?? "";
   return {
     order_id: m.order_id,
     tier,
@@ -49,7 +55,7 @@ const mapManifest = (m: Manifest): ListenRecord => {
     art_name: "",
     card_message: m.card_message ?? "",
     dedication: m.dedication ?? "",
-    song_title: m.song_title ?? "",
+    song_title: title,
     audio_url: m.audio_url ?? "",
     duration_seconds: 0,
     preserve_status: "approved",
