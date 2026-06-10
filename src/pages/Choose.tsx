@@ -84,6 +84,19 @@ const Choose = () => {
     );
   }
 
+  if (manifest?.qr_state === "activated") {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <div className="flex flex-col items-center gap-4 max-w-md">
+          <p className="font-serif text-cream text-2xl md:text-3xl">This song has already been chosen.</p>
+          <a href={`/listen/${order}`} className="font-serif italic text-gold text-base underline-offset-4 hover:underline">
+            Listen now →
+          </a>
+        </div>
+      </main>
+    );
+  }
+
   if (error || !manifest?.song_a_url || !manifest?.song_b_url) {
     return (
       <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
