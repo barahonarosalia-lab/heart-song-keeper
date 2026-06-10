@@ -5,6 +5,7 @@ interface Manifest {
   song_a_url?: string;
   song_b_url?: string;
   recipient_name?: string;
+  qr_state?: string;
 }
 
 const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
@@ -79,6 +80,19 @@ const Choose = () => {
     return (
       <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
         <p className="font-serif italic text-gold text-base">Loading…</p>
+      </main>
+    );
+  }
+
+  if (manifest?.qr_state === "activated") {
+    return (
+      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+        <div className="flex flex-col items-center gap-4 max-w-md">
+          <p className="font-serif text-cream text-2xl md:text-3xl">This song has already been chosen.</p>
+          <a href={`/listen/${order}`} className="font-serif italic text-gold text-base underline-offset-4 hover:underline">
+            Listen now →
+          </a>
+        </div>
       </main>
     );
   }
