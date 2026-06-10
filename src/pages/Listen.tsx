@@ -20,6 +20,7 @@ interface ListenRecord {
   duration_seconds: number;
   preserve_status: "approved" | "pending";
   paid: boolean;
+  qr_state?: string;
 }
 
 interface Manifest {
@@ -60,6 +61,7 @@ const mapManifest = (m: Manifest): ListenRecord => {
     duration_seconds: 0,
     preserve_status: "approved",
     paid: true,
+    qr_state: m.qr_state,
   };
 };
 
@@ -379,6 +381,17 @@ const Listen = () => {
 
           {/* Progress bar */}
           <ProgressBar current={currentTime} duration={duration} onSeek={handleSeek} />
+
+          {/* Download (activated only) */}
+          {record.qr_state === "activated" && record.audio_url && (
+            <a
+              href={record.audio_url}
+              download
+              className="font-serif italic text-gold/70 text-xs tracking-wide underline-offset-4 hover:text-gold hover:underline transition-colors"
+            >
+              Download their song.
+            </a>
+          )}
 
           {/* Divider for Preserve Pending */}
           {isPreservePending && <div className="w-16 h-px bg-gold/40 my-2" />}
