@@ -5,6 +5,7 @@ interface Manifest {
   song_a_url?: string;
   song_b_url?: string;
   recipient_name?: string;
+  qr_state?: string;
 }
 
 const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
