@@ -190,7 +190,9 @@ const Listen = () => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`https://koh-listen.barahonarosalia.workers.dev/${orderId}`, {
+        const token = new URLSearchParams(window.location.search).get("token");
+        const fetchUrl = `https://koh-listen.barahonarosalia.workers.dev/${orderId}${token ? "?token=" + token : ""}`;
+        const res = await fetch(fetchUrl, {
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(String(res.status));
