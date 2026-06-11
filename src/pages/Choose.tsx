@@ -36,7 +36,8 @@ const Choose = () => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`https://koh-listen.barahonarosalia.workers.dev/${order}`, {
+        const token = params.get("token") || "";
+        const res = await fetch(`https://koh-listen.barahonarosalia.workers.dev/${order}?token=${token}`, {
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(String(res.status));
