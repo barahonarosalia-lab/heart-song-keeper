@@ -388,21 +388,21 @@ const Listen = () => {
           {record.qr_state === "activated" && record.audio_url && (
             <button
               type="button"
-              onClick={async () => {
+              onClick={() => {
+                const name = (record.recipient_name || "their").trim().replace(/\s+/g, "-");
+                const filename = `${name}-song.mp3`;
                 try {
-                  const res = await fetch(record.audio_url);
-                  const blob = await res.blob();
-                  const url = URL.createObjectURL(blob);
                   const a = document.createElement("a");
-                  a.href = url;
-                  const name = (record.recipient_name || "their").trim().replace(/\s+/g, "-");
-                  a.download = `${name}-song.mp3`;
+                  a.href = record.audio_url;
+                  a.download = filename;
+                  a.rel = "noopener";
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
-                  URL.revokeObjectURL(url);
                 } catch {
-                  // fallback: open in new tab
+                  // Fallback if anchor click fails — opens in new tab so it at least plays.
+                  // NOTE: For true cross-origin download, R2 CDN must return
+                  // `Access-Control-Allow-Origin: *` (infrastructure fix).
                   window.open(record.audio_url, "_blank");
                 }
               }}
