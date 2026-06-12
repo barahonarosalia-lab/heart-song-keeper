@@ -386,13 +386,30 @@ const Listen = () => {
 
           {/* Download (activated only) */}
           {record.qr_state === "activated" && record.audio_url && (
-            <a
-              href={record.audio_url}
-              download
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const res = await fetch(record.audio_url);
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  const name = (record.recipient_name || "their").trim().replace(/\s+/g, "-");
+                  a.download = `${name}-song.mp3`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                } catch {
+                  // fallback: open in new tab
+                  window.open(record.audio_url, "_blank");
+                }
+              }}
               className="font-serif italic text-gold/70 text-xs tracking-wide underline-offset-4 hover:text-gold hover:underline transition-colors"
             >
               Download their song.
-            </a>
+            </button>
           )}
 
           {/* Divider for Preserve Pending */}
