@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
+import ComingSoon from "./pages/ComingSoon.tsx";
 import Start from "./pages/Start.tsx";
 import Order from "./pages/Order.tsx";
 import Listen from "./pages/Listen.tsx";
@@ -36,7 +37,8 @@ const App = () => (
         <GivingBanner />
         <PaymentTestModeBanner />
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<ComingSoon />} />
+          <Route path="/home" element={<Index />} />
           <Route path="/start" element={<Start />} />
           <Route path="/order/:orderId" element={<Order />} />
           <Route path="/listen/:orderId" element={<Listen />} />
