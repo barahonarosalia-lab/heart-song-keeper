@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey } from "@/lib/pricing";
+import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
 import PhotoPreview from "@/components/PhotoPreview";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
