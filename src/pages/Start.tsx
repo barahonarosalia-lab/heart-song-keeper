@@ -334,6 +334,8 @@ const OCCASION_TO_COLLECTION: Record<string, string> = {
   "Sobriety & Recovery": "meadow_mane",
   "Friendship": "fable_fawn",
   "Just Because": "meadow_mane",
+  "Lullaby & Nursery": "little_luminaries",
+  "Pregnancy Announcement": "little_luminaries",
 };
 
 // Map a product to the Step 4 headline noun
