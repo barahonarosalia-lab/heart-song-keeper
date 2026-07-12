@@ -17,6 +17,7 @@ interface Props {
   onQualityChange: (q: PhotoQualityState | null) => void;
   acknowledged: boolean;
   onAcknowledgedChange: (v: boolean) => void;
+  onCropAreaChange: (area: Area | null, zoom: number) => void;
 }
 
 const ACCEPT = "image/jpeg,.jpg,.jpeg";
@@ -57,6 +58,7 @@ export default function PhotoPreview({
   onQualityChange,
   acknowledged,
   onAcknowledgedChange,
+  onCropAreaChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +90,8 @@ export default function PhotoPreview({
           onChange(dataUrl);
           setCrop({ x: 0, y: 0 });
           setZoom(1);
+          setCroppedArea(null);
+          onCropAreaChange(null, 1);
         };
         img.onerror = () => setError("Could not read that image. Please try another.");
         img.src = dataUrl;
@@ -95,7 +99,7 @@ export default function PhotoPreview({
       reader.onerror = () => setError("Could not read that file. Please try another.");
       reader.readAsDataURL(file);
     },
-    [product, onChange, onQualityChange, onAcknowledgedChange],
+    [product, onChange, onQualityChange, onAcknowledgedChange, onCropAreaChange],
   );
 
   // Re-classify if product changes with an existing photo
@@ -159,7 +163,10 @@ export default function PhotoPreview({
             aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
-            onCropComplete={(_, area) => setCroppedArea(area)}
+            onCropComplete={(_, area) => {
+              setCroppedArea(area);
+              onCropAreaChange(area, zoom);
+            }}
             showGrid={false}
             objectFit="contain"
           />
@@ -241,6 +248,10 @@ export default function PhotoPreview({
               onChange("");
               onQualityChange(null);
               onAcknowledgedChange(false);
+              setCroppedArea(null);
+              setCrop({ x: 0, y: 0 });
+              setZoom(1);
+              onCropAreaChange(null, 1);
             }}
           >
             <X className="w-4 h-4 mr-1.5" /> Remove

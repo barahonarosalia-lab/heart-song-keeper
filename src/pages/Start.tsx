@@ -72,6 +72,8 @@ interface OrderState {
   blanket_orientation: "portrait" | "landscape";
   photo_natural_orientation: "portrait" | "landscape" | "square" | null;
   photo_reviewed: boolean;
+  photo_crop_area: { x: number; y: number; width: number; height: number } | null;
+  photo_zoom: number;
 }
 
 // Capitalized tier value sent in the checkout payload — backend does an
@@ -436,6 +438,8 @@ const Start = () => {
     blanket_orientation: "portrait",
     photo_natural_orientation: null,
     photo_reviewed: false,
+    photo_crop_area: null,
+    photo_zoom: 1,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -537,6 +541,8 @@ const Start = () => {
       blanket_orientation: "portrait",
       photo_natural_orientation: null,
       photo_reviewed: false,
+      photo_crop_area: null,
+      photo_zoom: 1,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
@@ -593,6 +599,8 @@ const Start = () => {
       photo_quality_override: false,
       photo_natural_orientation: null,
       photo_reviewed: false,
+      photo_crop_area: null,
+      photo_zoom: 1,
     }));
   };
 
@@ -1158,7 +1166,17 @@ const Start = () => {
                   onAcknowledgedChange={(v) =>
                     setOrder((prev) => ({ ...prev, photo_quality_override: v }))
                   }
+                  onCropAreaChange={(area, zoom) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      photo_crop_area: area
+                        ? { x: area.x, y: area.y, width: area.width, height: area.height }
+                        : null,
+                      photo_zoom: zoom,
+                    }))
+                  }
                 />
+
               ) : (
                 <>
                   {/* Collection dropdown */}
