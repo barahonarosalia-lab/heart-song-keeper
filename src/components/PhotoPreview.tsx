@@ -17,6 +17,7 @@ interface Props {
   onQualityChange: (q: PhotoQualityState | null) => void;
   acknowledged: boolean;
   onAcknowledgedChange: (v: boolean) => void;
+  onCropAreaChange: (area: Area | null, zoom: number) => void;
 }
 
 const ACCEPT = "image/jpeg,.jpg,.jpeg";
