@@ -1062,53 +1062,14 @@ const Start = () => {
           </Step>
         )}
 
-        {/* STEP 2 — Signature path */}
+        {/* STEP 2 — Story wizard */}
         {order.tier === "story" && (
-          <Step
-            index="02"
-            title="What moment are you celebrating?"
-            subtitle="Every occasion has its own song."
-          >
-            <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-3xl">
-              {OCCASIONS.map((occ) => (
-                <OccasionCard
-                  key={occ}
-                  label={occ}
-                  selected={order.occasion === occ}
-                  onSelect={() => handleSelectOccasion(occ)}
-                />
-              ))}
-            </div>
-
-            {order.occasion && (
-              <div
-                ref={detailsRef}
-                className="max-w-5xl mt-12 md:mt-16 animate-in fade-in slide-in-from-bottom-2 duration-500"
-              >
-                <button
-                  type="button"
-                  onClick={handleChangeOccasion}
-                  className="text-xs text-muted-foreground hover:text-gold underline underline-offset-4 decoration-muted-foreground/40 hover:decoration-gold transition-colors mb-6"
-                >
-                  Change occasion
-                </button>
-
-                <div className="grid md:grid-cols-3 gap-5 md:gap-6">
-                  {SONG_VERSIONS.map((song) => (
-                    <SongCard
-                      key={song.value}
-                      label={song.label}
-                      title={song.title}
-                      selected={order.song_version === song.value}
-                      onSelect={() =>
-                        setOrder((prev) => ({ ...prev, song_version: song.value }))
-                      }
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </Step>
+          <StoryWizard
+            order={order}
+            setOrder={setOrder}
+            complete={storyWizardComplete}
+            onComplete={() => setStoryWizardComplete(true)}
+          />
         )}
       </div>
 
