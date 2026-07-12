@@ -358,41 +358,54 @@ interface CardDesign {
   collection: string;
   name: string;
   cover: string;
+  accentColor: string;
   comingSoon?: boolean;
 }
+
+const CARD_ART_BASE = "https://assets.keyofhearts.com/koh-card-art";
 
 const CARD_DESIGNS: CardDesign[] = [
   {
     id: "card_little_luminaries",
     collection: "Little Luminaries",
     name: "Blush moon, pink clouds, soft stars",
-    cover: luminaries,
+    cover: `${CARD_ART_BASE}/little-luminaries.jpg`,
+    accentColor: "#D4A5C9",
   },
   {
     id: "card_meadow_mane",
     collection: "Meadow & Mane",
     name: "Warm botanical frame, gold geometric border",
-    cover: meadow,
+    cover: `${CARD_ART_BASE}/meadow-mane.jpg`,
+    accentColor: "#7A9E7E",
+  },
+  {
+    id: "card_meadow_mane_dark",
+    collection: "Meadow & Mane",
+    name: "Moodier palette — deep forest, dusk botanicals",
+    cover: `${CARD_ART_BASE}/meadow-mane-dark.jpg`,
+    accentColor: "#8B9E6E",
   },
   {
     id: "card_moonlit_botanica",
     collection: "Moonlit Botanica",
     name: "Deep navy, white rose, gold botanical line art",
-    cover: botanica,
+    cover: `${CARD_ART_BASE}/moonlit-botanica.jpg`,
+    accentColor: "#7B9E9E",
   },
   {
     id: "card_fable_fawn",
     collection: "Fable & Fawn",
-    name: "Coming soon",
-    cover: fable,
-    comingSoon: true,
+    name: "Moonlit fox, glowing cottage, botanical charm",
+    cover: `${CARD_ART_BASE}/fable-fawn.jpg`,
+    accentColor: "#A0785A",
   },
   {
     id: "card_ember_ivy",
     collection: "Ember & Ivy",
-    name: "Coming soon",
-    cover: ember,
-    comingSoon: true,
+    name: "Candlelit garden, paired foxes, cottage roses",
+    cover: `${CARD_ART_BASE}/ember-ivy.jpg`,
+    accentColor: "#C9A84C",
   },
 ];
 
