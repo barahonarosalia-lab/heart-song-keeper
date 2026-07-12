@@ -1845,24 +1845,49 @@ const ChipGrid = ({
   );
 };
 
-// ----- Story wizard -------------------------------------------------------
+// ----- Shared wizard step builders ---------------------------------------
 
-const StoryWizard = ({
+type SetOrder = React.Dispatch<React.SetStateAction<OrderState>>;
+
+const UPLOADCARE_PUBLIC_KEY = "b449aa35a5d74a79b1d5";
+
+const buildRelationshipStep = (order: OrderState, setOrder: SetOrder): WizardStep => ({
+  title: "Who is this song for?",
+  subtitle: "Pick the relationship that fits best.",
+  isValid: () => !!order.relationship,
+  render: () => (
+    <ChipGrid
+      options={STORY_RELATIONSHIPS}
+      value={order.relationship || null}
+      onSelect={(v) => setOrder((prev) => ({ ...prev, relationship: v }))}
+    />
+  ),
+});
+
+const buildNameStep = (order: OrderState, setOrder: SetOrder): WizardStep => ({
+  title: "What's their name?",
+  subtitle: "We'll use this throughout the experience.",
+  isValid: () => !!order.recipient_name.trim(),
+  render: () => (
+    <Input
+      value={order.recipient_name}
+      onChange={(e) =>
+        setOrder((prev) => ({ ...prev, recipient_name: e.target.value }))
+      }
+      placeholder="e.g. Sarah"
+      className="h-14 rounded-xl bg-card border-border/60 text-lg"
+      autoFocus
+    />
+  ),
+});
+
+// Sub-component with local state for the "Something else" input
+const OccasionStepBody = ({
   order,
   setOrder,
-  addDigitalCopy,
-  setAddDigitalCopy,
-  digitalAddonEligible,
-  onSelectProduct,
-  onCheckout,
 }: {
   order: OrderState;
-  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
-  addDigitalCopy: boolean;
-  setAddDigitalCopy: React.Dispatch<React.SetStateAction<boolean>>;
-  digitalAddonEligible: boolean;
-  onSelectProduct: (product: ProductId) => void;
-  onCheckout: () => void;
+  setOrder: SetOrder;
 }) => {
   const [customOccasion, setCustomOccasion] = useState(
     order.occasion && !OCCASIONS.includes(order.occasion) ? order.occasion : "",
@@ -1871,12 +1896,111 @@ const StoryWizard = ({
     order.occasion && !OCCASIONS.includes(order.occasion) ? "custom" : "preset",
   );
 
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-2.5">
+        {OCCASIONS.map((occ) => {
+          const selected = occasionMode === "preset" && order.occasion === occ;
+          return (
+            <button
+              key={occ}
+              type="button"
+              onClick={() => {
+                setOccasionMode("preset");
+                setOrder((prev) => ({ ...prev, occasion: occ }));
+              }}
+              className={cn(
+                "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+                selected
+                  ? "bg-gold text-navy border-gold shadow-gold"
+                  : "bg-card text-navy border-border/60 hover:border-gold",
+              )}
+            >
+              {occ}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => {
+            setOccasionMode("custom");
+            setOrder((prev) => ({ ...prev, occasion: customOccasion }));
+          }}
+          className={cn(
+            "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+            occasionMode === "custom"
+              ? "bg-gold text-navy border-gold shadow-gold"
+              : "bg-card text-navy border-border/60 hover:border-gold",
+          )}
+        >
+          Something else
+        </button>
+      </div>
+      {occasionMode === "custom" && (
+        <Input
+          value={customOccasion}
+          onChange={(e) => {
+            setCustomOccasion(e.target.value);
+            setOrder((prev) => ({ ...prev, occasion: e.target.value }));
+          }}
+          placeholder="Tell us the occasion"
+          className="h-12 rounded-xl bg-card border-border/60"
+          autoFocus
+        />
+      )}
+    </div>
+  );
+};
+
+const buildOccasionStep = (order: OrderState, setOrder: SetOrder): WizardStep => ({
+  title: "What's the occasion?",
+  subtitle: "Every moment has its own song.",
+  isValid: () => !!(order.occasion && order.occasion.trim()),
+  render: () => <OccasionStepBody order={order} setOrder={setOrder} />,
+});
+
+const buildProductStep = (
+  order: OrderState,
+  setOrder: SetOrder,
+  onSelectProduct: (product: ProductId) => void,
+): WizardStep => ({
+  title: "What would you like to gift them?",
+  subtitle:
+    "Free shipping on every US order. 🌍 International customers pay shipping — shown before payment.",
+  isValid: () => !!order.product,
+  render: () => (
+    <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+      {PRODUCTS.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          tier={order.tier!}
+          selected={order.product === product.id}
+          onSelect={() => onSelectProduct(product.id)}
+          onChooseArt={() => {}}
+          order={order}
+          setOrder={setOrder}
+          hideExpansion
+        />
+      ))}
+    </div>
+  ),
+});
+
+// Sub-component that hosts the product-specific configuration UI
+const ProductSubStepBody = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: SetOrder;
+}) => {
   const activeCollection = useMemo(
     () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
     [order.collection],
   );
 
-  // Default the collection when entering the art step for canvas/blanket/digital
+  // Default collection from occasion when entering an art-picker product
   useEffect(() => {
     if (
       order.product &&
@@ -1891,7 +2015,124 @@ const StoryWizard = ({
     }
   }, [order.product, order.occasion, order.collection, setOrder]);
 
-  // Product sub-step validity (mirrors outer step3Complete logic)
+  if (!order.product) return null;
+  if (order.product === "jewelry") {
+    return <JewelryExpansion order={order} setOrder={setOrder} tier={order.tier!} />;
+  }
+  if (order.product === "ornament") {
+    return <OrnamentExpansion order={order} setOrder={setOrder} />;
+  }
+  const mode: "photo" | "art" = order.photo_or_art === "photo" ? "photo" : "art";
+  const setMode = (m: "photo" | "art") =>
+    setOrder((prev) => ({ ...prev, photo_or_art: m }));
+
+  return (
+    <div className="space-y-8 md:space-y-10">
+      <div className="inline-flex rounded-full border border-border/60 bg-card p-1">
+        {(
+          [
+            { id: "art", label: "Choose from our art collection" },
+            { id: "photo", label: "Upload a photo" },
+          ] as const
+        ).map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => setMode(opt.id)}
+            className={cn(
+              "px-4 md:px-5 py-2 rounded-full text-sm font-medium transition-colors",
+              mode === opt.id ? "bg-navy text-cream" : "text-navy/70 hover:text-navy",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {mode === "photo" ? (
+        <PhotoPreview
+          product={order.product as "canvas" | "blanket" | "digital"}
+          value={order.photo_url}
+          onChange={(dataUrl) =>
+            setOrder((prev) => ({
+              ...prev,
+              photo_url: dataUrl,
+              art_id: dataUrl ? null : prev.art_id,
+            }))
+          }
+          blanketOrientation={order.blanket_orientation}
+          quality={order.photo_quality}
+          onQualityChange={(q) =>
+            setOrder((prev) => ({ ...prev, photo_quality: q }))
+          }
+          acknowledged={order.photo_quality_override}
+          onAcknowledgedChange={(v) =>
+            setOrder((prev) => ({ ...prev, photo_quality_override: v }))
+          }
+          onCropAreaChange={(area, zoom) =>
+            setOrder((prev) => ({
+              ...prev,
+              photo_crop_area: area
+                ? { x: area.x, y: area.y, width: area.width, height: area.height }
+                : null,
+              photo_zoom: zoom,
+            }))
+          }
+        />
+      ) : (
+        <>
+          <div className="space-y-3 max-w-md">
+            <label htmlFor="wiz-collection-select" className="label-eyebrow text-gold block">
+              Collection
+            </label>
+            <select
+              id="wiz-collection-select"
+              value={order.collection ?? ""}
+              onChange={(e) =>
+                setOrder((prev) => ({
+                  ...prev,
+                  collection: e.target.value || null,
+                  art_id: null,
+                }))
+              }
+              className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
+            >
+              <option value="" disabled>
+                Choose a collection
+              </option>
+              {COLLECTIONS.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {order.occasion &&
+              OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
+                <p className="text-xs text-muted-foreground italic">
+                  Suggested for "{order.occasion}" — change anytime.
+                </p>
+              )}
+          </div>
+
+          {activeCollection && (
+            <ArtGallery
+              collection={activeCollection}
+              selectedId={order.art_id}
+              onToggle={(pieceId) =>
+                setOrder((prev) => ({
+                  ...prev,
+                  art_id: prev.art_id === pieceId ? null : pieceId,
+                }))
+              }
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+const buildProductSubStep = (order: OrderState, setOrder: SetOrder): WizardStep => {
   const productSubValid = (() => {
     if (!order.product) return false;
     if (order.product === "jewelry") {
@@ -1923,99 +2164,377 @@ const StoryWizard = ({
       ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
       : "";
 
-  const steps: WizardStep[] = [
-    {
-      title: "Who is this song for?",
-      subtitle: "Pick the relationship that fits best.",
-      isValid: () => !!order.relationship,
-      render: () => (
-        <ChipGrid
-          options={STORY_RELATIONSHIPS}
-          value={order.relationship || null}
-          onSelect={(v) => setOrder((prev) => ({ ...prev, relationship: v }))}
-        />
-      ),
-    },
-    {
-      title: "What's their name?",
-      subtitle: "We'll use this throughout the experience.",
-      isValid: () => !!order.recipient_name.trim(),
-      render: () => (
+  return {
+    title: productSubTitle,
+    subtitle:
+      order.product && ART_PRODUCTS.includes(order.product)
+        ? "This is what they'll see every time they hold it."
+        : undefined,
+    isValid: () => productSubValid,
+    render: () => <ProductSubStepBody order={order} setOrder={setOrder} />,
+  };
+};
+
+const buildCardArtStep = (order: OrderState, setOrder: SetOrder): WizardStep => ({
+  title: "Choose the art for their card.",
+  subtitle: order.product ? cardSubheadlineForProduct(order.product) : undefined,
+  isValid: () => !!order.card_design,
+  render: () => (
+    <div className="space-y-8 md:space-y-10">
+      <CardGallery
+        designs={CARD_DESIGNS}
+        selectedId={order.card_design}
+        onToggle={(designId) =>
+          setOrder((prev) => ({
+            ...prev,
+            card_design: prev.card_design === designId ? null : designId,
+          }))
+        }
+      />
+      <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6 space-y-3">
+        <p className="label-eyebrow text-gold">Your QR code</p>
+        <p className="text-sm md:text-base text-navy/80 leading-relaxed">
+          {qrNoticeCopy(order)}
+        </p>
+      </div>
+    </div>
+  ),
+});
+
+const buildReviewStep = (
+  order: OrderState,
+  setOrder: SetOrder,
+  addDigitalCopy: boolean,
+  setAddDigitalCopy: React.Dispatch<React.SetStateAction<boolean>>,
+  digitalAddonEligible: boolean,
+): WizardStep => ({
+  title: "Make it theirs.",
+  subtitle: "One last look, then off to checkout.",
+  isValid: () =>
+    !!order.gifter_name.trim() &&
+    !!order.recipient_name.trim() &&
+    !!order.relationship.trim() &&
+    !!order.product &&
+    !!order.tier,
+  render: () => (
+    <div className="space-y-10 md:space-y-12">
+      <div className="space-y-3">
+        <label htmlFor="wiz-gifter-name" className="label-eyebrow text-gold block">
+          Your name
+        </label>
         <Input
-          value={order.recipient_name}
+          id="wiz-gifter-name"
+          value={order.gifter_name}
           onChange={(e) =>
-            setOrder((prev) => ({ ...prev, recipient_name: e.target.value }))
+            setOrder((prev) => ({ ...prev, gifter_name: e.target.value }))
           }
-          placeholder="e.g. Sarah"
-          className="h-14 rounded-xl bg-card border-border/60 text-lg"
-          autoFocus
+          placeholder="Your first name"
+          className="h-12 rounded-xl bg-card border-border/60 text-base"
         />
-      ),
-    },
-    {
-      title: "What's the occasion?",
-      subtitle: "Every moment has its own song.",
-      isValid: () => !!(order.occasion && order.occasion.trim()),
-      render: () => (
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-2.5">
-            {OCCASIONS.map((occ) => {
-              const selected = occasionMode === "preset" && order.occasion === occ;
-              return (
-                <button
-                  key={occ}
-                  type="button"
-                  onClick={() => {
-                    setOccasionMode("preset");
-                    setOrder((prev) => ({ ...prev, occasion: occ }));
-                  }}
-                  className={cn(
-                    "rounded-full px-4 h-10 text-sm font-medium border transition-all",
-                    selected
-                      ? "bg-gold text-navy border-gold shadow-gold"
-                      : "bg-card text-navy border-border/60 hover:border-gold",
-                  )}
-                >
-                  {occ}
-                </button>
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => {
-                setOccasionMode("custom");
-                setOrder((prev) => ({ ...prev, occasion: customOccasion }));
-              }}
-              className={cn(
-                "rounded-full px-4 h-10 text-sm font-medium border transition-all",
-                occasionMode === "custom"
-                  ? "bg-gold text-navy border-gold shadow-gold"
-                  : "bg-card text-navy border-border/60 hover:border-gold",
-              )}
-            >
-              Something else
-            </button>
-          </div>
-          {occasionMode === "custom" && (
-            <Input
-              value={customOccasion}
-              onChange={(e) => {
-                setCustomOccasion(e.target.value);
-                setOrder((prev) => ({ ...prev, occasion: e.target.value }));
-              }}
-              placeholder="Tell us the occasion"
-              className="h-12 rounded-xl bg-card border-border/60"
-              autoFocus
-            />
-          )}
+      </div>
+
+      <div className="space-y-3">
+        <label htmlFor="wiz-customer-message" className="label-eyebrow text-gold block">
+          Your message{" "}
+          <span className="text-muted-foreground/70 normal-case tracking-normal">
+            (optional)
+          </span>
+        </label>
+        <Textarea
+          id="wiz-customer-message"
+          value={order.customer_message}
+          maxLength={500}
+          rows={5}
+          onChange={(e) =>
+            setOrder((prev) => ({
+              ...prev,
+              customer_message: e.target.value.slice(0, 500),
+            }))
+          }
+          placeholder="Write something from the heart — a memory, a moment, what they mean to you."
+          className="rounded-xl bg-card border-border/60 text-base p-4"
+        />
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+            Not sure what to say? Leave this blank and we'll write something beautiful from the details you've given us.
+          </p>
+          <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+            {order.customer_message.length}/500
+          </span>
         </div>
-      ),
+      </div>
+
+      <div className="space-y-3">
+        <label htmlFor="wiz-dedication" className="label-eyebrow text-gold block">
+          A short dedication{" "}
+          <span className="text-muted-foreground/70 normal-case tracking-normal">
+            (optional)
+          </span>
+        </label>
+        <Input
+          id="wiz-dedication"
+          value={order.dedication}
+          maxLength={100}
+          onChange={(e) =>
+            setOrder((prev) => ({
+              ...prev,
+              dedication: e.target.value.slice(0, 100),
+            }))
+          }
+          placeholder="e.g. Because they were here."
+          className="h-12 rounded-xl bg-card border-border/60 text-base"
+        />
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+            A line that's entirely yours — featured on its own inside their card.
+          </p>
+          <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+            {order.dedication.length}/100
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <label className="flex items-center justify-between gap-4 cursor-pointer">
+          <span className="text-base text-navy font-medium">
+            Use my exact words — don't add anything
+          </span>
+          <Switch
+            checked={order.use_exact_words}
+            onCheckedChange={(checked) =>
+              setOrder((prev) => ({ ...prev, use_exact_words: checked }))
+            }
+            className="data-[state=checked]:bg-gold"
+          />
+        </label>
+        {order.use_exact_words && (
+          <p className="text-sm leading-relaxed italic" style={{ color: "#C4796A" }}>
+            Your words will appear exactly as written. Nothing added. Nothing changed.
+          </p>
+        )}
+      </div>
+
+      {digitalAddonEligible && (
+        <label
+          htmlFor="wiz-digital-addon"
+          className={cn(
+            "flex items-start gap-3 rounded-2xl border p-5 cursor-pointer transition-all",
+            addDigitalCopy
+              ? "border-gold bg-gold/5 shadow-soft"
+              : "border-border/60 bg-card hover:border-gold/60",
+          )}
+        >
+          <Checkbox
+            id="wiz-digital-addon"
+            checked={addDigitalCopy}
+            onCheckedChange={(c) => setAddDigitalCopy(c === true)}
+            className="mt-0.5"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="font-serif text-navy text-base md:text-lg">
+              Add a digital copy — $10
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-1">
+              A high-resolution PNG + PDF of their art, delivered to your inbox.
+            </p>
+          </div>
+        </label>
+      )}
+    </div>
+  ),
+});
+
+// ----- Voice/Memory content step (upload + consent + music) --------------
+
+const VoiceMemoryContentStepBody = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: SetOrder;
+}) => {
+  const isVoice = order.tier === "voice";
+  const widgetRef = useRef<HTMLInputElement>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [musicOn, setMusicOn] = useState(
+    !!order.music_style_preference &&
+      order.music_style_preference !== "No Music" &&
+      order.music_style_preference !== "No Background Music",
+  );
+
+  // When music toggle is off, force "No Music" as the stored value
+  useEffect(() => {
+    if (!musicOn && order.music_style_preference !== "No Music") {
+      setOrder((prev) => ({ ...prev, music_style_preference: "No Music" }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [musicOn]);
+
+  // Load Uploadcare widget script and wire onUploadComplete
+  useEffect(() => {
+    const SRC = "https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js";
+    const init = () => {
+      const uc = (window as unknown as { uploadcare?: any }).uploadcare;
+      if (!uc || !widgetRef.current) return;
+      const widget = uc.Widget(widgetRef.current);
+      widget.onUploadComplete((info: { cdnUrl: string }) => {
+        setUploadError(null);
+        setOrder((prev) =>
+          isVoice
+            ? { ...prev, audio_url: info.cdnUrl }
+            : { ...prev, video_url: info.cdnUrl },
+        );
+      });
+    };
+    if ((window as unknown as { uploadcare?: any }).uploadcare) {
+      init();
+      return;
+    }
+    const existing = document.querySelector(
+      `script[src="${SRC}"]`,
+    ) as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", init);
+      return () => existing.removeEventListener("load", init);
+    }
+    const script = document.createElement("script");
+    script.src = SRC;
+    script.async = true;
+    script.onload = init;
+    script.onerror = () =>
+      setUploadError("We couldn't load the uploader. Please refresh and try again.");
+    document.body.appendChild(script);
+  }, [isVoice, setOrder]);
+
+  const uploadedUrl = isVoice ? order.audio_url : order.video_url;
+
+  return (
+    <div className="space-y-8">
+      {!order.send_link_later && (
+        <div className="space-y-3">
+          <p className="label-eyebrow text-gold">
+            Upload their {isVoice ? "audio" : "video"}
+          </p>
+          <div className="rounded-xl border border-dashed border-gold/40 bg-cream/50 p-6">
+            <input
+              ref={widgetRef}
+              type="hidden"
+              data-public-key={UPLOADCARE_PUBLIC_KEY}
+              data-tabs="file camera url"
+              data-preview-step="true"
+              data-images-only="false"
+              data-clearable="true"
+            />
+          </div>
+          {uploadedUrl && (
+            <p className="text-sm text-navy">
+              Uploaded <span className="text-gold">✓</span>
+            </p>
+          )}
+          {uploadError && <p className="text-sm text-rose">{uploadError}</p>}
+        </div>
+      )}
+
+      <label className="flex items-start gap-3 cursor-pointer">
+        <Checkbox
+          checked={order.send_link_later}
+          onCheckedChange={(v) =>
+            setOrder((prev) => ({ ...prev, send_link_later: v === true }))
+          }
+          className="mt-0.5 border-navy/30 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
+        />
+        <span className="text-sm text-navy leading-relaxed">
+          I'll send this after I order — email me a link.
+        </span>
+      </label>
+
+      <div className="rounded-2xl bg-card border border-border/60 p-5 md:p-6">
+        <label className="flex items-start gap-3 cursor-pointer">
+          <Checkbox
+            checked={order.audio_consent}
+            onCheckedChange={(v) =>
+              setOrder((prev) => ({
+                ...prev,
+                audio_consent: v === true,
+                audio_consent_at: v === true ? new Date().toISOString() : null,
+              }))
+            }
+            className="mt-0.5 border-navy/40 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
+          />
+          <span className="text-sm text-navy leading-relaxed">
+            I have the right to share this recording and consent to it being used to
+            create this keepsake.
+          </span>
+        </label>
+      </div>
+
+      <div className="space-y-4 pt-2 border-t border-border/60">
+        <label className="flex items-center justify-between gap-4 cursor-pointer">
+          <span className="text-base text-navy font-medium">
+            Add background music?
+          </span>
+          <Switch
+            checked={musicOn}
+            onCheckedChange={setMusicOn}
+            className="data-[state=checked]:bg-gold"
+          />
+        </label>
+        {musicOn && (
+          <ChipGrid
+            options={MUSIC_STYLES.filter((s) => s !== "No Background Music")}
+            value={order.music_style_preference}
+            onSelect={(v) =>
+              setOrder((prev) => ({ ...prev, music_style_preference: v }))
+            }
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const buildVoiceMemoryContentStep = (
+  order: OrderState,
+  setOrder: SetOrder,
+): WizardStep => {
+  const isVoice = order.tier === "voice";
+  return {
+    title: isVoice ? "Share their voice." : "Share their moment.",
+    isValid: () => {
+      const hasFile = isVoice ? !!order.audio_url : !!order.video_url;
+      return (hasFile || order.send_link_later) && order.audio_consent;
     },
+    render: () => <VoiceMemoryContentStepBody order={order} setOrder={setOrder} />,
+  };
+};
+
+// ----- Story wizard -------------------------------------------------------
+
+const StoryWizard = ({
+  order,
+  setOrder,
+  addDigitalCopy,
+  setAddDigitalCopy,
+  digitalAddonEligible,
+  onSelectProduct,
+  onCheckout,
+}: {
+  order: OrderState;
+  setOrder: SetOrder;
+  addDigitalCopy: boolean;
+  setAddDigitalCopy: React.Dispatch<React.SetStateAction<boolean>>;
+  digitalAddonEligible: boolean;
+  onSelectProduct: (product: ProductId) => void;
+  onCheckout: () => void;
+}) => {
+  const steps: WizardStep[] = [
+    buildRelationshipStep(order, setOrder),
+    buildNameStep(order, setOrder),
+    buildOccasionStep(order, setOrder),
     {
       title: "Choose the sound and voice.",
       subtitle: "Pick a genre and who should sing it.",
-      isValid: () =>
-        !!order.music_style_preference && !!order.voice_preference,
+      isValid: () => !!order.music_style_preference && !!order.voice_preference,
       render: () => (
         <div className="space-y-8">
           <div className="space-y-3">
@@ -2110,335 +2629,10 @@ const StoryWizard = ({
         </div>
       ),
     },
-    // ------- Product picker -------
-    {
-      title: "What would you like to gift them?",
-      subtitle:
-        "Free shipping on every US order. 🌍 International customers pay shipping — shown before payment.",
-      isValid: () => !!order.product,
-      render: () => (
-        <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
-          {PRODUCTS.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              tier={order.tier!}
-              selected={order.product === product.id}
-              onSelect={() => onSelectProduct(product.id)}
-              onChooseArt={() => {}}
-              order={order}
-              setOrder={setOrder}
-              hideExpansion
-            />
-          ))}
-        </div>
-      ),
-    },
-    // ------- Product-specific sub-step -------
-    {
-      title: productSubTitle,
-      subtitle:
-        order.product && ART_PRODUCTS.includes(order.product)
-          ? "This is what they'll see every time they hold it."
-          : undefined,
-      isValid: () => productSubValid,
-      render: () => {
-        if (!order.product) return null;
-        if (order.product === "jewelry") {
-          return (
-            <JewelryExpansion order={order} setOrder={setOrder} tier={order.tier!} />
-          );
-        }
-        if (order.product === "ornament") {
-          return <OrnamentExpansion order={order} setOrder={setOrder} />;
-        }
-        // canvas / blanket / digital — photo or art
-        const mode: "photo" | "art" =
-          order.photo_or_art === "photo" ? "photo" : "art";
-        const setMode = (m: "photo" | "art") =>
-          setOrder((prev) => ({ ...prev, photo_or_art: m }));
-        return (
-          <div className="space-y-8 md:space-y-10">
-            <div className="inline-flex rounded-full border border-border/60 bg-card p-1">
-              {(
-                [
-                  { id: "art", label: "Choose from our art collection" },
-                  { id: "photo", label: "Upload a photo" },
-                ] as const
-              ).map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setMode(opt.id)}
-                  className={cn(
-                    "px-4 md:px-5 py-2 rounded-full text-sm font-medium transition-colors",
-                    mode === opt.id
-                      ? "bg-navy text-cream"
-                      : "text-navy/70 hover:text-navy",
-                  )}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
-            {mode === "photo" ? (
-              <PhotoPreview
-                product={order.product as "canvas" | "blanket" | "digital"}
-                value={order.photo_url}
-                onChange={(dataUrl) =>
-                  setOrder((prev) => ({
-                    ...prev,
-                    photo_url: dataUrl,
-                    art_id: dataUrl ? null : prev.art_id,
-                  }))
-                }
-                blanketOrientation={order.blanket_orientation}
-                quality={order.photo_quality}
-                onQualityChange={(q) =>
-                  setOrder((prev) => ({ ...prev, photo_quality: q }))
-                }
-                acknowledged={order.photo_quality_override}
-                onAcknowledgedChange={(v) =>
-                  setOrder((prev) => ({ ...prev, photo_quality_override: v }))
-                }
-                onCropAreaChange={(area, zoom) =>
-                  setOrder((prev) => ({
-                    ...prev,
-                    photo_crop_area: area
-                      ? { x: area.x, y: area.y, width: area.width, height: area.height }
-                      : null,
-                    photo_zoom: zoom,
-                  }))
-                }
-              />
-            ) : (
-              <>
-                <div className="space-y-3 max-w-md">
-                  <label
-                    htmlFor="wiz-collection-select"
-                    className="label-eyebrow text-gold block"
-                  >
-                    Collection
-                  </label>
-                  <select
-                    id="wiz-collection-select"
-                    value={order.collection ?? ""}
-                    onChange={(e) =>
-                      setOrder((prev) => ({
-                        ...prev,
-                        collection: e.target.value || null,
-                        art_id: null,
-                      }))
-                    }
-                    className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
-                  >
-                    <option value="" disabled>
-                      Choose a collection
-                    </option>
-                    {COLLECTIONS.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                  {order.occasion &&
-                    OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
-                      <p className="text-xs text-muted-foreground italic">
-                        Suggested for "{order.occasion}" — change anytime.
-                      </p>
-                    )}
-                </div>
-
-                {activeCollection && (
-                  <ArtGallery
-                    collection={activeCollection}
-                    selectedId={order.art_id}
-                    onToggle={(pieceId) =>
-                      setOrder((prev) => ({
-                        ...prev,
-                        art_id: prev.art_id === pieceId ? null : pieceId,
-                      }))
-                    }
-                  />
-                )}
-              </>
-            )}
-          </div>
-        );
-      },
-    },
-    // ------- Card art -------
-    {
-      title: "Choose the art for their card.",
-      subtitle: order.product ? cardSubheadlineForProduct(order.product) : undefined,
-      isValid: () => !!order.card_design,
-      render: () => (
-        <div className="space-y-8 md:space-y-10">
-          <CardGallery
-            designs={CARD_DESIGNS}
-            selectedId={order.card_design}
-            onToggle={(designId) =>
-              setOrder((prev) => ({
-                ...prev,
-                card_design: prev.card_design === designId ? null : designId,
-              }))
-            }
-          />
-          <div className="rounded-2xl bg-cream border border-border/60 p-5 md:p-6 space-y-3">
-            <p className="label-eyebrow text-gold">Your QR code</p>
-            <p className="text-sm md:text-base text-navy/80 leading-relaxed">
-              {qrNoticeCopy(order)}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-    // ------- Review & pay -------
-    {
-      title: "Make it theirs.",
-      subtitle: "One last look, then off to checkout.",
-      isValid: () =>
-        !!order.gifter_name.trim() &&
-        !!order.recipient_name.trim() &&
-        !!order.relationship.trim() &&
-        !!order.product &&
-        !!order.tier,
-      render: () => (
-        <div className="space-y-10 md:space-y-12">
-          {/* Your name */}
-          <div className="space-y-3">
-            <label htmlFor="wiz-gifter-name" className="label-eyebrow text-gold block">
-              Your name
-            </label>
-            <Input
-              id="wiz-gifter-name"
-              value={order.gifter_name}
-              onChange={(e) =>
-                setOrder((prev) => ({ ...prev, gifter_name: e.target.value }))
-              }
-              placeholder="Your first name"
-              className="h-12 rounded-xl bg-card border-border/60 text-base"
-            />
-          </div>
-
-          {/* Your message */}
-          <div className="space-y-3">
-            <label
-              htmlFor="wiz-customer-message"
-              className="label-eyebrow text-gold block"
-            >
-              Your message{" "}
-              <span className="text-muted-foreground/70 normal-case tracking-normal">
-                (optional)
-              </span>
-            </label>
-            <Textarea
-              id="wiz-customer-message"
-              value={order.customer_message}
-              maxLength={500}
-              rows={5}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  customer_message: e.target.value.slice(0, 500),
-                }))
-              }
-              placeholder="Write something from the heart — a memory, a moment, what they mean to you."
-              className="rounded-xl bg-card border-border/60 text-base p-4"
-            />
-            <div className="flex items-start justify-between gap-4">
-              <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-                Not sure what to say? Leave this blank and we'll write something beautiful from the details you've given us.
-              </p>
-              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                {order.customer_message.length}/500
-              </span>
-            </div>
-          </div>
-
-          {/* Dedication */}
-          <div className="space-y-3">
-            <label htmlFor="wiz-dedication" className="label-eyebrow text-gold block">
-              A short dedication{" "}
-              <span className="text-muted-foreground/70 normal-case tracking-normal">
-                (optional)
-              </span>
-            </label>
-            <Input
-              id="wiz-dedication"
-              value={order.dedication}
-              maxLength={100}
-              onChange={(e) =>
-                setOrder((prev) => ({
-                  ...prev,
-                  dedication: e.target.value.slice(0, 100),
-                }))
-              }
-              placeholder="e.g. Because they were here."
-              className="h-12 rounded-xl bg-card border-border/60 text-base"
-            />
-            <div className="flex items-start justify-between gap-4">
-              <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-                A line that's entirely yours — featured on its own inside their card.
-              </p>
-              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                {order.dedication.length}/100
-              </span>
-            </div>
-          </div>
-
-          {/* Use exact words */}
-          <div className="space-y-3">
-            <label className="flex items-center justify-between gap-4 cursor-pointer">
-              <span className="text-base text-navy font-medium">
-                Use my exact words — don't add anything
-              </span>
-              <Switch
-                checked={order.use_exact_words}
-                onCheckedChange={(checked) =>
-                  setOrder((prev) => ({ ...prev, use_exact_words: checked }))
-                }
-                className="data-[state=checked]:bg-gold"
-              />
-            </label>
-            {order.use_exact_words && (
-              <p className="text-sm leading-relaxed italic" style={{ color: "#C4796A" }}>
-                Your words will appear exactly as written. Nothing added. Nothing changed.
-              </p>
-            )}
-          </div>
-
-          {/* Optional digital copy add-on */}
-          {digitalAddonEligible && (
-            <label
-              htmlFor="wiz-digital-addon"
-              className={cn(
-                "flex items-start gap-3 rounded-2xl border p-5 cursor-pointer transition-all",
-                addDigitalCopy
-                  ? "border-gold bg-gold/5 shadow-soft"
-                  : "border-border/60 bg-card hover:border-gold/60",
-              )}
-            >
-              <Checkbox
-                id="wiz-digital-addon"
-                checked={addDigitalCopy}
-                onCheckedChange={(c) => setAddDigitalCopy(c === true)}
-                className="mt-0.5"
-              />
-              <div className="flex-1 min-w-0">
-                <p className="font-serif text-navy text-base md:text-lg">
-                  Add a digital copy — $10
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-                  A high-resolution PNG + PDF of their art, delivered to your inbox.
-                </p>
-              </div>
-            </label>
-          )}
-        </div>
-      ),
-    },
+    buildProductStep(order, setOrder, onSelectProduct),
+    buildProductSubStep(order, setOrder),
+    buildCardArtStep(order, setOrder),
+    buildReviewStep(order, setOrder, addDigitalCopy, setAddDigitalCopy, digitalAddonEligible),
   ];
 
   return (
@@ -2449,5 +2643,45 @@ const StoryWizard = ({
     />
   );
 };
+
+// ----- Voice / Memory wizard ---------------------------------------------
+
+const VoiceMemoryWizard = ({
+  order,
+  setOrder,
+  addDigitalCopy,
+  setAddDigitalCopy,
+  digitalAddonEligible,
+  onSelectProduct,
+  onCheckout,
+}: {
+  order: OrderState;
+  setOrder: SetOrder;
+  addDigitalCopy: boolean;
+  setAddDigitalCopy: React.Dispatch<React.SetStateAction<boolean>>;
+  digitalAddonEligible: boolean;
+  onSelectProduct: (product: ProductId) => void;
+  onCheckout: () => void;
+}) => {
+  const steps: WizardStep[] = [
+    buildRelationshipStep(order, setOrder),
+    buildNameStep(order, setOrder),
+    buildOccasionStep(order, setOrder),
+    buildVoiceMemoryContentStep(order, setOrder),
+    buildProductStep(order, setOrder, onSelectProduct),
+    buildProductSubStep(order, setOrder),
+    buildCardArtStep(order, setOrder),
+    buildReviewStep(order, setOrder, addDigitalCopy, setAddDigitalCopy, digitalAddonEligible),
+  ];
+
+  return (
+    <WizardShell
+      steps={steps}
+      onFinish={onCheckout}
+      finishLabel="Continue to checkout →"
+    />
+  );
+};
+
 
 export default Start;
