@@ -42,6 +42,7 @@ interface OrderState {
   story_feeling: string;
   use_name_in_lyrics: boolean;
   audio_url: string;
+  video_url: string;
   send_link_later: boolean;
   audio_consent: boolean;
   audio_consent_at: string | null;
