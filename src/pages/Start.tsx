@@ -541,6 +541,8 @@ const Start = () => {
       blanket_orientation: "portrait",
       photo_natural_orientation: null,
       photo_reviewed: false,
+      photo_crop_area: null,
+      photo_zoom: 1,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
