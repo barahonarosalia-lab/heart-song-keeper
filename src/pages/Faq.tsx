@@ -57,8 +57,8 @@ const sections: FaqSection[] = [
         a: "Because every Key of Hearts is made to order and production begins immediately, we are unable to cancel or modify orders once placed. Please review your order carefully before checkout.",
       },
       {
-        q: "What if I am not happy with my Signature song?",
-        a: "Contact us at hello@keyofhearts.com. We will switch it to another Signature song of your choosing.",
+        q: "What if I am not happy with my Story song?",
+        a: "You can regenerate it for free, as many times as you'd like, within 30 days of purchase — just use the link in your delivery email. After 30 days, reach out to hello@keyofhearts.com and we'll help.",
       },
       {
         q: "Do you ship internationally?",
@@ -78,8 +78,8 @@ const sections: FaqSection[] = [
         a: "Never. Your song lives at a permanent URL. It does not expire, and it does not require an app to scan.",
       },
       {
-        q: "What is the difference between Signature and Preserve?",
-        a: "Signature orders include a beautifully curated song chosen for your occasion — delivered instantly. Preserve orders include your own voice recording mixed with an original instrumental score composed just for your moment. No one else has this song. No one ever will.",
+        q: "What is the difference between Story, Voice, and Memory?",
+        a: "Story is an original song written for your occasion from what you share about them — words, moments, the little details that make them who they are. Voice takes your own audio recording — a message, a laugh, a lullaby — and wraps it in an original instrumental score composed for your moment. Memory does the same with your own video. No one else has your Key. No one ever will.",
       },
     ],
   },
