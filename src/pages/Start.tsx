@@ -1068,8 +1068,11 @@ const Start = () => {
           <StoryWizard
             order={order}
             setOrder={setOrder}
-            complete={storyWizardComplete}
-            onComplete={() => setStoryWizardComplete(true)}
+            addDigitalCopy={addDigitalCopy}
+            setAddDigitalCopy={setAddDigitalCopy}
+            digitalAddonEligible={digitalAddonEligible}
+            onSelectProduct={handleSelectProduct}
+            onCheckout={handleCheckout}
           />
         )}
       </div>
