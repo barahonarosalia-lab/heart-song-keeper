@@ -1824,8 +1824,8 @@ const JewelryExpansion = ({
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
   tier: Tier;
 }) => {
-  const silverPrice = tier === "story" ? 89 : 109;
-  const goldPrice = tier === "story" ? 99 : 119;
+  const silverPrice = amountForPriceKey("jewelry_silver", tier);
+  const goldPrice = amountForPriceKey("jewelry_gold", tier);
 
   return (
     <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
