@@ -282,6 +282,9 @@ const Listen = () => {
   const isPreserveTier = record.tier === "voice" || record.tier === "memory";
   const isPreservePending = isPreserveTier && record.preserve_status === "pending";
   const isPreserveApproved = isPreserveTier && record.preserve_status === "approved";
+  const isVideo = record.content_type === "video" && !!record.video_url;
+  const downloadUrl = isVideo ? record.video_url! : record.audio_url;
+  const downloadExt = isVideo ? "mp4" : "mp3";
 
   return (
     <main className="relative min-h-screen w-full bg-navy overflow-hidden text-cream">
