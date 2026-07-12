@@ -17,24 +17,36 @@ import ember from "@/assets/collection-ember.jpg";
 
 // ----- Types --------------------------------------------------------------
 
-type Tier = "signature" | "preserve";
+type Tier = "story" | "voice" | "memory";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
 type PhotoQuality = "green" | "yellow" | "red";
-type JewelryStyle = "heart" | "circle" | "dog_tag";
+type JewelryStyle = "heart" | "round" | "dogtag";
 type JewelryFinish = "silver" | "gold";
+type PhotoOrArt = "photo" | "art";
+type VoicePreference = "male" | "female" | "surprise";
 
 interface OrderState {
   tier: Tier | null;
   occasion: string | null;
   song_version: SongVersion | null;
   whose_audio: string;
+  // Shared across tiers: for Voice/Memory this holds the instrumental style;
+  // for Story it holds the genre value.
   music_style_preference: string | null;
+  voice_preference: VoicePreference | null;
+  // Story-tier intake fields (UI comes later)
+  story_who: string;
+  story_memory: string;
+  story_feeling: string;
+  use_name_in_lyrics: boolean;
   audio_url: string;
   send_link_later: boolean;
   audio_consent: boolean;
   audio_consent_at: string | null;
   product: ProductId | null;
+  // Applies to canvas / blanket / digital only. UI comes later.
+  photo_or_art: PhotoOrArt | null;
   ornament_design: string | null;
   ornament_dedication: string;
   ornament_year: string;
@@ -61,6 +73,11 @@ interface OrderState {
   photo_reviewed: boolean;
 }
 
+// Capitalized tier value sent in the checkout payload — backend does an
+// exact-match lookup on this string, so keep the capitalization exact.
+const tierPayloadLabel = (tier: Tier): "Story" | "Voice" | "Memory" =>
+  tier === "story" ? "Story" : tier === "voice" ? "Voice" : "Memory";
+
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
   { value: "instrumental", label: "INSTRUMENTAL", title: "Song 1" },
   { value: "humming", label: "HUMMING", title: "Song 2" },
@@ -74,6 +91,8 @@ const OCCASIONS = [
   "Anniversary & Wedding",
   "Baby & Birth",
   "New Parent",
+  "Lullaby & Nursery",
+  "Pregnancy Announcement",
   "Birthday",
   "Mother's Day",
   "Father's Day",
@@ -81,6 +100,10 @@ const OCCASIONS = [
   "Graduation",
   "College Send-Off",
   "Sobriety & Recovery",
+  "Get Well",
+  "Retirement",
+  "Thank You",
+  "Missing You",
   "Friendship",
   "Just Because",
 ];
