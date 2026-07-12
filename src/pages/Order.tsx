@@ -331,7 +331,6 @@ interface StripeOrderRow {
 }
 
 const PRICE_LABEL: Record<string, string> = {
-const PRICE_LABEL: Record<string, string> = {
   digital_story: "Digital Download — Story",
   digital_voice: "Digital Download — Voice",
   digital_memory: "Digital Download — Memory",
@@ -439,7 +438,7 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
             <SummaryRow label="Status" value={row.status === "paid" ? "Paid" : row.status} />
           </div>
 
-          {row.price_id && /^(canvas|blanket|photo_blanket)_/.test(row.price_id) && (
+          {row.price_id && /^(canvas|blanket)_/.test(row.price_id) && (
             <DigitalAddOnCard
               orderId={row.stripe_session_id}
               recipientName={meta.recipient_name ?? null}
