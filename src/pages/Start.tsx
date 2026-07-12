@@ -29,7 +29,7 @@ interface OrderState {
   occasion: string | null;
   song_version: SongVersion | null;
   whose_audio: string;
-  music_style: string | null;
+  music_style_preference: string | null;
   audio_url: string;
   send_link_later: boolean;
   audio_consent: boolean;
@@ -45,7 +45,7 @@ interface OrderState {
   engraving_line_1: string;
   engraving_line_2: string;
   collection: string | null;
-  art_selected: string | null;
+  art_id: string | null;
   card_design: string | null;
   gifter_name: string;
   recipient_name: string;
@@ -369,10 +369,10 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
 
 // Step 5 QR notice copy based on tier + Preserve audio choice
 const qrNoticeCopy = (order: OrderState): string => {
-  if (order.tier === "signature") {
+  if (order.tier === "story") {
     return "Your card includes a unique QR code linked to their song. Physical cards are printed and on their way within 2 business days. Digital orders receive their card by email instantly.";
   }
-  if (order.tier === "preserve" && order.send_link_later) {
+  if (order.(tier === "voice" || tier === "memory") && order.send_link_later) {
     return "Your card includes a unique QR code. From the moment it arrives, scanning it plays a beautiful song matched to their occasion. Send us their audio when you're ready — we'll have their voice live within 48 hours of receiving it. The card never waits. Neither does the music.";
   }
   // Preserve + audio uploaded
@@ -387,7 +387,7 @@ const Start = () => {
     occasion: null,
     song_version: null,
     whose_audio: "",
-    music_style: null,
+    music_style_preference: null,
     audio_url: "",
     send_link_later: false,
     audio_consent: false,
@@ -403,7 +403,7 @@ const Start = () => {
     engraving_line_1: "",
     engraving_line_2: "",
     collection: null,
-    art_selected: null,
+    art_id: null,
     card_design: null,
     gifter_name: "",
     recipient_name: "",
@@ -586,12 +586,12 @@ const Start = () => {
 
   // Determine if Step 2 is complete enough to unlock Step 3
   const step2Complete =
-    order.tier === "signature"
+    order.tier === "story"
       ? !!order.song_version
-      : order.tier === "preserve"
+      : order.(tier === "voice" || tier === "memory")
       ? !!order.occasion &&
         !!order.whose_audio.trim() &&
-        !!order.music_style &&
+        !!order.music_style_preference &&
         (order.send_link_later || !!order.audio_url) &&
         order.audio_consent
       : false;
@@ -631,7 +631,7 @@ const Start = () => {
     setOrder((prev) => ({
       ...prev,
       collection: collectionId,
-      art_selected: piece ? piece.id : prev.art_selected,
+      art_id: piece ? piece.id : prev.art_id,
     }));
     setFromCollections(true);
     if (piece) setPrefilledArtId(piece.id);
@@ -716,7 +716,7 @@ const Start = () => {
   // their product. This unlocks Step 5 (the card art picker).
   const step3Complete = (() => {
     if (!order.product) return false;
-    if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
+    if (ART_PRODUCTS.includes(order.product)) return !!order.art_id;
     if (order.product === "photo_blanket") {
       return (
         !!order.photo_url &&
@@ -765,7 +765,7 @@ const Start = () => {
   if (order.tier) {
     summaryItems.push({
       label: "Tier",
-      value: order.tier === "signature" ? "Signature" : "Preserve",
+      value: order.tier === "story" ? "Story" : order.tier === "voice" ? "Voice" : "Memory",
       ref: step2Ref,
     });
   }
@@ -798,8 +798,8 @@ const Start = () => {
       .join(" · ");
     if (ornText) summaryItems.push({ label: "Ornament text", value: ornText, ref: step3Ref });
   }
-  if (order.art_selected && activeCollection) {
-    const piece = activeCollection.pieces.find((p) => p.id === order.art_selected);
+  if (order.art_id && activeCollection) {
+    const piece = activeCollection.pieces.find((p) => p.id === order.art_id);
     summaryItems.push({
       label: "Art selected",
       value: `${activeCollection.name} — ${piece?.name ?? ""}`,
@@ -861,8 +861,8 @@ const Start = () => {
             examples="· Instrumental · Humming · With Lyrics"
             price="From $29"
             cta="Choose Signature"
-            selected={order.tier === "signature"}
-            onSelect={() => handleSelectTier("signature")}
+            selected={order.tier === "story"}
+            onSelect={() => handleSelectTier("story")}
           />
           <TierCard
             label="PRESERVE"
@@ -871,15 +871,15 @@ const Start = () => {
             examples="· Voicemail · Vows · Bedtime stories · Deployment recordings"
             price="From $49"
             cta="Choose Preserve"
-            selected={order.tier === "preserve"}
-            onSelect={() => handleSelectTier("preserve")}
+            selected={order.(tier === "voice" || tier === "memory")}
+            onSelect={() => handleSelectTier("voice")}
           />
         </div>
       </Step>
 
       {/* STEP 2 — Preserve path */}
       <div ref={step2Ref}>
-        {order.tier === "preserve" && (
+        {order.(tier === "voice" || tier === "memory") && (
           <Step
             index="02"
             title="What moment are you celebrating?"
@@ -922,13 +922,13 @@ const Start = () => {
                   <p className="label-eyebrow text-gold">Background music style</p>
                   <div className="flex flex-wrap gap-2.5">
                     {MUSIC_STYLES.map((style) => {
-                      const selected = order.music_style === style;
+                      const selected = order.music_style_preference === style;
                       return (
                         <button
                           key={style}
                           type="button"
                           onClick={() =>
-                            setOrder((prev) => ({ ...prev, music_style: style }))
+                            setOrder((prev) => ({ ...prev, music_style_preference: style }))
                           }
                           className={cn(
                             "rounded-full px-4 h-10 text-sm font-medium border transition-all",
@@ -1028,7 +1028,7 @@ const Start = () => {
         )}
 
         {/* STEP 2 — Signature path */}
-        {order.tier === "signature" && (
+        {order.tier === "story" && (
           <Step
             index="02"
             title="What moment are you celebrating?"
@@ -1146,7 +1146,7 @@ const Start = () => {
                         setOrder((prev) => ({
                           ...prev,
                           collection: e.target.value || null,
-                          art_selected: null,
+                          art_id: null,
                         }))
                       }
                       className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
@@ -1162,12 +1162,12 @@ const Start = () => {
                     </select>
                     {fromCollections &&
                       prefilledArtId &&
-                      order.art_selected === prefilledArtId && (
+                      order.art_id === prefilledArtId && (
                         <p className="text-xs text-gold/80 italic">
                           You chose this art from our collections — change anytime.
                         </p>
                       )}
-                    {!(fromCollections && order.art_selected === prefilledArtId) &&
+                    {!(fromCollections && order.art_id === prefilledArtId) &&
                       order.occasion &&
                       OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
                         <p className="text-xs text-muted-foreground italic">
@@ -1180,11 +1180,11 @@ const Start = () => {
                   {activeCollection && (
                     <ArtGallery
                       collection={activeCollection}
-                      selectedId={order.art_selected}
+                      selectedId={order.art_id}
                       onToggle={(pieceId) =>
                         setOrder((prev) => ({
                           ...prev,
-                          art_selected: prev.art_selected === pieceId ? null : pieceId,
+                          art_id: prev.art_id === pieceId ? null : pieceId,
                         }))
                       }
                     />
@@ -1631,7 +1631,7 @@ const ProductCard = ({
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
 }) => {
   // Dynamic price for jewelry: gold finish adds $10
-  const basePrice = tier === "signature" ? product.signature : product.preserve;
+  const basePrice = tier === "story" ? product.signature : product.preserve;
   const displayPrice =
     product.id === "jewelry" && order.jewelry_finish === "gold"
       ? basePrice + 10
@@ -1659,7 +1659,7 @@ const ProductCard = ({
       <ul className="space-y-2 mb-7 text-sm text-muted-foreground">
         {product.details.map((d, idx) => {
           const isFirstDigitalPreserve =
-            product.id === "digital" && idx === 0 && tier === "preserve";
+            product.id === "digital" && idx === 0 && (tier === "voice" || tier === "memory");
           const display = isFirstDigitalPreserve
             ? "Your digital file arrives instantly. Your voice goes live within 48 hours of us receiving it."
             : d;
@@ -1861,8 +1861,8 @@ const JewelryExpansion = ({
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
   tier: Tier;
 }) => {
-  const silverPrice = tier === "signature" ? 89 : 109;
-  const goldPrice = tier === "signature" ? 99 : 119;
+  const silverPrice = tier === "story" ? 89 : 109;
+  const goldPrice = tier === "story" ? 99 : 119;
 
   return (
     <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
