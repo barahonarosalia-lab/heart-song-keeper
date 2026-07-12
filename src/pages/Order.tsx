@@ -12,8 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackTikTokEvent } from "@/lib/tiktokEvents";
 
 // ----- Types -----
-type Tier = "signature" | "preserve";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type Tier = "story" | "voice" | "memory";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
 type AudioQuality = "green" | "yellow" | "red";
 
 interface OrderRecord {
@@ -38,8 +38,15 @@ const PRODUCT_LABEL: Record<ProductId, string> = {
   ornament: "Heirloom Ornament",
   jewelry: "Engraved Jewelry",
   blanket: "KOH Art Blanket",
-  photo_blanket: "Photo Blanket",
 };
+
+const TIER_LABEL: Record<Tier, string> = {
+  story: "Story",
+  voice: "Voice",
+  memory: "Memory",
+};
+
+const isPreserveTier = (tier: Tier) => tier === "voice" || tier === "memory";
 
 // Mock loader — in production this hits the backend with the order_id.
 // For now we read overrides from query params so the page is testable.
@@ -50,7 +57,7 @@ const loadOrder = (orderId: string, params: URLSearchParams): OrderRecord | null
     date: params.get("date") ?? new Date().toLocaleDateString("en-US", {
       year: "numeric", month: "long", day: "numeric",
     }),
-    tier: (params.get("tier") as Tier) ?? "signature",
+    tier: (params.get("tier") as Tier) ?? "story",
     occasion: params.get("occasion") ?? "Anniversary & Wedding",
     product: (params.get("product") as ProductId) ?? "canvas",
     collection: params.get("collection") ?? "Moonlit Botanica",
