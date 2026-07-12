@@ -416,8 +416,10 @@ const Listen = () => {
             </div>
           )}
 
-          {/* Progress bar */}
-          <ProgressBar current={currentTime} duration={duration} onSeek={handleSeek} />
+          {/* Progress bar — audio only */}
+          {!isVideo && (
+            <ProgressBar current={currentTime} duration={duration} onSeek={handleSeek} />
+          )}
 
           {/* Download (activated only) */}
           {record.qr_state === "activated" && record.audio_url && (
