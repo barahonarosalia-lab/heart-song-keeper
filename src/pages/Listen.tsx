@@ -308,18 +308,20 @@ const Listen = () => {
         }
       `}</style>
 
-      {/* Hidden audio element */}
-      <audio
-        ref={audioRef}
-        src={record.audio_url || undefined}
-        preload="metadata"
-        onLoadedMetadata={(e) => {
-          const d = (e.currentTarget as HTMLAudioElement).duration;
-          if (isFinite(d) && d > 0) setDuration(d);
-        }}
-        onTimeUpdate={(e) => setCurrentTime((e.currentTarget as HTMLAudioElement).currentTime)}
-        onEnded={() => setIsPlaying(false)}
-      />
+      {/* Hidden audio element — audio mode only */}
+      {!isVideo && (
+        <audio
+          ref={audioRef}
+          src={record.audio_url || undefined}
+          preload="metadata"
+          onLoadedMetadata={(e) => {
+            const d = (e.currentTarget as HTMLAudioElement).duration;
+            if (isFinite(d) && d > 0) setDuration(d);
+          }}
+          onTimeUpdate={(e) => setCurrentTime((e.currentTarget as HTMLAudioElement).currentTime)}
+          onEnded={() => setIsPlaying(false)}
+        />
+      )}
 
       {/* Branding only for Preserve Pending */}
       {isPreservePending && (
