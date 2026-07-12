@@ -1593,8 +1593,8 @@ const ProductCard = ({
   order: OrderState;
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
 }) => {
-  // Dynamic price for jewelry: gold finish adds $10
-  const basePrice = tier === "story" ? product.signature : product.preserve;
+  // Base price by tier; jewelry gold finish adds $10.
+  const basePrice = product[tier];
   const displayPrice =
     product.id === "jewelry" && order.jewelry_finish === "gold"
       ? basePrice + 10
