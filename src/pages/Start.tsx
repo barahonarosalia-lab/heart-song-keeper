@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey } from "@/lib/pricing";
+import PhotoPreview from "@/components/PhotoPreview";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
@@ -721,7 +722,14 @@ const Start = () => {
   // their product. This unlocks Step 5 (the card art picker).
   const step3Complete = (() => {
     if (!order.product) return false;
-    if (ART_PRODUCTS.includes(order.product)) return !!order.art_id;
+    if (ART_PRODUCTS.includes(order.product)) {
+      if (order.photo_or_art === "photo") {
+        if (!order.photo_url) return false;
+        if (order.photo_quality === "green") return true;
+        return order.photo_quality_override;
+      }
+      return !!order.art_id;
+    }
     if (order.product === "ornament") return !!order.ornament_design;
     if (order.product === "jewelry") {
       return (
@@ -1097,8 +1105,63 @@ const Start = () => {
             subtitle={step4Subtitle}
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
-              <>
-                {/* Collection dropdown */}
+              {/* Toggle: photo vs art collection */}
+              {(() => {
+                const mode: "photo" | "art" =
+                  order.photo_or_art === "photo" ? "photo" : "art";
+                const setMode = (m: "photo" | "art") =>
+                  setOrder((prev) => ({ ...prev, photo_or_art: m }));
+                return (
+                  <div className="inline-flex rounded-full border border-border/60 bg-card p-1">
+                    {(
+                      [
+                        { id: "art", label: "Choose from our art collection" },
+                        { id: "photo", label: "Upload a photo" },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setMode(opt.id)}
+                        className={cn(
+                          "px-4 md:px-5 py-2 rounded-full text-sm font-medium transition-colors",
+                          mode === opt.id
+                            ? "bg-navy text-cream"
+                            : "text-navy/70 hover:text-navy",
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {order.photo_or_art === "photo" ? (
+                <PhotoPreview
+                  product={order.product as "canvas" | "blanket" | "digital"}
+                  value={order.photo_url}
+                  onChange={(dataUrl) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      photo_url: dataUrl,
+                      // Clear art selection when switching to a photo
+                      art_id: dataUrl ? null : prev.art_id,
+                    }))
+                  }
+                  blanketOrientation={order.blanket_orientation}
+                  quality={order.photo_quality}
+                  onQualityChange={(q) =>
+                    setOrder((prev) => ({ ...prev, photo_quality: q }))
+                  }
+                  acknowledged={order.photo_quality_override}
+                  onAcknowledgedChange={(v) =>
+                    setOrder((prev) => ({ ...prev, photo_quality_override: v }))
+                  }
+                />
+              ) : (
+                <>
+                  {/* Collection dropdown */}
                   <div className="space-y-3 max-w-md">
                     <label htmlFor="collection-select" className="label-eyebrow text-gold block">
                       Collection
@@ -1151,9 +1214,10 @@ const Start = () => {
                           art_id: prev.art_id === pieceId ? null : pieceId,
                         }))
                       }
-                  />
-                )}
-              </>
+                    />
+                  )}
+                </>
+              )}
             </div>
           </Step>
         )}
