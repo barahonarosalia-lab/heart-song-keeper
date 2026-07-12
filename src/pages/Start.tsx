@@ -1088,7 +1088,7 @@ const Start = () => {
         )}
       </div>
 
-      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) OR Photo upload (Photo Blanket) */}
+      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) */}
       <div ref={step4Ref}>
         {showStep4 && (
           <Step
@@ -1097,27 +1097,7 @@ const Start = () => {
             subtitle={step4Subtitle}
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
-              {order.product === "photo_blanket" ? (
-                <PhotoUpload
-                  photoUrl={order.photo_url}
-                  quality={order.photo_quality}
-                  override={order.photo_quality_override}
-                  orientation={order.blanket_orientation}
-                  naturalOrientation={order.photo_natural_orientation}
-                  reviewed={order.photo_reviewed}
-                  onUpload={handlePhotoUpload}
-                  onRemove={handleRemovePhoto}
-                  onOverride={() =>
-                    setOrder((prev) => ({ ...prev, photo_quality_override: true }))
-                  }
-                  onOrientationChange={(o) =>
-                    setOrder((prev) => ({ ...prev, blanket_orientation: o }))
-                  }
-                  onReviewedChange={(checked) =>
-                    setOrder((prev) => ({ ...prev, photo_reviewed: checked }))
-                  }
-                />
-              ) : (
+              <>
                 <>
                   {/* Collection dropdown */}
                   <div className="space-y-3 max-w-md">
