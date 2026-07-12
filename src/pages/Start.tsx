@@ -1166,7 +1166,17 @@ const Start = () => {
                   onAcknowledgedChange={(v) =>
                     setOrder((prev) => ({ ...prev, photo_quality_override: v }))
                   }
+                  onCropAreaChange={(area, zoom) =>
+                    setOrder((prev) => ({
+                      ...prev,
+                      photo_crop_area: area
+                        ? { x: area.x, y: area.y, width: area.width, height: area.height }
+                        : null,
+                      photo_zoom: zoom,
+                    }))
+                  }
                 />
+
               ) : (
                 <>
                   {/* Collection dropdown */}
