@@ -332,7 +332,7 @@ const Listen = () => {
 
       {/* Centered content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md flex flex-col items-center text-center gap-6">
+        <div className={cn("w-full flex flex-col items-center text-center gap-6", isVideo ? "max-w-2xl" : "max-w-md")}>
           {/* Recipient */}
           {(record.recipient_name || record.occasion) && (
             <div className="flex flex-col items-center gap-2">
