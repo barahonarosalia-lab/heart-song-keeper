@@ -46,6 +46,14 @@ Deno.serve(async (req) => {
       ui_mode: "embedded",
       return_url: returnUrl,
       ...(customerEmail && { customer_email: customerEmail }),
+      // Stripe requires an explicit allowed_countries list for
+      // shipping_address_collection — there is no "any country" option.
+      // This is a broad international list (Stripe's supported shipping
+      // countries, minus sanctioned/embargoed jurisdictions). Applied to
+      // every session; harmless no-op for digital-only orders.
+      shipping_address_collection: {
+        allowed_countries: SHIPPING_ALLOWED_COUNTRIES,
+      },
       metadata: {
         priceId,
         ...(metadata || {}),
