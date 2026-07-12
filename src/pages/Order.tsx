@@ -687,7 +687,7 @@ const Order = () => {
         <div className="max-w-2xl mx-auto">
           <p className="label-eyebrow text-gold mb-6 text-center">Your Order</p>
           <div className="bg-card rounded-2xl shadow-card p-8 md:p-10 border border-gold/20">
-            <SummaryRow label="Tier" value={order.tier === "story" ? "Signature" : "Preserve"} />
+            <SummaryRow label="Tier" value={TIER_LABEL[order.tier]} />
             <SummaryRow label="Occasion" value={order.occasion} />
             <SummaryRow label="Product" value={PRODUCT_LABEL[order.product]} />
             <SummaryRow label="Art" value={`${order.collection} — ${order.art_name}`} />
