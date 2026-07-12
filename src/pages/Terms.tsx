@@ -42,8 +42,10 @@ const Terms = () => {
                 either a replacement or a resolution, at our discretion.
               </p>
               <p>
-                If you are not happy with your Signature song, contact us. We will switch it
-                to another Signature song of your choosing.
+                If you're not happy with your Story song, you can regenerate it — free,
+                as many times as you'd like — within 30 days of purchase, using the link
+                in your delivery email. After 30 days, contact us and we'll do our best
+                to help.
               </p>
             </section>
 
