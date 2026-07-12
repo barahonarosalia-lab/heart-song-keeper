@@ -58,12 +58,13 @@ export default function PhotoPreview({
   onQualityChange,
   acknowledged,
   onAcknowledgedChange,
+  onCropAreaChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [, setCroppedArea] = useState<Area | null>(null);
+  const [croppedArea, setCroppedArea] = useState<Area | null>(null);
 
   const aspect = aspectFor(product, blanketOrientation);
 
