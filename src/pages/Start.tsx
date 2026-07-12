@@ -1776,9 +1776,26 @@ const WizardShell = ({
   const step = steps[idx];
   const canNext = step.isValid();
   const isLast = idx === total - 1;
+  const containerRef = useRef<HTMLElement | null>(null);
+  const stepRef = useRef<HTMLDivElement | null>(null);
+  const didMountRef = useRef(false);
+
+  // On mount (tier just chosen), scroll wizard container into view.
+  useEffect(() => {
+    containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  // On step change (Next/Back), scroll to the step heading.
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+    stepRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [idx]);
 
   return (
-    <section className="container py-16 md:py-24">
+    <section ref={containerRef} className="container py-16 md:py-24 scroll-mt-4">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <p className="label-eyebrow text-gold">
@@ -1805,8 +1822,9 @@ const WizardShell = ({
         </div>
 
         <div
+          ref={stepRef}
           key={idx}
-          className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+          className="animate-in fade-in slide-in-from-bottom-2 duration-300 scroll-mt-4"
         >
           <h2 className="font-serif text-3xl md:text-4xl text-navy text-balance leading-[1.1] mb-3">
             {step.title}
