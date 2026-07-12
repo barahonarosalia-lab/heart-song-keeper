@@ -395,7 +395,7 @@ const qrNoticeCopy = (order: OrderState): string => {
   if (order.tier === "story") {
     return "Your card includes a unique QR code linked to their song. Physical cards are printed and on their way within 2 business days. Digital orders receive their card by email instantly.";
   }
-  if (order.(tier === "voice" || tier === "memory") && order.send_link_later) {
+  if ((order.tier === "voice" || order.tier === "memory") && order.send_link_later) {
     return "Your card includes a unique QR code. From the moment it arrives, scanning it plays a beautiful song matched to their occasion. Send us their audio when you're ready — we'll have their voice live within 48 hours of receiving it. The card never waits. Neither does the music.";
   }
   // Preserve + audio uploaded
@@ -611,7 +611,7 @@ const Start = () => {
   const step2Complete =
     order.tier === "story"
       ? !!order.song_version
-      : order.(tier === "voice" || tier === "memory")
+      : (order.tier === "voice" || order.tier === "memory")
       ? !!order.occasion &&
         !!order.whose_audio.trim() &&
         !!order.music_style_preference &&
@@ -894,7 +894,7 @@ const Start = () => {
             examples="· Voicemail · Vows · Bedtime stories · Deployment recordings"
             price="From $49"
             cta="Choose Preserve"
-            selected={order.(tier === "voice" || tier === "memory")}
+            selected={(order.tier === "voice" || order.tier === "memory")}
             onSelect={() => handleSelectTier("voice")}
           />
         </div>
@@ -902,7 +902,7 @@ const Start = () => {
 
       {/* STEP 2 — Preserve path */}
       <div ref={step2Ref}>
-        {order.(tier === "voice" || tier === "memory") && (
+        {(order.tier === "voice" || order.tier === "memory") && (
           <Step
             index="02"
             title="What moment are you celebrating?"
