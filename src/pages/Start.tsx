@@ -638,11 +638,12 @@ const Start = () => {
     }));
   };
 
-  // Determine if Step 2 is complete enough to unlock Step 3
+  // Determine if Step 2 is complete enough to unlock Step 3.
+  // Story tier runs its own full wizard (including product / card / review /
+  // checkout), so the outer Steps 3-6 are hidden for Story by keeping this
+  // false — they only render for Voice/Memory.
   const step2Complete =
-    order.tier === "story"
-      ? storyWizardComplete
-      : (order.tier === "voice" || order.tier === "memory")
+    (order.tier === "voice" || order.tier === "memory")
       ? !!order.occasion &&
         !!order.whose_audio.trim() &&
         !!order.music_style_preference &&
