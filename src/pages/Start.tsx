@@ -1450,8 +1450,15 @@ const CardGallery = ({
                   <Check className="size-4" strokeWidth={3} />
                 </span>
               )}
-              <div className="p-3">
-                <p className="label-eyebrow text-gold mb-1">{design.collection}</p>
+              <div className="p-3 border-t-2" style={{ borderTopColor: design.accentColor }}>
+                <p className="label-eyebrow mb-1 flex items-center gap-1.5" style={{ color: design.accentColor }}>
+                  <span
+                    className="inline-block size-1.5 rounded-full"
+                    style={{ backgroundColor: design.accentColor }}
+                    aria-hidden
+                  />
+                  {design.collection}
+                </p>
                 <p className="font-serif text-sm md:text-base text-navy leading-tight">
                   {design.name}
                 </p>
