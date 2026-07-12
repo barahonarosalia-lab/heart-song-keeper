@@ -501,6 +501,7 @@ const Start = () => {
         product: order.product,
         // Backend does exact-match string lookup on this — capitalized.
         tier: tierPayloadLabel(order.tier),
+        voice_preference: resolveVoicePreference(order.voice_preference) || "",
         ...(wantsAddon
           ? { addon: "digital_addon", addon_price_id: DIGITAL_ADDON_PRICE_ID }
           : {}),
