@@ -372,8 +372,6 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
       return "Included with their canvas. Frameable. Yours to keep forever.";
     case "blanket":
       return "Included with their blanket. Frameable. Yours to keep forever.";
-    case "photo_blanket":
-      return "Included with their photo blanket. Frameable. Yours to keep forever.";
     case "ornament":
       return "Included with their ornament. Frameable. Yours to keep forever.";
     case "digital":
@@ -406,7 +404,13 @@ const Start = () => {
     send_link_later: false,
     audio_consent: false,
     audio_consent_at: null,
+    voice_preference: null,
+    story_who: "",
+    story_memory: "",
+    story_feeling: "",
+    use_name_in_lyrics: false,
     product: null,
+    photo_or_art: null,
     ornament_design: null,
     ornament_dedication: "",
     ornament_year: "",
@@ -444,9 +448,7 @@ const Start = () => {
   const [addDigitalCopy, setAddDigitalCopy] = useState(false);
 
   const digitalAddonEligible =
-    order.product === "canvas" ||
-    order.product === "blanket" ||
-    order.product === "photo_blanket";
+    order.product === "canvas" || order.product === "blanket";
 
   const handleCheckout = () => {
     if (!order.product || !order.tier) return;
@@ -465,10 +467,8 @@ const Start = () => {
         gifter_name: order.gifter_name || "",
         occasion: order.occasion || "",
         product: order.product,
-        tier: order.tier,
-        ...(order.product === "photo_blanket"
-          ? { blanket_orientation: order.blanket_orientation }
-          : {}),
+        // Backend does exact-match string lookup on this — capitalized.
+        tier: tierPayloadLabel(order.tier),
         ...(wantsAddon
           ? { addon: "digital_addon", addon_price_id: DIGITAL_ADDON_PRICE_ID }
           : {}),
