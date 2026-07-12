@@ -661,7 +661,7 @@ const Order = () => {
     );
   }
 
-  const showUpload = order.isPreserveTier(tier) && !order.audio_uploaded;
+  const showUpload = isPreserveTier(order.tier) && !order.audio_uploaded;
   const startUrl = `/start?tier=${order.tier}&occasion=${encodeURIComponent(order.occasion)}`;
   const showDigitalAddon = order.product === "canvas" || order.product === "blanket";
 
