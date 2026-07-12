@@ -26,7 +26,7 @@ function aspectFor(
   product: PhotoPreviewProduct,
   orientation: "portrait" | "landscape",
 ): number {
-  if (product === "canvas") return 14 / 11; // landscape by default
+  if (product === "canvas") return 11 / 14; // portrait (11" wide × 14" tall)
   if (product === "blanket") return orientation === "landscape" ? 60 / 50 : 50 / 60;
   return 1; // digital
 }
