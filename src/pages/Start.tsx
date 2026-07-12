@@ -478,12 +478,7 @@ const Start = () => {
 
   const { openCheckout, checkoutElement } = useStripeCheckout();
   const [addDigitalCopy, setAddDigitalCopy] = useState(false);
-  const [storyWizardComplete, setStoryWizardComplete] = useState(false);
 
-  // Reset Story wizard completion when tier changes away from Story
-  useEffect(() => {
-    if (order.tier !== "story") setStoryWizardComplete(false);
-  }, [order.tier]);
 
   const digitalAddonEligible =
     order.product === "canvas" || order.product === "blanket";
