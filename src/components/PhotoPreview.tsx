@@ -161,7 +161,10 @@ export default function PhotoPreview({
             aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
-            onCropComplete={(_, area) => setCroppedArea(area)}
+            onCropComplete={(_, area) => {
+              setCroppedArea(area);
+              onCropAreaChange(area, zoom);
+            }}
             showGrid={false}
             objectFit="contain"
           />
