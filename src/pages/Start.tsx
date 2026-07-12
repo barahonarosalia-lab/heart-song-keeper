@@ -124,8 +124,9 @@ const MUSIC_STYLES = [
 interface ProductDef {
   id: ProductId;
   name: string;
-  signature: number;
-  preserve: number;
+  story: number;
+  voice: number;
+  memory: number;
   tagline: string;
   details: string[];
   cta: string;
@@ -135,8 +136,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "digital",
     name: "Digital Download",
-    signature: 29,
-    preserve: 49,
+    story: 49,
+    voice: 69,
+    memory: 79,
     tagline: "Instant. Printable. Frameable.",
     details: [
       "Delivered to inbox instantly",
@@ -150,8 +152,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "canvas",
     name: "Canvas — Unframed 11x14",
-    signature: 79,
-    preserve: 99,
+    story: 99,
+    voice: 119,
+    memory: 129,
     tagline: "Hang it. Scan it. Feel it again.",
     details: [
       "Ships in 3-5 business days",
@@ -164,8 +167,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "ornament",
     name: "Acrylic Ornament",
-    signature: 59,
-    preserve: 79,
+    story: 79,
+    voice: 99,
+    memory: 109,
     tagline: "Scan to unwrap.",
     details: [
       "Gift box included",
@@ -176,12 +180,13 @@ const PRODUCTS: ProductDef[] = [
   },
   {
     id: "jewelry",
-    name: "Jewelry — Heart · Circle · Dog Tag",
-    signature: 89,
-    preserve: 109,
+    name: "Jewelry — Heart · Round · Dog Tag",
+    story: 109,
+    voice: 129,
+    memory: 139,
     tagline: "Worn every day. Scanned whenever they need it.",
     details: [
-      "Heart · Circle · Dog Tag",
+      "Heart · Round · Dog Tag",
       "Silver or Gold",
       "Ships in 5-7 business days",
       "Free shipping",
@@ -191,8 +196,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "blanket",
     name: "Blanket",
-    signature: 119,
-    preserve: 139,
+    story: 139,
+    voice: 159,
+    memory: 169,
     tagline: "Wrapped in it. Every night.",
     details: [
       "Sherpa 50x60",
@@ -201,21 +207,6 @@ const PRODUCTS: ProductDef[] = [
       "Free shipping",
     ],
     cta: "Choose Blanket",
-  },
-  {
-    id: "photo_blanket",
-    name: "Photo Blanket",
-    signature: 119,
-    preserve: 139,
-    tagline: "A moment in time. Their voice. Forever.",
-    details: [
-      "Your photo full bleed",
-      "QR code woven into art",
-      "Sherpa 50x60",
-      "Ships in 3-5 business days",
-      "Free shipping",
-    ],
-    cta: "Choose Photo Blanket",
   },
 ];
 
@@ -236,8 +227,8 @@ const ORNAMENT_DESIGNS: OrnamentDesign[] = [
 
 const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
   { id: "heart", name: "Heart" },
-  { id: "circle", name: "Circle" },
-  { id: "dog_tag", name: "Dog Tag" },
+  { id: "round", name: "Round" },
+  { id: "dogtag", name: "Dog Tag" },
 ];
 
 // ----- Collections (art) --------------------------------------------------
@@ -325,7 +316,7 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
 // Products that auto-scroll to Step 4 (art picker OR photo upload)
-const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital", "photo_blanket"];
+const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
 // ----- Card designs (Step 5) ---------------------------------------------
 
