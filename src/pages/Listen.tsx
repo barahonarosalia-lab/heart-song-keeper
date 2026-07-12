@@ -350,23 +350,45 @@ const Listen = () => {
             </div>
           )}
 
-          {/* Play button */}
-          <div className="my-2">
-            <PlayCircle isPlaying={isPlaying} onClick={togglePlay} />
-            {needsTap && (
-              <p className="mt-4 font-serif italic text-gold text-sm animate-fade-in">
-                Tap to hear their song
-              </p>
-            )}
-            {record.dedication && record.dedication.trim() && (
-              <p
-                className="mt-4 font-serif italic text-gold"
-                style={{ fontSize: "15px" }}
-              >
-                {record.dedication}
-              </p>
-            )}
-          </div>
+          {/* Player — video or audio */}
+          {isVideo ? (
+            <div className="my-2 w-full">
+              <div className="relative w-full rounded-2xl overflow-hidden border border-gold/40 shadow-[0_0_60px_hsl(var(--gold)/0.25)] bg-navy-deep">
+                <video
+                  src={record.video_url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-auto block bg-black"
+                />
+              </div>
+              {record.dedication && record.dedication.trim() && (
+                <p
+                  className="mt-4 font-serif italic text-gold text-center"
+                  style={{ fontSize: "15px" }}
+                >
+                  {record.dedication}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="my-2">
+              <PlayCircle isPlaying={isPlaying} onClick={togglePlay} />
+              {needsTap && (
+                <p className="mt-4 font-serif italic text-gold text-sm animate-fade-in">
+                  Tap to hear their song
+                </p>
+              )}
+              {record.dedication && record.dedication.trim() && (
+                <p
+                  className="mt-4 font-serif italic text-gold"
+                  style={{ fontSize: "15px" }}
+                >
+                  {record.dedication}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* State-specific middle content */}
           {record.tier === "story" && (
