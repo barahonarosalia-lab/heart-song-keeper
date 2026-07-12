@@ -227,9 +227,10 @@ const Listen = () => {
     });
   }, [record]);
 
-  // Attempt autoplay on mount
+  // Attempt autoplay on mount (audio only — video uses native controls)
   useEffect(() => {
     if (!record || !record.paid) return;
+    if (record.content_type === "video" && record.video_url) return;
     const a = audioRef.current;
     if (!a) return;
     const tryPlay = async () => {
