@@ -722,7 +722,14 @@ const Start = () => {
   // their product. This unlocks Step 5 (the card art picker).
   const step3Complete = (() => {
     if (!order.product) return false;
-    if (ART_PRODUCTS.includes(order.product)) return !!order.art_id;
+    if (ART_PRODUCTS.includes(order.product)) {
+      if (order.photo_or_art === "photo") {
+        if (!order.photo_url) return false;
+        if (order.photo_quality === "green") return true;
+        return order.photo_quality_override;
+      }
+      return !!order.art_id;
+    }
     if (order.product === "ornament") return !!order.ornament_design;
     if (order.product === "jewelry") {
       return (
