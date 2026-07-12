@@ -432,6 +432,7 @@ const Start = () => {
     whose_audio: "",
     music_style_preference: null,
     audio_url: "",
+    video_url: "",
     send_link_later: false,
     audio_consent: false,
     audio_consent_at: null,
