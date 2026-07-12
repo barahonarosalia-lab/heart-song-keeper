@@ -17,6 +17,8 @@ interface ListenRecord {
   dedication: string;
   song_title: string;
   audio_url: string;
+  video_url?: string;
+  content_type?: string;
   duration_seconds: number;
   preserve_status: "approved" | "pending";
   paid: boolean;
@@ -29,6 +31,8 @@ interface Manifest {
   occasion: string;
   song_title: string;
   audio_url: string;
+  video_url?: string;
+  content_type?: string;
   card_message: string;
   dedication?: string;
   is_story?: boolean;
@@ -58,6 +62,8 @@ const mapManifest = (m: Manifest): ListenRecord => {
     dedication: m.dedication ?? "",
     song_title: title,
     audio_url: m.audio_url ?? "",
+    video_url: m.video_url,
+    content_type: m.content_type,
     duration_seconds: 0,
     preserve_status: "approved",
     paid: true,
