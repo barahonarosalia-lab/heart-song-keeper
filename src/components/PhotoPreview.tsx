@@ -64,7 +64,7 @@ export default function PhotoPreview({
   const [error, setError] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedArea, setCroppedArea] = useState<Area | null>(null);
+  const [, setCroppedArea] = useState<Area | null>(null);
 
   const aspect = aspectFor(product, blanketOrientation);
 
