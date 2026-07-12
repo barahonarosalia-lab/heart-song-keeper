@@ -248,6 +248,10 @@ export default function PhotoPreview({
               onChange("");
               onQualityChange(null);
               onAcknowledgedChange(false);
+              setCroppedArea(null);
+              setCrop({ x: 0, y: 0 });
+              setZoom(1);
+              onCropAreaChange(null, 1);
             }}
           >
             <X className="w-4 h-4 mr-1.5" /> Remove
