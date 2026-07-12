@@ -1665,6 +1665,7 @@ const ProductCard = ({
   onChooseArt,
   order,
   setOrder,
+  hideExpansion = false,
 }: {
   product: ProductDef;
   tier: Tier;
@@ -1673,6 +1674,7 @@ const ProductCard = ({
   onChooseArt: () => void;
   order: OrderState;
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+  hideExpansion?: boolean;
 }) => {
   // Base price by tier; jewelry gold finish adds $10.
   const basePrice = product[tier];
@@ -1716,25 +1718,26 @@ const ProductCard = ({
         })}
       </ul>
 
-      {!selected && (
+      {(!selected || hideExpansion) && (
         <button
           type="button"
           onClick={onSelect}
           className="mt-auto inline-flex items-center justify-center rounded-full h-11 px-5 text-sm font-medium bg-navy text-cream hover:bg-navy-deep transition-colors"
         >
-          {product.cta}
+          {selected ? "Selected" : product.cta}
         </button>
       )}
 
-      {selected && product.id === "ornament" && (
+      {!hideExpansion && selected && product.id === "ornament" && (
         <OrnamentExpansion order={order} setOrder={setOrder} />
       )}
 
-      {selected && product.id === "jewelry" && (
+      {!hideExpansion && selected && product.id === "jewelry" && (
         <JewelryExpansion order={order} setOrder={setOrder} tier={tier} />
       )}
 
-      {selected &&
+      {!hideExpansion &&
+        selected &&
         product.id !== "ornament" &&
         product.id !== "jewelry" && (
           <p className="text-xs text-muted-foreground italic">
