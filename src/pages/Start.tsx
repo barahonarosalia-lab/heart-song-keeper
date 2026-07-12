@@ -438,6 +438,8 @@ const Start = () => {
     blanket_orientation: "portrait",
     photo_natural_orientation: null,
     photo_reviewed: false,
+    photo_crop_area: null,
+    photo_zoom: 1,
   });
 
   const step2Ref = useRef<HTMLDivElement>(null);
