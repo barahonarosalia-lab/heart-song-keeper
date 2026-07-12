@@ -641,7 +641,7 @@ const Start = () => {
   // Determine if Step 2 is complete enough to unlock Step 3
   const step2Complete =
     order.tier === "story"
-      ? !!order.song_version
+      ? storyWizardComplete
       : (order.tier === "voice" || order.tier === "memory")
       ? !!order.occasion &&
         !!order.whose_audio.trim() &&
