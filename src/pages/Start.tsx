@@ -501,20 +501,89 @@ const Start = () => {
     });
     if (!priceId) return;
     const wantsAddon = digitalAddonEligible && addDigitalCopy;
+
+    // Build the full metadata payload for Process Order. Stripe metadata
+    // values must be strings, so stringify objects/arrays and String()
+    // primitives. Only include fields that have a real value for this
+    // order — skip nulls / empty strings so we don't send jewelry fields
+    // on a canvas order, etc.
+    const metadata: Record<string, string> = {
+      flow: "start",
+      product: order.product,
+      tier: tierPayloadLabel(order.tier),
+    };
+    const put = (key: string, value: unknown) => {
+      if (value === null || value === undefined) return;
+      if (typeof value === "string") {
+        if (value.length === 0) return;
+        metadata[key] = value;
+      } else if (typeof value === "boolean" || typeof value === "number") {
+        metadata[key] = String(value);
+      } else {
+        metadata[key] = JSON.stringify(value);
+      }
+    };
+
+    const o = order as OrderState & Record<string, unknown>;
+    put("recipient_name", order.recipient_name);
+    put("gifter_name", order.gifter_name);
+    put("occasion", order.occasion);
+    put("voice_preference", resolveVoicePreference(order.voice_preference));
+    put("collection", order.collection);
+    put("art_id", order.art_id);
+    put("card_design", order.card_design);
+    put("blanket_orientation",
+      order.product === "blanket" ? order.blanket_orientation : null);
+    put("dedication", order.dedication);
+    put("customer_message", order.customer_message);
+    put("use_exact_words", order.use_exact_words);
+    put("card_message", o.card_message);
+    put("story_who", order.story_who);
+    put("story_memory", order.story_memory);
+    put("story_feeling", order.story_feeling);
+    put("use_name_in_lyrics", order.use_name_in_lyrics);
+    put("music_style_preference", order.music_style_preference);
+    put("photo_url", order.photo_url);
+    put("photo_quality", order.photo_quality);
+    put("photo_quality_override", order.photo_quality_override);
+    put("photo_crop_area", order.photo_crop_area);
+    put("photo_zoom",
+      order.photo_url && order.photo_zoom !== 1 ? order.photo_zoom : null);
+    put("audio_url", order.audio_url);
+    put("video_url", order.video_url);
+    put("audio_consent", order.audio_consent ? true : null);
+    put("audio_consent_at", order.audio_consent_at);
+    put("send_link_later", order.send_link_later ? true : null);
+    put("jewelry_style", order.jewelry_style);
+    put("jewelry_finish", order.jewelry_finish);
+    put("engraving_line_1",
+      order.product === "jewelry" ? order.engraving_line_1 : null);
+    put("engraving_line_2",
+      order.product === "jewelry" ? order.engraving_line_2 : null);
+    put("ornament_design", order.ornament_design);
+    put("ornament_dedication",
+      order.product === "ornament" ? order.ornament_dedication : null);
+    put("ornament_year",
+      order.product === "ornament" ? order.ornament_year : null);
+    put("ornament_line_1",
+      order.product === "ornament" ? order.ornament_line_1 : null);
+    put("ornament_line_2",
+      order.product === "ornament" ? order.ornament_line_2 : null);
+    put("shipping_name", o.shipping_name);
+    put("shipping_address", o.shipping_address);
+    put("shipping_city", o.shipping_city);
+    put("shipping_state", o.shipping_state);
+    put("shipping_zip", o.shipping_zip);
+    put("shipping_country", o.shipping_country);
+
+    if (wantsAddon) {
+      metadata.addon = "digital_addon";
+      metadata.addon_price_id = DIGITAL_ADDON_PRICE_ID;
+    }
+
     openCheckout({
       priceId,
-      metadata: {
-        flow: "start",
-        recipient_name: order.recipient_name || "",
-        gifter_name: order.gifter_name || "",
-        occasion: order.occasion || "",
-        product: order.product,
-        tier: tierPayloadLabel(order.tier),
-        voice_preference: resolveVoicePreference(order.voice_preference) || "",
-        ...(wantsAddon
-          ? { addon: "digital_addon", addon_price_id: DIGITAL_ADDON_PRICE_ID }
-          : {}),
-      },
+      metadata,
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
     });
   };
