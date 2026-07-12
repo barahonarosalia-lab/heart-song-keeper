@@ -90,6 +90,8 @@ export default function PhotoPreview({
           onChange(dataUrl);
           setCrop({ x: 0, y: 0 });
           setZoom(1);
+          setCroppedArea(null);
+          onCropAreaChange(null, 1);
         };
         img.onerror = () => setError("Could not read that image. Please try another.");
         img.src = dataUrl;
@@ -97,7 +99,7 @@ export default function PhotoPreview({
       reader.onerror = () => setError("Could not read that file. Please try another.");
       reader.readAsDataURL(file);
     },
-    [product, onChange, onQualityChange, onAcknowledgedChange],
+    [product, onChange, onQualityChange, onAcknowledgedChange, onCropAreaChange],
   );
 
   // Re-classify if product changes with an existing photo
