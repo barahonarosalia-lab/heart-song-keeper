@@ -530,15 +530,12 @@ const Start = () => {
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
-      photo_url: product === "photo_blanket" ? prev.photo_url : "",
-      photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
-      photo_quality_override:
-        product === "photo_blanket" ? prev.photo_quality_override : false,
-      blanket_orientation:
-        product === "photo_blanket" ? prev.blanket_orientation : "portrait",
-      photo_natural_orientation:
-        product === "photo_blanket" ? prev.photo_natural_orientation : null,
-      photo_reviewed: product === "photo_blanket" ? prev.photo_reviewed : false,
+      photo_url: "",
+      photo_quality: null,
+      photo_quality_override: false,
+      blanket_orientation: "portrait",
+      photo_natural_orientation: null,
+      photo_reviewed: false,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
