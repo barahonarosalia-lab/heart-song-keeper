@@ -422,15 +422,15 @@ const Listen = () => {
           )}
 
           {/* Download (activated only) */}
-          {record.qr_state === "activated" && record.audio_url && (
+          {record.qr_state === "activated" && downloadUrl && (
             <button
               type="button"
               onClick={() => {
                 const name = (record.recipient_name || "their").trim().replace(/\s+/g, "-");
-                const filename = `${name}-song.mp3`;
+                const filename = `${name}-song.${downloadExt}`;
                 try {
                   const a = document.createElement("a");
-                  a.href = record.audio_url;
+                  a.href = downloadUrl;
                   a.download = filename;
                   a.rel = "noopener";
                   document.body.appendChild(a);
@@ -440,7 +440,7 @@ const Listen = () => {
                   // Fallback if anchor click fails — opens in new tab so it at least plays.
                   // NOTE: For true cross-origin download, R2 CDN must return
                   // `Access-Control-Allow-Origin: *` (infrastructure fix).
-                  window.open(record.audio_url, "_blank");
+                  window.open(downloadUrl, "_blank");
                 }
               }}
               className="font-serif italic text-gold/70 text-xs tracking-wide underline-offset-4 hover:text-gold hover:underline transition-colors"
