@@ -599,6 +599,8 @@ const Start = () => {
       photo_quality_override: false,
       photo_natural_orientation: null,
       photo_reviewed: false,
+      photo_crop_area: null,
+      photo_zoom: 1,
     }));
   };
 
