@@ -804,19 +804,6 @@ const Start = () => {
       ref: step4Ref,
     });
   }
-  if (order.product === "photo_blanket" && order.photo_url) {
-    const qualityLabel =
-      order.photo_quality === "green"
-        ? "High quality"
-        : order.photo_quality === "yellow"
-        ? "Good quality"
-        : "Quality override";
-    summaryItems.push({
-      label: "Photo uploaded",
-      value: qualityLabel,
-      ref: step4Ref,
-    });
-  }
   if (order.card_design) {
     const cd = CARD_DESIGNS.find((c) => c.id === order.card_design);
     if (cd) summaryItems.push({ label: "Card art", value: cd.collection, ref: step5Ref });
