@@ -1098,8 +1098,7 @@ const Start = () => {
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
               <>
-                <>
-                  {/* Collection dropdown */}
+                {/* Collection dropdown */}
                   <div className="space-y-3 max-w-md">
                     <label htmlFor="collection-select" className="label-eyebrow text-gold block">
                       Collection
@@ -1152,10 +1151,9 @@ const Start = () => {
                           art_id: prev.art_id === pieceId ? null : pieceId,
                         }))
                       }
-                    />
-                  )}
-                </>
-              )}
+                  />
+                )}
+              </>
             </div>
           </Step>
         )}
