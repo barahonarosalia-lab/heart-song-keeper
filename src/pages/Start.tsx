@@ -72,6 +72,8 @@ interface OrderState {
   blanket_orientation: "portrait" | "landscape";
   photo_natural_orientation: "portrait" | "landscape" | "square" | null;
   photo_reviewed: boolean;
+  photo_crop_area: { x: number; y: number; width: number; height: number } | null;
+  photo_zoom: number;
 }
 
 // Capitalized tier value sent in the checkout payload — backend does an
