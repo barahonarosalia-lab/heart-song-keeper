@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey } from "@/lib/pricing";
+import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
 import PhotoPreview from "@/components/PhotoPreview";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
@@ -619,26 +619,36 @@ const Start = () => {
         title="How would you like to gift them?"
         subtitle="This choice shapes everything — your song, your product, your price."
       >
-        <div className="grid md:grid-cols-2 gap-5 md:gap-6 max-w-5xl">
+        <div className="grid md:grid-cols-3 gap-5 md:gap-6 max-w-6xl">
           <TierCard
-            label="SIGNATURE"
+            label="STORY"
             heading="We compose their song"
             subtext="We've created original songs for every occasion. Preview three and pick the one that feels like them."
             examples="· Instrumental · Humming · With Lyrics"
-            price="From $29"
-            cta="Choose Signature"
+            price={`From $${BASE_STORY_PRICES.digital + TIER_UPCHARGE.story}`}
+            cta="Choose Story"
             selected={order.tier === "story"}
             onSelect={() => handleSelectTier("story")}
           />
           <TierCard
-            label="PRESERVE"
+            label="VOICE"
             heading="We preserve their voice"
             subtext="Upload any recording — a voicemail, vows, a bedtime story. We wrap it in an original score composed just for them."
             examples="· Voicemail · Vows · Bedtime stories · Deployment recordings"
-            price="From $49"
-            cta="Choose Preserve"
-            selected={order.tier === "voice" || order.tier === "memory"}
+            price={`From $${BASE_STORY_PRICES.digital + TIER_UPCHARGE.voice}`}
+            cta="Choose Voice"
+            selected={order.tier === "voice"}
             onSelect={() => handleSelectTier("voice")}
+          />
+          <TierCard
+            label="MEMORY"
+            heading="We preserve their moment"
+            subtext="Upload a video — a birthday, a homecoming, a moment you never want to lose. We wrap it in an original score composed just for them."
+            examples="· Birthdays · Homecomings · First steps · Reunions"
+            price={`From $${BASE_STORY_PRICES.digital + TIER_UPCHARGE.memory}`}
+            cta="Choose Memory"
+            selected={order.tier === "memory"}
+            onSelect={() => handleSelectTier("memory")}
           />
         </div>
       </Step>
