@@ -12,8 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackTikTokEvent } from "@/lib/tiktokEvents";
 
 // ----- Types -----
-type Tier = "signature" | "preserve";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type Tier = "story" | "voice" | "memory";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
 type AudioQuality = "green" | "yellow" | "red";
 
 interface OrderRecord {
@@ -38,8 +38,15 @@ const PRODUCT_LABEL: Record<ProductId, string> = {
   ornament: "Heirloom Ornament",
   jewelry: "Engraved Jewelry",
   blanket: "KOH Art Blanket",
-  photo_blanket: "Photo Blanket",
 };
+
+const TIER_LABEL: Record<Tier, string> = {
+  story: "Story",
+  voice: "Voice",
+  memory: "Memory",
+};
+
+const isPreserveTier = (tier: Tier) => tier === "voice" || tier === "memory";
 
 // Mock loader — in production this hits the backend with the order_id.
 // For now we read overrides from query params so the page is testable.
@@ -50,7 +57,7 @@ const loadOrder = (orderId: string, params: URLSearchParams): OrderRecord | null
     date: params.get("date") ?? new Date().toLocaleDateString("en-US", {
       year: "numeric", month: "long", day: "numeric",
     }),
-    tier: (params.get("tier") as Tier) ?? "signature",
+    tier: (params.get("tier") as Tier) ?? "story",
     occasion: params.get("occasion") ?? "Anniversary & Wedding",
     product: (params.get("product") as ProductId) ?? "canvas",
     collection: params.get("collection") ?? "Moonlit Botanica",
@@ -75,7 +82,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
   const { tier, product, recipient_name, audio_uploaded, jewelry_style } = order;
 
   // ----- Signature -----
-  if (tier === "signature" && product === "digital") {
+  if (tier === "story" && product === "digital") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Your card and digital file are being prepared right now. You'll have them in your inbox within 2 business days.
@@ -83,21 +90,21 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "signature" && product === "canvas") {
+  if (tier === "story" && product === "canvas") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Your canvas and card are being prepared together. They'll ship within 3-5 business days and arrive together — ready to hang and scan.
       </p>
     );
   }
-  if (tier === "signature" && (product === "blanket" || product === "photo_blanket")) {
+  if (tier === "story" && (product === "blanket")) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Your blanket and card are being prepared together. They'll ship within 3-5 business days and arrive together — ready to wrap around and scan.
       </p>
     );
   }
-  if (tier === "signature" && product === "ornament") {
+  if (tier === "story" && product === "ornament") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Your card ships first — arriving in 2-3 days so {recipient_name} knows something beautiful is on its way.
@@ -105,7 +112,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "signature" && product === "jewelry") {
+  if (tier === "story" && product === "jewelry") {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Your card ships first — arriving in 2-3 days so {recipient_name} knows something beautiful is on its way.
@@ -115,7 +122,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
   }
 
   // ----- Preserve -----
-  if (tier === "preserve" && product === "digital" && audio_uploaded) {
+  if (isPreserveTier(tier) && product === "digital" && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording. We're wrapping it in an original score composed just for this moment.
@@ -124,7 +131,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "digital" && !audio_uploaded) {
+  if (isPreserveTier(tier) && product === "digital" && !audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Their QR is already live — playing a song matched to their occasion while we wait for their voice.
@@ -132,7 +139,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "canvas" && audio_uploaded) {
+  if (isPreserveTier(tier) && product === "canvas" && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording and we're working on it. Their canvas and card will ship together within 3-5 business days.
@@ -140,7 +147,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "canvas" && !audio_uploaded) {
+  if (isPreserveTier(tier) && product === "canvas" && !audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Their canvas and card will ship together within 3-5 business days.
@@ -148,7 +155,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && (product === "blanket" || product === "photo_blanket") && audio_uploaded) {
+  if (isPreserveTier(tier) && (product === "blanket") && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording and we're working on it. Their blanket and card will ship together within 3-5 business days.
@@ -156,7 +163,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && (product === "blanket" || product === "photo_blanket") && !audio_uploaded) {
+  if (isPreserveTier(tier) && (product === "blanket") && !audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Their blanket and card will ship together within 3-5 business days.
@@ -164,7 +171,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "ornament" && audio_uploaded) {
+  if (isPreserveTier(tier) && product === "ornament" && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording and we're working on it. Their card ships first — arriving in 2-3 days.
@@ -173,7 +180,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "ornament" && !audio_uploaded) {
+  if (isPreserveTier(tier) && product === "ornament" && !audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Their card ships first — arriving in 2-3 days. Their ornament follows within 5-7 business days.
@@ -181,7 +188,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "jewelry" && audio_uploaded) {
+  if (isPreserveTier(tier) && product === "jewelry" && audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         We received their recording and we're working on it. Their card ships first — arriving in 2-3 days.
@@ -190,7 +197,7 @@ const NextStepsCopy = ({ order }: { order: OrderRecord }) => {
       </p>
     );
   }
-  if (tier === "preserve" && product === "jewelry" && !audio_uploaded) {
+  if (isPreserveTier(tier) && product === "jewelry" && !audio_uploaded) {
     return (
       <p className="text-navy/80 text-lg leading-relaxed font-light">
         Their card ships first — arriving in 2-3 days. Their {jewelry_style} follows within 5-7 business days.
@@ -324,20 +331,24 @@ interface StripeOrderRow {
 }
 
 const PRICE_LABEL: Record<string, string> = {
-  digital_signature: "Digital Download — Signature",
-  digital_preserve: "Digital Download — Preserve",
-  canvas_signature: "Canvas 11x14 — Signature",
-  canvas_preserve: "Canvas 11x14 — Preserve",
-  ornament_signature: "Acrylic Ornament — Signature",
-  ornament_preserve: "Acrylic Ornament — Preserve",
-  jewelry_silver_signature: "Jewelry Silver — Signature",
-  jewelry_silver_preserve: "Jewelry Silver — Preserve",
-  jewelry_gold_signature: "Jewelry Gold — Signature",
-  jewelry_gold_preserve: "Jewelry Gold — Preserve",
-  blanket_signature: "Blanket — Signature",
-  blanket_preserve: "Blanket — Preserve",
-  photo_blanket_signature: "Photo Blanket — Signature",
-  photo_blanket_preserve: "Photo Blanket — Preserve",
+  digital_story: "Digital Download — Story",
+  digital_voice: "Digital Download — Voice",
+  digital_memory: "Digital Download — Memory",
+  canvas_story: "Canvas 11x14 — Story",
+  canvas_voice: "Canvas 11x14 — Voice",
+  canvas_memory: "Canvas 11x14 — Memory",
+  ornament_story: "Acrylic Ornament — Story",
+  ornament_voice: "Acrylic Ornament — Voice",
+  ornament_memory: "Acrylic Ornament — Memory",
+  jewelry_silver_story: "Jewelry Silver — Story",
+  jewelry_silver_voice: "Jewelry Silver — Voice",
+  jewelry_silver_memory: "Jewelry Silver — Memory",
+  jewelry_gold_story: "Jewelry Gold — Story",
+  jewelry_gold_voice: "Jewelry Gold — Voice",
+  jewelry_gold_memory: "Jewelry Gold — Memory",
+  blanket_story: "Blanket — Story",
+  blanket_voice: "Blanket — Voice",
+  blanket_memory: "Blanket — Memory",
   upgrade_key: "Upgrade Your Key",
   digital_addon: "Digital Download Add-On",
   art_companion_digital: "Art Companion — Digital",
@@ -427,7 +438,7 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
             <SummaryRow label="Status" value={row.status === "paid" ? "Paid" : row.status} />
           </div>
 
-          {row.price_id && /^(canvas|blanket|photo_blanket)_/.test(row.price_id) && (
+          {row.price_id && /^(canvas|blanket)_/.test(row.price_id) && (
             <DigitalAddOnCard
               orderId={row.stripe_session_id}
               recipientName={meta.recipient_name ?? null}
@@ -650,9 +661,9 @@ const Order = () => {
     );
   }
 
-  const showUpload = order.tier === "preserve" && !order.audio_uploaded;
+  const showUpload = isPreserveTier(order.tier) && !order.audio_uploaded;
   const startUrl = `/start?tier=${order.tier}&occasion=${encodeURIComponent(order.occasion)}`;
-  const showDigitalAddon = order.product === "canvas" || order.product === "blanket" || order.product === "photo_blanket";
+  const showDigitalAddon = order.product === "canvas" || order.product === "blanket";
 
   return (
     <div className="min-h-screen bg-cream">
@@ -676,7 +687,7 @@ const Order = () => {
         <div className="max-w-2xl mx-auto">
           <p className="label-eyebrow text-gold mb-6 text-center">Your Order</p>
           <div className="bg-card rounded-2xl shadow-card p-8 md:p-10 border border-gold/20">
-            <SummaryRow label="Tier" value={order.tier === "signature" ? "Signature" : "Preserve"} />
+            <SummaryRow label="Tier" value={order.tier === "story" ? "Signature" : "Preserve"} />
             <SummaryRow label="Occasion" value={order.occasion} />
             <SummaryRow label="Product" value={PRODUCT_LABEL[order.product]} />
             <SummaryRow label="Art" value={`${order.collection} — ${order.art_name}`} />

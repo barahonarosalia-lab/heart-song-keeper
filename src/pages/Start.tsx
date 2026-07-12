@@ -17,24 +17,36 @@ import ember from "@/assets/collection-ember.jpg";
 
 // ----- Types --------------------------------------------------------------
 
-type Tier = "signature" | "preserve";
+type Tier = "story" | "voice" | "memory";
 type SongVersion = "instrumental" | "humming" | "with_lyrics";
-type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket" | "photo_blanket";
+type ProductId = "digital" | "canvas" | "ornament" | "jewelry" | "blanket";
 type PhotoQuality = "green" | "yellow" | "red";
-type JewelryStyle = "heart" | "circle" | "dog_tag";
+type JewelryStyle = "heart" | "round" | "dogtag";
 type JewelryFinish = "silver" | "gold";
+type PhotoOrArt = "photo" | "art";
+type VoicePreference = "male" | "female" | "surprise";
 
 interface OrderState {
   tier: Tier | null;
   occasion: string | null;
   song_version: SongVersion | null;
   whose_audio: string;
-  music_style: string | null;
+  // Shared across tiers: for Voice/Memory this holds the instrumental style;
+  // for Story it holds the genre value.
+  music_style_preference: string | null;
+  voice_preference: VoicePreference | null;
+  // Story-tier intake fields (UI comes later)
+  story_who: string;
+  story_memory: string;
+  story_feeling: string;
+  use_name_in_lyrics: boolean;
   audio_url: string;
   send_link_later: boolean;
   audio_consent: boolean;
   audio_consent_at: string | null;
   product: ProductId | null;
+  // Applies to canvas / blanket / digital only. UI comes later.
+  photo_or_art: PhotoOrArt | null;
   ornament_design: string | null;
   ornament_dedication: string;
   ornament_year: string;
@@ -45,7 +57,7 @@ interface OrderState {
   engraving_line_1: string;
   engraving_line_2: string;
   collection: string | null;
-  art_selected: string | null;
+  art_id: string | null;
   card_design: string | null;
   gifter_name: string;
   recipient_name: string;
@@ -61,6 +73,11 @@ interface OrderState {
   photo_reviewed: boolean;
 }
 
+// Capitalized tier value sent in the checkout payload — backend does an
+// exact-match lookup on this string, so keep the capitalization exact.
+const tierPayloadLabel = (tier: Tier): "Story" | "Voice" | "Memory" =>
+  tier === "story" ? "Story" : tier === "voice" ? "Voice" : "Memory";
+
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
   { value: "instrumental", label: "INSTRUMENTAL", title: "Song 1" },
   { value: "humming", label: "HUMMING", title: "Song 2" },
@@ -74,6 +91,8 @@ const OCCASIONS = [
   "Anniversary & Wedding",
   "Baby & Birth",
   "New Parent",
+  "Lullaby & Nursery",
+  "Pregnancy Announcement",
   "Birthday",
   "Mother's Day",
   "Father's Day",
@@ -81,6 +100,10 @@ const OCCASIONS = [
   "Graduation",
   "College Send-Off",
   "Sobriety & Recovery",
+  "Get Well",
+  "Retirement",
+  "Thank You",
+  "Missing You",
   "Friendship",
   "Just Because",
 ];
@@ -101,8 +124,9 @@ const MUSIC_STYLES = [
 interface ProductDef {
   id: ProductId;
   name: string;
-  signature: number;
-  preserve: number;
+  story: number;
+  voice: number;
+  memory: number;
   tagline: string;
   details: string[];
   cta: string;
@@ -112,8 +136,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "digital",
     name: "Digital Download",
-    signature: 29,
-    preserve: 49,
+    story: 49,
+    voice: 69,
+    memory: 79,
     tagline: "Instant. Printable. Frameable.",
     details: [
       "Delivered to inbox instantly",
@@ -127,8 +152,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "canvas",
     name: "Canvas — Unframed 11x14",
-    signature: 79,
-    preserve: 99,
+    story: 99,
+    voice: 119,
+    memory: 129,
     tagline: "Hang it. Scan it. Feel it again.",
     details: [
       "Ships in 3-5 business days",
@@ -141,8 +167,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "ornament",
     name: "Acrylic Ornament",
-    signature: 59,
-    preserve: 79,
+    story: 79,
+    voice: 99,
+    memory: 109,
     tagline: "Scan to unwrap.",
     details: [
       "Gift box included",
@@ -153,12 +180,13 @@ const PRODUCTS: ProductDef[] = [
   },
   {
     id: "jewelry",
-    name: "Jewelry — Heart · Circle · Dog Tag",
-    signature: 89,
-    preserve: 109,
+    name: "Jewelry — Heart · Round · Dog Tag",
+    story: 109,
+    voice: 129,
+    memory: 139,
     tagline: "Worn every day. Scanned whenever they need it.",
     details: [
-      "Heart · Circle · Dog Tag",
+      "Heart · Round · Dog Tag",
       "Silver or Gold",
       "Ships in 5-7 business days",
       "Free shipping",
@@ -168,8 +196,9 @@ const PRODUCTS: ProductDef[] = [
   {
     id: "blanket",
     name: "Blanket",
-    signature: 119,
-    preserve: 139,
+    story: 139,
+    voice: 159,
+    memory: 169,
     tagline: "Wrapped in it. Every night.",
     details: [
       "Sherpa 50x60",
@@ -178,21 +207,6 @@ const PRODUCTS: ProductDef[] = [
       "Free shipping",
     ],
     cta: "Choose Blanket",
-  },
-  {
-    id: "photo_blanket",
-    name: "Photo Blanket",
-    signature: 119,
-    preserve: 139,
-    tagline: "A moment in time. Their voice. Forever.",
-    details: [
-      "Your photo full bleed",
-      "QR code woven into art",
-      "Sherpa 50x60",
-      "Ships in 3-5 business days",
-      "Free shipping",
-    ],
-    cta: "Choose Photo Blanket",
   },
 ];
 
@@ -213,8 +227,8 @@ const ORNAMENT_DESIGNS: OrnamentDesign[] = [
 
 const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
   { id: "heart", name: "Heart" },
-  { id: "circle", name: "Circle" },
-  { id: "dog_tag", name: "Dog Tag" },
+  { id: "round", name: "Round" },
+  { id: "dogtag", name: "Dog Tag" },
 ];
 
 // ----- Collections (art) --------------------------------------------------
@@ -302,7 +316,7 @@ const PRODUCT_TO_ART_NOUN: Partial<Record<ProductId, string>> = {
 const ART_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
 // Products that auto-scroll to Step 4 (art picker OR photo upload)
-const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital", "photo_blanket"];
+const STEP4_PRODUCTS: ProductId[] = ["canvas", "blanket", "digital"];
 
 // ----- Card designs (Step 5) ---------------------------------------------
 
@@ -358,8 +372,6 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
       return "Included with their canvas. Frameable. Yours to keep forever.";
     case "blanket":
       return "Included with their blanket. Frameable. Yours to keep forever.";
-    case "photo_blanket":
-      return "Included with their photo blanket. Frameable. Yours to keep forever.";
     case "ornament":
       return "Included with their ornament. Frameable. Yours to keep forever.";
     case "digital":
@@ -369,10 +381,10 @@ const cardSubheadlineForProduct = (product: ProductId): string => {
 
 // Step 5 QR notice copy based on tier + Preserve audio choice
 const qrNoticeCopy = (order: OrderState): string => {
-  if (order.tier === "signature") {
+  if (order.tier === "story") {
     return "Your card includes a unique QR code linked to their song. Physical cards are printed and on their way within 2 business days. Digital orders receive their card by email instantly.";
   }
-  if (order.tier === "preserve" && order.send_link_later) {
+  if ((order.tier === "voice" || order.tier === "memory") && order.send_link_later) {
     return "Your card includes a unique QR code. From the moment it arrives, scanning it plays a beautiful song matched to their occasion. Send us their audio when you're ready — we'll have their voice live within 48 hours of receiving it. The card never waits. Neither does the music.";
   }
   // Preserve + audio uploaded
@@ -387,12 +399,18 @@ const Start = () => {
     occasion: null,
     song_version: null,
     whose_audio: "",
-    music_style: null,
+    music_style_preference: null,
     audio_url: "",
     send_link_later: false,
     audio_consent: false,
     audio_consent_at: null,
+    voice_preference: null,
+    story_who: "",
+    story_memory: "",
+    story_feeling: "",
+    use_name_in_lyrics: false,
     product: null,
+    photo_or_art: null,
     ornament_design: null,
     ornament_dedication: "",
     ornament_year: "",
@@ -403,7 +421,7 @@ const Start = () => {
     engraving_line_1: "",
     engraving_line_2: "",
     collection: null,
-    art_selected: null,
+    art_id: null,
     card_design: null,
     gifter_name: "",
     recipient_name: "",
@@ -430,9 +448,7 @@ const Start = () => {
   const [addDigitalCopy, setAddDigitalCopy] = useState(false);
 
   const digitalAddonEligible =
-    order.product === "canvas" ||
-    order.product === "blanket" ||
-    order.product === "photo_blanket";
+    order.product === "canvas" || order.product === "blanket";
 
   const handleCheckout = () => {
     if (!order.product || !order.tier) return;
@@ -451,10 +467,8 @@ const Start = () => {
         gifter_name: order.gifter_name || "",
         occasion: order.occasion || "",
         product: order.product,
-        tier: order.tier,
-        ...(order.product === "photo_blanket"
-          ? { blanket_orientation: order.blanket_orientation }
-          : {}),
+        // Backend does exact-match string lookup on this — capitalized.
+        tier: tierPayloadLabel(order.tier),
         ...(wantsAddon
           ? { addon: "digital_addon", addon_price_id: DIGITAL_ADDON_PRICE_ID }
           : {}),
@@ -516,15 +530,12 @@ const Start = () => {
       jewelry_finish: product === "jewelry" ? prev.jewelry_finish : null,
       engraving_line_1: product === "jewelry" ? prev.engraving_line_1 : "",
       engraving_line_2: product === "jewelry" ? prev.engraving_line_2 : "",
-      photo_url: product === "photo_blanket" ? prev.photo_url : "",
-      photo_quality: product === "photo_blanket" ? prev.photo_quality : null,
-      photo_quality_override:
-        product === "photo_blanket" ? prev.photo_quality_override : false,
-      blanket_orientation:
-        product === "photo_blanket" ? prev.blanket_orientation : "portrait",
-      photo_natural_orientation:
-        product === "photo_blanket" ? prev.photo_natural_orientation : null,
-      photo_reviewed: product === "photo_blanket" ? prev.photo_reviewed : false,
+      photo_url: "",
+      photo_quality: null,
+      photo_quality_override: false,
+      blanket_orientation: "portrait",
+      photo_natural_orientation: null,
+      photo_reviewed: false,
     }));
 
     // Auto-scroll to Step 4 when a product that uses it is selected
@@ -586,12 +597,12 @@ const Start = () => {
 
   // Determine if Step 2 is complete enough to unlock Step 3
   const step2Complete =
-    order.tier === "signature"
+    order.tier === "story"
       ? !!order.song_version
-      : order.tier === "preserve"
+      : (order.tier === "voice" || order.tier === "memory")
       ? !!order.occasion &&
         !!order.whose_audio.trim() &&
-        !!order.music_style &&
+        !!order.music_style_preference &&
         (order.send_link_later || !!order.audio_url) &&
         order.audio_consent
       : false;
@@ -631,7 +642,7 @@ const Start = () => {
     setOrder((prev) => ({
       ...prev,
       collection: collectionId,
-      art_selected: piece ? piece.id : prev.art_selected,
+      art_id: piece ? piece.id : prev.art_id,
     }));
     setFromCollections(true);
     if (piece) setPrefilledArtId(piece.id);
@@ -644,7 +655,7 @@ const Start = () => {
     const productParam = searchParams.get("product");
     if (!productParam) return;
     const valid: ProductId[] = [
-      "digital", "canvas", "ornament", "jewelry", "blanket", "photo_blanket",
+      "digital", "canvas", "ornament", "jewelry", "blanket",
     ];
     if (valid.includes(productParam as ProductId)) {
       setOrder((prev) => ({ ...prev, product: productParam as ProductId }));
@@ -697,16 +708,10 @@ const Start = () => {
   }, [order.product, order.occasion, order.collection, fromCollections]);
 
   const showStep4 = !!order.product && STEP4_PRODUCTS.includes(order.product);
-  const step4Headline =
-    order.product === "photo_blanket"
-      ? "Upload their photo."
-      : order.product
-      ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
-      : "";
-  const step4Subtitle =
-    order.product === "photo_blanket"
-      ? "This is what will be printed full bleed on their blanket. Choose something that matters."
-      : "This is what they'll see every time they hold it.";
+  const step4Headline = order.product
+    ? `Choose the art for their ${PRODUCT_TO_ART_NOUN[order.product] ?? "gift"}.`
+    : "";
+  const step4Subtitle = "This is what they'll see every time they hold it.";
   const activeCollection = useMemo(
     () => COLLECTIONS.find((c) => c.id === order.collection) ?? null,
     [order.collection],
@@ -716,14 +721,7 @@ const Start = () => {
   // their product. This unlocks Step 5 (the card art picker).
   const step3Complete = (() => {
     if (!order.product) return false;
-    if (ART_PRODUCTS.includes(order.product)) return !!order.art_selected;
-    if (order.product === "photo_blanket") {
-      return (
-        !!order.photo_url &&
-        (order.photo_quality !== "red" || order.photo_quality_override) &&
-        order.photo_reviewed
-      );
-    }
+    if (ART_PRODUCTS.includes(order.product)) return !!order.art_id;
     if (order.product === "ornament") return !!order.ornament_design;
     if (order.product === "jewelry") {
       return (
@@ -765,7 +763,7 @@ const Start = () => {
   if (order.tier) {
     summaryItems.push({
       label: "Tier",
-      value: order.tier === "signature" ? "Signature" : "Preserve",
+      value: order.tier === "story" ? "Story" : order.tier === "voice" ? "Voice" : "Memory",
       ref: step2Ref,
     });
   }
@@ -798,24 +796,11 @@ const Start = () => {
       .join(" · ");
     if (ornText) summaryItems.push({ label: "Ornament text", value: ornText, ref: step3Ref });
   }
-  if (order.art_selected && activeCollection) {
-    const piece = activeCollection.pieces.find((p) => p.id === order.art_selected);
+  if (order.art_id && activeCollection) {
+    const piece = activeCollection.pieces.find((p) => p.id === order.art_id);
     summaryItems.push({
       label: "Art selected",
       value: `${activeCollection.name} — ${piece?.name ?? ""}`,
-      ref: step4Ref,
-    });
-  }
-  if (order.product === "photo_blanket" && order.photo_url) {
-    const qualityLabel =
-      order.photo_quality === "green"
-        ? "High quality"
-        : order.photo_quality === "yellow"
-        ? "Good quality"
-        : "Quality override";
-    summaryItems.push({
-      label: "Photo uploaded",
-      value: qualityLabel,
       ref: step4Ref,
     });
   }
@@ -861,8 +846,8 @@ const Start = () => {
             examples="· Instrumental · Humming · With Lyrics"
             price="From $29"
             cta="Choose Signature"
-            selected={order.tier === "signature"}
-            onSelect={() => handleSelectTier("signature")}
+            selected={order.tier === "story"}
+            onSelect={() => handleSelectTier("story")}
           />
           <TierCard
             label="PRESERVE"
@@ -871,15 +856,15 @@ const Start = () => {
             examples="· Voicemail · Vows · Bedtime stories · Deployment recordings"
             price="From $49"
             cta="Choose Preserve"
-            selected={order.tier === "preserve"}
-            onSelect={() => handleSelectTier("preserve")}
+            selected={(order.tier === "voice" || order.tier === "memory")}
+            onSelect={() => handleSelectTier("voice")}
           />
         </div>
       </Step>
 
       {/* STEP 2 — Preserve path */}
       <div ref={step2Ref}>
-        {order.tier === "preserve" && (
+        {(order.tier === "voice" || order.tier === "memory") && (
           <Step
             index="02"
             title="What moment are you celebrating?"
@@ -922,13 +907,13 @@ const Start = () => {
                   <p className="label-eyebrow text-gold">Background music style</p>
                   <div className="flex flex-wrap gap-2.5">
                     {MUSIC_STYLES.map((style) => {
-                      const selected = order.music_style === style;
+                      const selected = order.music_style_preference === style;
                       return (
                         <button
                           key={style}
                           type="button"
                           onClick={() =>
-                            setOrder((prev) => ({ ...prev, music_style: style }))
+                            setOrder((prev) => ({ ...prev, music_style_preference: style }))
                           }
                           className={cn(
                             "rounded-full px-4 h-10 text-sm font-medium border transition-all",
@@ -1028,7 +1013,7 @@ const Start = () => {
         )}
 
         {/* STEP 2 — Signature path */}
-        {order.tier === "signature" && (
+        {order.tier === "story" && (
           <Step
             index="02"
             title="What moment are you celebrating?"
@@ -1103,7 +1088,7 @@ const Start = () => {
         )}
       </div>
 
-      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) OR Photo upload (Photo Blanket) */}
+      {/* STEP 4 — Art picker (Canvas/Blanket/Digital) */}
       <div ref={step4Ref}>
         {showStep4 && (
           <Step
@@ -1112,29 +1097,8 @@ const Start = () => {
             subtitle={step4Subtitle}
           >
             <div className="max-w-5xl space-y-8 md:space-y-10">
-              {order.product === "photo_blanket" ? (
-                <PhotoUpload
-                  photoUrl={order.photo_url}
-                  quality={order.photo_quality}
-                  override={order.photo_quality_override}
-                  orientation={order.blanket_orientation}
-                  naturalOrientation={order.photo_natural_orientation}
-                  reviewed={order.photo_reviewed}
-                  onUpload={handlePhotoUpload}
-                  onRemove={handleRemovePhoto}
-                  onOverride={() =>
-                    setOrder((prev) => ({ ...prev, photo_quality_override: true }))
-                  }
-                  onOrientationChange={(o) =>
-                    setOrder((prev) => ({ ...prev, blanket_orientation: o }))
-                  }
-                  onReviewedChange={(checked) =>
-                    setOrder((prev) => ({ ...prev, photo_reviewed: checked }))
-                  }
-                />
-              ) : (
-                <>
-                  {/* Collection dropdown */}
+              <>
+                {/* Collection dropdown */}
                   <div className="space-y-3 max-w-md">
                     <label htmlFor="collection-select" className="label-eyebrow text-gold block">
                       Collection
@@ -1146,7 +1110,7 @@ const Start = () => {
                         setOrder((prev) => ({
                           ...prev,
                           collection: e.target.value || null,
-                          art_selected: null,
+                          art_id: null,
                         }))
                       }
                       className="h-12 w-full rounded-xl bg-card border border-border/60 px-4 text-base text-navy font-serif focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/30 transition-colors"
@@ -1162,12 +1126,12 @@ const Start = () => {
                     </select>
                     {fromCollections &&
                       prefilledArtId &&
-                      order.art_selected === prefilledArtId && (
+                      order.art_id === prefilledArtId && (
                         <p className="text-xs text-gold/80 italic">
                           You chose this art from our collections — change anytime.
                         </p>
                       )}
-                    {!(fromCollections && order.art_selected === prefilledArtId) &&
+                    {!(fromCollections && order.art_id === prefilledArtId) &&
                       order.occasion &&
                       OCCASION_TO_COLLECTION[order.occasion] === order.collection && (
                         <p className="text-xs text-muted-foreground italic">
@@ -1180,17 +1144,16 @@ const Start = () => {
                   {activeCollection && (
                     <ArtGallery
                       collection={activeCollection}
-                      selectedId={order.art_selected}
+                      selectedId={order.art_id}
                       onToggle={(pieceId) =>
                         setOrder((prev) => ({
                           ...prev,
-                          art_selected: prev.art_selected === pieceId ? null : pieceId,
+                          art_id: prev.art_id === pieceId ? null : pieceId,
                         }))
                       }
-                    />
-                  )}
-                </>
-              )}
+                  />
+                )}
+              </>
             </div>
           </Step>
         )}
@@ -1630,8 +1593,8 @@ const ProductCard = ({
   order: OrderState;
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
 }) => {
-  // Dynamic price for jewelry: gold finish adds $10
-  const basePrice = tier === "signature" ? product.signature : product.preserve;
+  // Base price by tier; jewelry gold finish adds $10.
+  const basePrice = product[tier];
   const displayPrice =
     product.id === "jewelry" && order.jewelry_finish === "gold"
       ? basePrice + 10
@@ -1659,7 +1622,7 @@ const ProductCard = ({
       <ul className="space-y-2 mb-7 text-sm text-muted-foreground">
         {product.details.map((d, idx) => {
           const isFirstDigitalPreserve =
-            product.id === "digital" && idx === 0 && tier === "preserve";
+            product.id === "digital" && idx === 0 && (tier === "voice" || tier === "memory");
           const display = isFirstDigitalPreserve
             ? "Your digital file arrives instantly. Your voice goes live within 48 hours of us receiving it."
             : d;
@@ -1861,8 +1824,8 @@ const JewelryExpansion = ({
   setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
   tier: Tier;
 }) => {
-  const silverPrice = tier === "signature" ? 89 : 109;
-  const goldPrice = tier === "signature" ? 99 : 119;
+  const silverPrice = tier === "story" ? 89 : 109;
+  const goldPrice = tier === "story" ? 99 : 119;
 
   return (
     <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">

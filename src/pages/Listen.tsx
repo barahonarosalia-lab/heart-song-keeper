@@ -4,7 +4,7 @@ import { Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ----- Types -----
-type Tier = "signature" | "preserve";
+type Tier = "story" | "voice" | "memory";
 
 interface ListenRecord {
   order_id: string;
@@ -42,7 +42,7 @@ interface Manifest {
 }
 
 const mapManifest = (m: Manifest): ListenRecord => {
-  const tier: Tier = m.is_voice || m.is_memory ? "preserve" : "signature";
+  const tier: Tier = m.is_memory ? "memory" : m.is_voice ? "voice" : "story";
   const title =
     m.qr_state === "activated" && m.display_title
       ? m.display_title
@@ -272,8 +272,9 @@ const Listen = () => {
     setCurrentTime(s);
   };
 
-  const isPreservePending = record.tier === "preserve" && record.preserve_status === "pending";
-  const isPreserveApproved = record.tier === "preserve" && record.preserve_status === "approved";
+  const isPreserveTier = record.tier === "voice" || record.tier === "memory";
+  const isPreservePending = isPreserveTier && record.preserve_status === "pending";
+  const isPreserveApproved = isPreserveTier && record.preserve_status === "approved";
 
   return (
     <main className="relative min-h-screen w-full bg-navy overflow-hidden text-cream">
@@ -356,7 +357,7 @@ const Listen = () => {
           </div>
 
           {/* State-specific middle content */}
-          {record.tier === "signature" && (
+          {record.tier === "story" && (
             <h1 className="font-serif text-cream text-2xl md:text-3xl">{record.song_title}</h1>
           )}
 

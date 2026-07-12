@@ -1,36 +1,66 @@
 // Maps an order's product/tier (and finish for jewelry) to a Stripe price ID.
-// Price IDs are created in Stripe via batch_create_product and are stable
-// across sandbox and live.
+// Price IDs are generated programmatically from the base table below to keep
+// this DRY. Story is the base tier; Voice adds a flat $20; Memory adds $30.
 
 import type { ProductId, Tier, JewelryFinish } from "./orderTypes";
+
+type PriceKey =
+  | "digital"
+  | "canvas"
+  | "ornament"
+  | "jewelry_silver"
+  | "jewelry_gold"
+  | "blanket";
+
+// Story-tier base prices (USD). Voice = +$20, Memory = +$30 on every product.
+export const BASE_STORY_PRICES: Record<PriceKey, number> = {
+  digital: 49,
+  canvas: 99,
+  ornament: 79,
+  jewelry_silver: 109,
+  jewelry_gold: 119,
+  blanket: 139,
+};
+
+export const TIER_UPCHARGE: Record<Tier, number> = {
+  story: 0,
+  voice: 20,
+  memory: 30,
+};
+
+export function amountForPriceKey(key: PriceKey, tier: Tier): number {
+  return BASE_STORY_PRICES[key] + TIER_UPCHARGE[tier];
+}
+
+// e.g. "digital_story", "jewelry_gold_memory"
+export function priceIdFor(key: PriceKey, tier: Tier): string {
+  return `${key}_${tier}`;
+}
+
+function priceKeyForOrder(
+  product: ProductId,
+  jewelryFinish?: JewelryFinish | null,
+): PriceKey | null {
+  switch (product) {
+    case "digital":
+    case "canvas":
+    case "ornament":
+    case "blanket":
+      return product;
+    case "jewelry":
+      return (jewelryFinish ?? "silver") === "gold" ? "jewelry_gold" : "jewelry_silver";
+    default:
+      return null;
+  }
+}
 
 export function priceIdForOrder(args: {
   product: ProductId;
   tier: Tier;
   jewelryFinish?: JewelryFinish | null;
 }): string | null {
-  const { product, tier, jewelryFinish } = args;
-  switch (product) {
-    case "digital":
-      return tier === "signature" ? "digital_signature" : "digital_preserve";
-    case "canvas":
-      return tier === "signature" ? "canvas_signature" : "canvas_preserve";
-    case "ornament":
-      return tier === "signature" ? "ornament_signature" : "ornament_preserve";
-    case "blanket":
-      return tier === "signature" ? "blanket_signature" : "blanket_preserve";
-    case "photo_blanket":
-      return tier === "signature" ? "photo_blanket_signature" : "photo_blanket_preserve";
-    case "jewelry": {
-      const finish: JewelryFinish = jewelryFinish ?? "silver";
-      if (finish === "gold") {
-        return tier === "signature" ? "jewelry_gold_signature" : "jewelry_gold_preserve";
-      }
-      return tier === "signature" ? "jewelry_silver_signature" : "jewelry_silver_preserve";
-    }
-    default:
-      return null;
-  }
+  const key = priceKeyForOrder(args.product, args.jewelryFinish);
+  return key ? priceIdFor(key, args.tier) : null;
 }
 
 export function giftCardPriceId(amount: number): string | null {
@@ -40,8 +70,8 @@ export function giftCardPriceId(amount: number): string | null {
 
 export const UPGRADE_PRICE_ID = "upgrade_key";
 
-// Optional add-on: digital copy bundled with a physical product (canvas/blanket).
-// $10 one-time. Surfaced as a checkbox on the Order review step.
+// Optional add-on: visual/digital copy bundled with a physical product.
+// Flat $10 across all tiers.
 export const DIGITAL_ADDON_PRICE_ID = "digital_addon";
 
 // Standalone post-purchase upsell linked from the jewelry confirmation email.
