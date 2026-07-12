@@ -81,6 +81,33 @@ interface OrderState {
 const tierPayloadLabel = (tier: Tier): "Story" | "Voice" | "Memory" =>
   tier === "story" ? "Story" : tier === "voice" ? "Voice" : "Memory";
 
+// "Surprise Me" stays as literal "surprise" in UI state so the chip stays
+// highlighted; resolve to a concrete male/female only at payload build time.
+const resolveVoicePreference = (
+  v: VoicePreference | null,
+): "male" | "female" | null => {
+  if (v === "surprise") return Math.random() < 0.5 ? "male" : "female";
+  return v;
+};
+
+const STORY_RELATIONSHIPS = [
+  "Husband", "Wife", "Partner", "Girlfriend", "Boyfriend",
+  "Son", "Daughter", "Fiancé", "Father", "Mother",
+  "Grandparent", "Grandson", "Granddaughter", "Sibling",
+  "Friend", "Myself", "Other",
+];
+
+const STORY_GENRES = [
+  "Pop", "Country", "Rock", "R&B", "Jazz", "Acoustic",
+  "Rap/Hip-Hop", "Indie", "Latin", "Worship", "Reggaeton", "Reggae",
+];
+
+const STORY_VOICES: { value: VoicePreference; label: string }[] = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "surprise", label: "Surprise Me" },
+];
+
 const SONG_VERSIONS: { value: SongVersion; label: string; title: string }[] = [
   { value: "instrumental", label: "INSTRUMENTAL", title: "Song 1" },
   { value: "humming", label: "HUMMING", title: "Song 2" },
