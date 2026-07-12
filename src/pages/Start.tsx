@@ -2525,4 +2525,362 @@ const OrientationOption = ({
 );
 
 
+// ----- Wizard shell (reusable; only Story wired for now) ------------------
+
+interface WizardStep {
+  title: string;
+  subtitle?: string;
+  isValid: () => boolean;
+  render: () => React.ReactNode;
+}
+
+const WizardShell = ({
+  steps,
+  onFinish,
+  finishLabel = "Continue",
+}: {
+  steps: WizardStep[];
+  onFinish: () => void;
+  finishLabel?: string;
+}) => {
+  const [idx, setIdx] = useState(0);
+  const total = steps.length;
+  const step = steps[idx];
+  const canNext = step.isValid();
+  const isLast = idx === total - 1;
+
+  return (
+    <section className="container py-16 md:py-24">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <p className="label-eyebrow text-gold">
+            Step {idx + 1} of {total}
+          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={idx === 0}
+            onClick={() => setIdx((i) => Math.max(0, i - 1))}
+            className="text-navy/70 hover:text-gold"
+          >
+            <ArrowLeft className="size-4 mr-1" /> Back
+          </Button>
+        </div>
+
+        {/* Progress bar */}
+        <div className="h-1 w-full bg-navy/10 rounded-full mb-10 overflow-hidden">
+          <div
+            className="h-full bg-gold transition-all duration-500"
+            style={{ width: `${((idx + 1) / total) * 100}%` }}
+          />
+        </div>
+
+        <div
+          key={idx}
+          className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+        >
+          <h2 className="font-serif text-3xl md:text-4xl text-navy text-balance leading-[1.1] mb-3">
+            {step.title}
+          </h2>
+          {step.subtitle && (
+            <p className="text-muted-foreground text-lg mb-8 text-balance">
+              {step.subtitle}
+            </p>
+          )}
+          <div className="mt-8">{step.render()}</div>
+        </div>
+
+        <div className="flex justify-end mt-12">
+          <Button
+            type="button"
+            size="lg"
+            disabled={!canNext}
+            onClick={() => {
+              if (isLast) onFinish();
+              else setIdx((i) => Math.min(total - 1, i + 1));
+            }}
+            className="bg-gold text-navy hover:bg-gold/90 disabled:opacity-40"
+          >
+            {isLast ? finishLabel : "Next"}
+            <ArrowRight className="size-4 ml-1.5" />
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ----- Chip grid ----------------------------------------------------------
+
+const ChipGrid = ({
+  options,
+  value,
+  onSelect,
+}: {
+  options: { value: string; label: string }[] | string[];
+  value: string | null;
+  onSelect: (v: string) => void;
+}) => {
+  const normalized = (options as (string | { value: string; label: string })[]).map((o) =>
+    typeof o === "string" ? { value: o, label: o } : o,
+  );
+  return (
+    <div className="flex flex-wrap gap-2.5">
+      {normalized.map((o) => {
+        const selected = value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onSelect(o.value)}
+            className={cn(
+              "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+              selected
+                ? "bg-gold text-navy border-gold shadow-gold"
+                : "bg-card text-navy border-border/60 hover:border-gold",
+            )}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+// ----- Story wizard -------------------------------------------------------
+
+const StoryWizard = ({
+  order,
+  setOrder,
+  complete,
+  onComplete,
+}: {
+  order: OrderState;
+  setOrder: React.Dispatch<React.SetStateAction<OrderState>>;
+  complete: boolean;
+  onComplete: () => void;
+}) => {
+  const [customOccasion, setCustomOccasion] = useState(
+    order.occasion && !OCCASIONS.includes(order.occasion) ? order.occasion : "",
+  );
+  const [occasionMode, setOccasionMode] = useState<"preset" | "custom">(
+    order.occasion && !OCCASIONS.includes(order.occasion) ? "custom" : "preset",
+  );
+
+  // Once the wizard is complete, keep the last step visible with a done note
+  if (complete) {
+    return (
+      <section className="container py-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="label-eyebrow text-gold mb-3">Your story is set</p>
+          <p className="text-muted-foreground">Continue below to pick their gift.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const steps: WizardStep[] = [
+    {
+      title: "Who is this song for?",
+      subtitle: "Pick the relationship that fits best.",
+      isValid: () => !!order.relationship,
+      render: () => (
+        <ChipGrid
+          options={STORY_RELATIONSHIPS}
+          value={order.relationship || null}
+          onSelect={(v) => setOrder((prev) => ({ ...prev, relationship: v }))}
+        />
+      ),
+    },
+    {
+      title: "What's their name?",
+      subtitle: "We'll use this throughout the experience.",
+      isValid: () => !!order.recipient_name.trim(),
+      render: () => (
+        <Input
+          value={order.recipient_name}
+          onChange={(e) =>
+            setOrder((prev) => ({ ...prev, recipient_name: e.target.value }))
+          }
+          placeholder="e.g. Sarah"
+          className="h-14 rounded-xl bg-card border-border/60 text-lg"
+          autoFocus
+        />
+      ),
+    },
+    {
+      title: "What's the occasion?",
+      subtitle: "Every moment has its own song.",
+      isValid: () => !!(order.occasion && order.occasion.trim()),
+      render: () => (
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2.5">
+            {OCCASIONS.map((occ) => {
+              const selected = occasionMode === "preset" && order.occasion === occ;
+              return (
+                <button
+                  key={occ}
+                  type="button"
+                  onClick={() => {
+                    setOccasionMode("preset");
+                    setOrder((prev) => ({ ...prev, occasion: occ }));
+                  }}
+                  className={cn(
+                    "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+                    selected
+                      ? "bg-gold text-navy border-gold shadow-gold"
+                      : "bg-card text-navy border-border/60 hover:border-gold",
+                  )}
+                >
+                  {occ}
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => {
+                setOccasionMode("custom");
+                setOrder((prev) => ({ ...prev, occasion: customOccasion }));
+              }}
+              className={cn(
+                "rounded-full px-4 h-10 text-sm font-medium border transition-all",
+                occasionMode === "custom"
+                  ? "bg-gold text-navy border-gold shadow-gold"
+                  : "bg-card text-navy border-border/60 hover:border-gold",
+              )}
+            >
+              Something else
+            </button>
+          </div>
+          {occasionMode === "custom" && (
+            <Input
+              value={customOccasion}
+              onChange={(e) => {
+                setCustomOccasion(e.target.value);
+                setOrder((prev) => ({ ...prev, occasion: e.target.value }));
+              }}
+              placeholder="Tell us the occasion"
+              className="h-12 rounded-xl bg-card border-border/60"
+              autoFocus
+            />
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Choose the sound and voice.",
+      subtitle: "Pick a genre and who should sing it.",
+      isValid: () =>
+        !!order.music_style_preference && !!order.voice_preference,
+      render: () => (
+        <div className="space-y-8">
+          <div className="space-y-3">
+            <p className="label-eyebrow text-gold">Genre</p>
+            <ChipGrid
+              options={STORY_GENRES}
+              value={order.music_style_preference}
+              onSelect={(v) =>
+                setOrder((prev) => ({ ...prev, music_style_preference: v }))
+              }
+            />
+          </div>
+          <div className="space-y-3">
+            <p className="label-eyebrow text-gold">Voice</p>
+            <ChipGrid
+              options={STORY_VOICES}
+              value={order.voice_preference}
+              onSelect={(v) =>
+                setOrder((prev) => ({
+                  ...prev,
+                  voice_preference: v as VoicePreference,
+                }))
+              }
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Tell us about them.",
+      subtitle: "The more you share, the more personal their song.",
+      isValid: () =>
+        !!order.story_who.trim() &&
+        !!order.story_memory.trim() &&
+        !!order.story_feeling.trim(),
+      render: () => (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="label-eyebrow text-gold block">
+              What makes them special?
+            </label>
+            <Textarea
+              value={order.story_who}
+              onChange={(e) =>
+                setOrder((prev) => ({ ...prev, story_who: e.target.value }))
+              }
+              rows={3}
+              className="rounded-xl bg-card border-border/60"
+              placeholder="Their spirit, their quirks, what you love most…"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="label-eyebrow text-gold block">
+              Share a favorite memory
+            </label>
+            <Textarea
+              value={order.story_memory}
+              onChange={(e) =>
+                setOrder((prev) => ({ ...prev, story_memory: e.target.value }))
+              }
+              rows={3}
+              className="rounded-xl bg-card border-border/60"
+              placeholder="A moment that captures who they are…"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="label-eyebrow text-gold block">
+              A message from your heart
+            </label>
+            <Textarea
+              value={order.story_feeling}
+              onChange={(e) =>
+                setOrder((prev) => ({ ...prev, story_feeling: e.target.value }))
+              }
+              rows={3}
+              className="rounded-xl bg-card border-border/60"
+              placeholder="What you'd want them to hear, always…"
+            />
+          </div>
+          <label className="flex items-start gap-3 cursor-pointer pt-1">
+            <Checkbox
+              checked={order.use_name_in_lyrics}
+              onCheckedChange={(v) =>
+                setOrder((prev) => ({ ...prev, use_name_in_lyrics: v === true }))
+              }
+              className="mt-0.5 border-navy/30 data-[state=checked]:bg-gold data-[state=checked]:border-gold data-[state=checked]:text-navy"
+            />
+            <span className="text-sm text-navy leading-relaxed">
+              Use their name in the lyrics
+            </span>
+          </label>
+        </div>
+      ),
+    },
+    {
+      title: "You're all set.",
+      subtitle: "Let's pick the way you'd like to gift their song.",
+      isValid: () => true,
+      render: () => (
+        <p className="text-muted-foreground">
+          When you're ready, continue on to choose their gift.
+        </p>
+      ),
+    },
+  ];
+
+  return <WizardShell steps={steps} onFinish={onComplete} finishLabel="Continue" />;
+};
+
 export default Start;
