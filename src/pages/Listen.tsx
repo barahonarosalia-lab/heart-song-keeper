@@ -17,6 +17,8 @@ interface ListenRecord {
   dedication: string;
   song_title: string;
   audio_url: string;
+  video_url?: string;
+  content_type?: string;
   duration_seconds: number;
   preserve_status: "approved" | "pending";
   paid: boolean;
@@ -29,6 +31,8 @@ interface Manifest {
   occasion: string;
   song_title: string;
   audio_url: string;
+  video_url?: string;
+  content_type?: string;
   card_message: string;
   dedication?: string;
   is_story?: boolean;
@@ -58,6 +62,8 @@ const mapManifest = (m: Manifest): ListenRecord => {
     dedication: m.dedication ?? "",
     song_title: title,
     audio_url: m.audio_url ?? "",
+    video_url: m.video_url,
+    content_type: m.content_type,
     duration_seconds: 0,
     preserve_status: "approved",
     paid: true,
@@ -221,9 +227,10 @@ const Listen = () => {
     });
   }, [record]);
 
-  // Attempt autoplay on mount
+  // Attempt autoplay on mount (audio only — video uses native controls)
   useEffect(() => {
     if (!record || !record.paid) return;
+    if (record.content_type === "video" && record.video_url) return;
     const a = audioRef.current;
     if (!a) return;
     const tryPlay = async () => {
@@ -275,6 +282,9 @@ const Listen = () => {
   const isPreserveTier = record.tier === "voice" || record.tier === "memory";
   const isPreservePending = isPreserveTier && record.preserve_status === "pending";
   const isPreserveApproved = isPreserveTier && record.preserve_status === "approved";
+  const isVideo = record.content_type === "video" && !!record.video_url;
+  const downloadUrl = isVideo ? record.video_url! : record.audio_url;
+  const downloadExt = isVideo ? "mp4" : "mp3";
 
   return (
     <main className="relative min-h-screen w-full bg-navy overflow-hidden text-cream">
@@ -298,18 +308,20 @@ const Listen = () => {
         }
       `}</style>
 
-      {/* Hidden audio element */}
-      <audio
-        ref={audioRef}
-        src={record.audio_url || undefined}
-        preload="metadata"
-        onLoadedMetadata={(e) => {
-          const d = (e.currentTarget as HTMLAudioElement).duration;
-          if (isFinite(d) && d > 0) setDuration(d);
-        }}
-        onTimeUpdate={(e) => setCurrentTime((e.currentTarget as HTMLAudioElement).currentTime)}
-        onEnded={() => setIsPlaying(false)}
-      />
+      {/* Hidden audio element — audio mode only */}
+      {!isVideo && (
+        <audio
+          ref={audioRef}
+          src={record.audio_url || undefined}
+          preload="metadata"
+          onLoadedMetadata={(e) => {
+            const d = (e.currentTarget as HTMLAudioElement).duration;
+            if (isFinite(d) && d > 0) setDuration(d);
+          }}
+          onTimeUpdate={(e) => setCurrentTime((e.currentTarget as HTMLAudioElement).currentTime)}
+          onEnded={() => setIsPlaying(false)}
+        />
+      )}
 
       {/* Branding only for Preserve Pending */}
       {isPreservePending && (
@@ -320,7 +332,7 @@ const Listen = () => {
 
       {/* Centered content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md flex flex-col items-center text-center gap-6">
+        <div className={cn("w-full flex flex-col items-center text-center gap-6", isVideo ? "max-w-2xl" : "max-w-md")}>
           {/* Recipient */}
           {(record.recipient_name || record.occasion) && (
             <div className="flex flex-col items-center gap-2">
@@ -338,23 +350,45 @@ const Listen = () => {
             </div>
           )}
 
-          {/* Play button */}
-          <div className="my-2">
-            <PlayCircle isPlaying={isPlaying} onClick={togglePlay} />
-            {needsTap && (
-              <p className="mt-4 font-serif italic text-gold text-sm animate-fade-in">
-                Tap to hear their song
-              </p>
-            )}
-            {record.dedication && record.dedication.trim() && (
-              <p
-                className="mt-4 font-serif italic text-gold"
-                style={{ fontSize: "15px" }}
-              >
-                {record.dedication}
-              </p>
-            )}
-          </div>
+          {/* Player — video or audio */}
+          {isVideo ? (
+            <div className="my-2 w-full">
+              <div className="relative w-full rounded-2xl overflow-hidden border border-gold/40 shadow-[0_0_60px_hsl(var(--gold)/0.25)] bg-navy-deep">
+                <video
+                  src={record.video_url}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-auto block bg-black"
+                />
+              </div>
+              {record.dedication && record.dedication.trim() && (
+                <p
+                  className="mt-4 font-serif italic text-gold text-center"
+                  style={{ fontSize: "15px" }}
+                >
+                  {record.dedication}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="my-2">
+              <PlayCircle isPlaying={isPlaying} onClick={togglePlay} />
+              {needsTap && (
+                <p className="mt-4 font-serif italic text-gold text-sm animate-fade-in">
+                  Tap to hear their song
+                </p>
+              )}
+              {record.dedication && record.dedication.trim() && (
+                <p
+                  className="mt-4 font-serif italic text-gold"
+                  style={{ fontSize: "15px" }}
+                >
+                  {record.dedication}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* State-specific middle content */}
           {record.tier === "story" && (
@@ -382,19 +416,21 @@ const Listen = () => {
             </div>
           )}
 
-          {/* Progress bar */}
-          <ProgressBar current={currentTime} duration={duration} onSeek={handleSeek} />
+          {/* Progress bar — audio only */}
+          {!isVideo && (
+            <ProgressBar current={currentTime} duration={duration} onSeek={handleSeek} />
+          )}
 
           {/* Download (activated only) */}
-          {record.qr_state === "activated" && record.audio_url && (
+          {record.qr_state === "activated" && downloadUrl && (
             <button
               type="button"
               onClick={() => {
                 const name = (record.recipient_name || "their").trim().replace(/\s+/g, "-");
-                const filename = `${name}-song.mp3`;
+                const filename = `${name}-song.${downloadExt}`;
                 try {
                   const a = document.createElement("a");
-                  a.href = record.audio_url;
+                  a.href = downloadUrl;
                   a.download = filename;
                   a.rel = "noopener";
                   document.body.appendChild(a);
@@ -404,7 +440,7 @@ const Listen = () => {
                   // Fallback if anchor click fails — opens in new tab so it at least plays.
                   // NOTE: For true cross-origin download, R2 CDN must return
                   // `Access-Control-Allow-Origin: *` (infrastructure fix).
-                  window.open(record.audio_url, "_blank");
+                  window.open(downloadUrl, "_blank");
                 }
               }}
               className="font-serif italic text-gold/70 text-xs tracking-wide underline-offset-4 hover:text-gold hover:underline transition-colors"
