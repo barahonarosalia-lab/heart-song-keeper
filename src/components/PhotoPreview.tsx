@@ -26,7 +26,7 @@ function aspectFor(
   product: PhotoPreviewProduct,
   orientation: "portrait" | "landscape",
 ): number {
-  if (product === "canvas") return 11 / 14; // portrait (11" wide × 14" tall)
+  if (product === "canvas") return 3300 / 3701; // canvas art zone: Printful's 11x14 template has a 450px margin on all 4 sides, so the true visible art zone is 3300w × 3701h (3300×4200 visible face minus the banner height) — not the full 11x14 product ratio. Matching this exactly means the crop fills the art zone edge-to-edge with zero cream padding, since the backend composite uses this same size.
   if (product === "blanket") return orientation === "landscape" ? 60 / 50 : 50 / 60;
   return 1; // digital
 }
