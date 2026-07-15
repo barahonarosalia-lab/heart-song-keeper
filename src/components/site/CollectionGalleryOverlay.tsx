@@ -105,11 +105,38 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
     );
   }
 
-  // Build 10 placeholder slots — repeat the collection hero for now
-  const images = Array.from({ length: 10 }, (_, i) => ({
-    src: collection.img,
-    index: i + 1,
-  }));
+  const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+  const COLLECTION_ART: Record<string, string[]> = {
+    "little-luminaries": [
+      "ll-cat-001","ll-deer-001","ll-elephant-001","ll-fawn-001","ll-fox-001","ll-giraffe-001",
+      "ll-punchangel-001","ll-punchbubble-001","ll-punchforest-00","ll-punchhammock-001",
+      "ll-punchhug-001","ll-punchpinkcloud-001","ll-punchpurplecloud-001","ll-punchrainbow-001",
+      "ll-punchsleep-001","ll-punchsunflower-001",
+    ],
+    "moonlit-botanica": [
+      "mb-birdflowers-001","mb-bleedinghearts-001","mb-cat-001","mb-cat-002","mb-dogcollar-001",
+      "mb-horse-001","mb-iris-001","mb-lantern-001","mb-magnolia-001","mb-moth-001",
+      "mb-peonies-001","mb-poppies-001","mb-raven-001","mb-rose-001","mb-rose-002",
+      "mb-wisteria-001","mb-yarn-001",
+    ],
+    "meadow-mane": [
+      "mm-bear-001","mm-bison-001","mm-buck-001","mm-canyon-001","mm-dog-001","mm-eagle-001",
+      "mm-elk-001","mm-horse-001","mm-lake-001","mm-river-001","mm-tundra-001","mm-wolf-001",
+    ],
+    "fable-fawn": [
+      "ff-archway-001","ff-cats-001","ff-fawn-001","ff-fox-001","ff-fox-002","ff-fullmoon-001",
+      "ff-hobbitcottage-001","ff-horse-001","ff-mushrooms-001","ff-rabbit-001","ff-stag-001",
+      "ff-twilightfield-001",
+    ],
+    "ember-ivy": [
+      "ei-bench-001","ei-birds-001","ei-butterfly-001","ei-butterfly-002","ei-cottage-001",
+      "ei-fox-001","ei-path-001","ei-rosegarden-001","ei-stonetable-001","ei-swans-001",
+    ],
+  };
+  const files = COLLECTION_ART[collection.slug];
+  const images = files
+    ? files.map((name, i) => ({ src: `${ART_BASE}/${name}.jpg`, index: i + 1 }))
+    : Array.from({ length: 10 }, (_, i) => ({ src: collection.img, index: i + 1 }));
 
   return (
     <div className="fixed inset-0 z-[100] bg-navy text-cream flex flex-col overflow-hidden">
