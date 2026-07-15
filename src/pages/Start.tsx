@@ -2583,9 +2583,9 @@ const buildVinylPosterStep = (
     if (!order.is_vinyl_poster) return true; // "No" is valid — skip vinyl fields
     if (!order.vinyl_header_text.trim()) return false;
     if (order.vinyl_photo_upsell) {
-      if (!order.vinyl_photo_url) return false;
-      if (order.vinyl_photo_quality === "green") return true;
-      return order.vinyl_photo_quality_override;
+      if (!order.photo_url) return false;
+      if (order.photo_quality === "green") return true;
+      return order.photo_quality_override;
     }
     return true;
   },
