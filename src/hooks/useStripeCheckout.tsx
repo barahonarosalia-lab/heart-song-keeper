@@ -8,6 +8,10 @@ interface CheckoutOptions {
   customerEmail?: string;
   metadata?: Record<string, string>;
   returnUrl?: string;
+  // Additional Stripe price lookup keys to bundle as extra line items
+  // (qty 1 each) on the same checkout session — e.g. Vinyl Poster photo
+  // upsell alongside a base Digital/Canvas order.
+  extraPriceIds?: string[];
 }
 
 export function useStripeCheckout() {
