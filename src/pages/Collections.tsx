@@ -62,7 +62,6 @@ const artCollections: ArtCollection[] = [
       "Adult whimsy with an enchanted edge. For the one who still believes in magic — and is probably 34.",
     occasions: ["Friendship", "Just Because", "Childhood Memory"],
     slug: "fable-fawn",
-    comingSoon: true,
   },
   {
     name: "Ember & Ivy",
@@ -71,7 +70,6 @@ const artCollections: ArtCollection[] = [
       "Candlelit and romantic. For the love that was chosen and keeps being chosen every day.",
     occasions: ["Anniversary & Wedding", "Friendship", "Just Because"],
     slug: "ember-ivy",
-    comingSoon: true,
   },
 ];
 
