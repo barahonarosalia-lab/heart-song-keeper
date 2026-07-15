@@ -8,6 +8,9 @@ interface CheckoutBody {
   returnUrl: string;
   environment: StripeEnv;
   metadata?: Record<string, string>;
+  // Additional price lookup keys to bundle as extra line items (qty 1
+  // each) alongside the primary priceId.
+  extraPriceIds?: string[];
 }
 
 // Broad international shipping list — Stripe's supported shipping
