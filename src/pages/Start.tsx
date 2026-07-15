@@ -499,6 +499,15 @@ const Start = () => {
     photo_reviewed: false,
     photo_crop_area: null,
     photo_zoom: 1,
+    is_vinyl_poster: false,
+    vinyl_header_text: "",
+    vinyl_bottom_text: "",
+    vinyl_photo_upsell: false,
+    vinyl_photo_url: "",
+    vinyl_photo_quality: null,
+    vinyl_photo_quality_override: false,
+    vinyl_photo_crop_area: null,
+    vinyl_photo_zoom: 1,
   });
 
   const { openCheckout, checkoutElement } = useStripeCheckout();
