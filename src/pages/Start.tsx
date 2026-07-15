@@ -2525,28 +2525,28 @@ const VinylPosterStepBody = ({
               </p>
               <PhotoPreview
                 product="vinyl"
-                value={order.vinyl_photo_url}
+                value={order.photo_url}
                 onChange={(dataUrl) =>
-                  setOrder((prev) => ({ ...prev, vinyl_photo_url: dataUrl }))
+                  setOrder((prev) => ({ ...prev, photo_url: dataUrl }))
                 }
-                quality={order.vinyl_photo_quality}
+                quality={order.photo_quality}
                 onQualityChange={(q) =>
-                  setOrder((prev) => ({ ...prev, vinyl_photo_quality: q }))
+                  setOrder((prev) => ({ ...prev, photo_quality: q }))
                 }
-                acknowledged={order.vinyl_photo_quality_override}
+                acknowledged={order.photo_quality_override}
                 onAcknowledgedChange={(v) =>
                   setOrder((prev) => ({
                     ...prev,
-                    vinyl_photo_quality_override: v,
+                    photo_quality_override: v,
                   }))
                 }
                 onCropAreaChange={(area, zoom) =>
                   setOrder((prev) => ({
                     ...prev,
-                    vinyl_photo_crop_area: area
+                    photo_crop_area: area
                       ? { x: area.x, y: area.y, width: area.width, height: area.height }
                       : null,
-                    vinyl_photo_zoom: zoom,
+                    photo_zoom: zoom,
                   }))
                 }
               />
