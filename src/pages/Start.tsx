@@ -78,18 +78,12 @@ interface OrderState {
   // Vinyl Poster upsell — Story tier only, on Canvas or Digital products.
   // A style flag on the base SKU (not a separate product). When the user
   // opts into the photo center, a $10 line item (VINYL_PHOTO_UPSELL_PRICE_ID)
-  // is added to the checkout session and the vinyl_photo_* fields carry
-  // the same shape as photo_url/photo_crop_area (namespaced to avoid
-  // colliding with a regular product photo).
+  // is added to the checkout session. The photo itself reuses the shared
+  // photo_url / photo_crop_area / photo_zoom fields (only one photo per order).
   is_vinyl_poster: boolean;
   vinyl_header_text: string;
   vinyl_bottom_text: string;
   vinyl_photo_upsell: boolean;
-  vinyl_photo_url: string;
-  vinyl_photo_quality: PhotoQuality | null;
-  vinyl_photo_quality_override: boolean;
-  vinyl_photo_crop_area: { x: number; y: number; width: number; height: number } | null;
-  vinyl_photo_zoom: number;
 }
 
 // Capitalized tier value sent in the checkout payload — backend does an
@@ -503,11 +497,6 @@ const Start = () => {
     vinyl_header_text: "",
     vinyl_bottom_text: "",
     vinyl_photo_upsell: false,
-    vinyl_photo_url: "",
-    vinyl_photo_quality: null,
-    vinyl_photo_quality_override: false,
-    vinyl_photo_crop_area: null,
-    vinyl_photo_zoom: 1,
   });
 
   const { openCheckout, checkoutElement } = useStripeCheckout();
@@ -615,14 +604,6 @@ const Start = () => {
       put("vinyl_bottom_text", order.vinyl_bottom_text);
       if (order.vinyl_photo_upsell) {
         put("vinyl_photo_upsell", true);
-        put("vinyl_photo_url", order.vinyl_photo_url);
-        put("vinyl_photo_quality", order.vinyl_photo_quality);
-        put("vinyl_photo_quality_override", order.vinyl_photo_quality_override);
-        put("vinyl_photo_crop_area", order.vinyl_photo_crop_area);
-        put("vinyl_photo_zoom",
-          order.vinyl_photo_url && order.vinyl_photo_zoom !== 1
-            ? order.vinyl_photo_zoom
-            : null);
         extraPriceIds.push(VINYL_PHOTO_UPSELL_PRICE_ID);
       }
     }
@@ -2353,9 +2334,9 @@ const VinylPosterStepBody = ({
   const productLabel =
     order.product === "canvas" ? "Canvas" : "Digital";
   const photoOk =
-    !!order.vinyl_photo_url &&
-    (order.vinyl_photo_quality === "green" ||
-      order.vinyl_photo_quality_override);
+    !!order.photo_url &&
+    (order.photo_quality === "green" ||
+      order.photo_quality_override);
 
   return (
     <div className="space-y-8">
@@ -2397,11 +2378,11 @@ const VinylPosterStepBody = ({
               vinyl_photo_upsell: false,
               vinyl_header_text: "",
               vinyl_bottom_text: "",
-              vinyl_photo_url: "",
-              vinyl_photo_quality: null,
-              vinyl_photo_quality_override: false,
-              vinyl_photo_crop_area: null,
-              vinyl_photo_zoom: 1,
+              photo_url: "",
+              photo_quality: null,
+              photo_quality_override: false,
+              photo_crop_area: null,
+              photo_zoom: 1,
             }))
           }
           className={cn(
@@ -2482,11 +2463,11 @@ const VinylPosterStepBody = ({
                   setOrder((prev) => ({
                     ...prev,
                     vinyl_photo_upsell: false,
-                    vinyl_photo_url: "",
-                    vinyl_photo_quality: null,
-                    vinyl_photo_quality_override: false,
-                    vinyl_photo_crop_area: null,
-                    vinyl_photo_zoom: 1,
+                    photo_url: "",
+                    photo_quality: null,
+                    photo_quality_override: false,
+                    photo_crop_area: null,
+                    photo_zoom: 1,
                   }))
                 }
                 className={cn(
@@ -2544,28 +2525,28 @@ const VinylPosterStepBody = ({
               </p>
               <PhotoPreview
                 product="vinyl"
-                value={order.vinyl_photo_url}
+                value={order.photo_url}
                 onChange={(dataUrl) =>
-                  setOrder((prev) => ({ ...prev, vinyl_photo_url: dataUrl }))
+                  setOrder((prev) => ({ ...prev, photo_url: dataUrl }))
                 }
-                quality={order.vinyl_photo_quality}
+                quality={order.photo_quality}
                 onQualityChange={(q) =>
-                  setOrder((prev) => ({ ...prev, vinyl_photo_quality: q }))
+                  setOrder((prev) => ({ ...prev, photo_quality: q }))
                 }
-                acknowledged={order.vinyl_photo_quality_override}
+                acknowledged={order.photo_quality_override}
                 onAcknowledgedChange={(v) =>
                   setOrder((prev) => ({
                     ...prev,
-                    vinyl_photo_quality_override: v,
+                    photo_quality_override: v,
                   }))
                 }
                 onCropAreaChange={(area, zoom) =>
                   setOrder((prev) => ({
                     ...prev,
-                    vinyl_photo_crop_area: area
+                    photo_crop_area: area
                       ? { x: area.x, y: area.y, width: area.width, height: area.height }
                       : null,
-                    vinyl_photo_zoom: zoom,
+                    photo_zoom: zoom,
                   }))
                 }
               />
@@ -2602,9 +2583,9 @@ const buildVinylPosterStep = (
     if (!order.is_vinyl_poster) return true; // "No" is valid — skip vinyl fields
     if (!order.vinyl_header_text.trim()) return false;
     if (order.vinyl_photo_upsell) {
-      if (!order.vinyl_photo_url) return false;
-      if (order.vinyl_photo_quality === "green") return true;
-      return order.vinyl_photo_quality_override;
+      if (!order.photo_url) return false;
+      if (order.photo_quality === "green") return true;
+      return order.photo_quality_override;
     }
     return true;
   },
@@ -3069,12 +3050,14 @@ const StoryWizard = ({
     },
     buildProductStep(order, setOrder, onSelectProduct),
     // Vinyl Poster upsell — Story tier only, and only when the customer
-    // has selected Canvas or Digital. Sits right after product selection
-    // so a "No" answer flows straight into the existing productSubStep.
-    ...((order.product === "canvas" || order.product === "digital")
+    // has selected Canvas or Digital. Sits right after product selection.
+    // When the customer opts into vinyl, the productSubStep (art / photo
+    // picker) is skipped because the vinyl step already covers that choice.
+    ...(order.tier === "story" &&
+    (order.product === "canvas" || order.product === "digital")
       ? [buildVinylPosterStep(order, setOrder)]
       : []),
-    buildProductSubStep(order, setOrder),
+    ...(order.is_vinyl_poster ? [] : [buildProductSubStep(order, setOrder)]),
     buildCardArtStep(order, setOrder),
     buildReviewStep(order, setOrder, addDigitalCopy, setAddDigitalCopy, digitalAddonEligible),
   ];
