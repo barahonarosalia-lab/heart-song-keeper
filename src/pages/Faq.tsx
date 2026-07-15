@@ -50,7 +50,7 @@ const sections: FaqSection[] = [
     items: [
       {
         q: "When will my order arrive?",
-        a: "Digital downloads are delivered instantly after checkout. Physical products ship within 5-7 business days. Preserve orders ship within 5-7 business days — your QR code activates within 48 business hours of your audio being received and approved.",
+        a: "Digital downloads are delivered instantly after checkout. Physical products ship within 5-7 business days. For Voice and Memory orders, your QR code activates within 48 business hours of your audio or video being received and approved.",
       },
       {
         q: "Can I change or cancel my order?",
