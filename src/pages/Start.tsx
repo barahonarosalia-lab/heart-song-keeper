@@ -605,10 +605,33 @@ const Start = () => {
       metadata.addon_price_id = DIGITAL_ADDON_PRICE_ID;
     }
 
+    // Vinyl Poster (Story tier, Canvas/Digital only). is_vinyl_poster is a
+    // style flag on the base SKU; when vinyl_photo_upsell is also true we
+    // bundle the $10 photo-center line item alongside the base price.
+    const extraPriceIds: string[] = [];
+    if (order.is_vinyl_poster) {
+      put("is_vinyl_poster", true);
+      put("vinyl_header_text", order.vinyl_header_text);
+      put("vinyl_bottom_text", order.vinyl_bottom_text);
+      if (order.vinyl_photo_upsell) {
+        put("vinyl_photo_upsell", true);
+        put("vinyl_photo_url", order.vinyl_photo_url);
+        put("vinyl_photo_quality", order.vinyl_photo_quality);
+        put("vinyl_photo_quality_override", order.vinyl_photo_quality_override);
+        put("vinyl_photo_crop_area", order.vinyl_photo_crop_area);
+        put("vinyl_photo_zoom",
+          order.vinyl_photo_url && order.vinyl_photo_zoom !== 1
+            ? order.vinyl_photo_zoom
+            : null);
+        extraPriceIds.push(VINYL_PHOTO_UPSELL_PRICE_ID);
+      }
+    }
+
     openCheckout({
       priceId,
       metadata,
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
+      ...(extraPriceIds.length > 0 && { extraPriceIds }),
     });
   };
 
