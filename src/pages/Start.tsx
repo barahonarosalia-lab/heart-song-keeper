@@ -2334,9 +2334,9 @@ const VinylPosterStepBody = ({
   const productLabel =
     order.product === "canvas" ? "Canvas" : "Digital";
   const photoOk =
-    !!order.vinyl_photo_url &&
-    (order.vinyl_photo_quality === "green" ||
-      order.vinyl_photo_quality_override);
+    !!order.photo_url &&
+    (order.photo_quality === "green" ||
+      order.photo_quality_override);
 
   return (
     <div className="space-y-8">
