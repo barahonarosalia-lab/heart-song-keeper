@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
-export type PhotoPreviewProduct = "canvas" | "blanket" | "digital";
+export type PhotoPreviewProduct = "canvas" | "blanket" | "digital" | "vinyl";
 export type PhotoQualityState = "green" | "yellow" | "red";
 
 interface Props {
@@ -28,7 +28,7 @@ function aspectFor(
 ): number {
   if (product === "canvas") return 3300 / 3701; // canvas art zone: Printful's 11x14 template has a 450px margin on all 4 sides, so the true visible art zone is 3300w × 3701h (3300×4200 visible face minus the banner height) — not the full 11x14 product ratio. Matching this exactly means the crop fills the art zone edge-to-edge with zero cream padding, since the backend composite uses this same size.
   if (product === "blanket") return orientation === "landscape" ? 60 / 50 : 50 / 60;
-  return 1; // digital
+  return 1; // digital + vinyl (square, vinyl uses a circular mask on top)
 }
 
 function classifyQuality(
@@ -43,7 +43,7 @@ function classifyQuality(
     if (longest >= 1600) return "yellow";
     return "red";
   }
-  // canvas + digital
+  // canvas + digital + vinyl
   if (shortest >= 2800) return "green";
   if (shortest >= 1700) return "yellow";
   return "red";
@@ -161,6 +161,7 @@ export default function PhotoPreview({
             crop={crop}
             zoom={zoom}
             aspect={aspect}
+            cropShape={product === "vinyl" ? "round" : "rect"}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={(_, area) => {

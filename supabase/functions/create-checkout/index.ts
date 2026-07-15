@@ -8,6 +8,9 @@ interface CheckoutBody {
   returnUrl: string;
   environment: StripeEnv;
   metadata?: Record<string, string>;
+  // Additional price lookup keys to bundle as extra line items (qty 1
+  // each) alongside the primary priceId.
+  extraPriceIds?: string[];
 }
 
 // Broad international shipping list — Stripe's supported shipping
@@ -57,7 +60,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = (await req.json()) as CheckoutBody;
-    const { priceId, quantity, customerEmail, returnUrl, environment, metadata } = body;
+    const { priceId, quantity, customerEmail, returnUrl, environment, metadata, extraPriceIds } = body;
 
     if (!priceId || !/^[a-zA-Z0-9_-]+$/.test(priceId)) {
       throw new Error("Invalid priceId");
@@ -66,15 +69,31 @@ Deno.serve(async (req) => {
     if (environment !== "sandbox" && environment !== "live") {
       throw new Error("Invalid environment");
     }
+    const extras = Array.isArray(extraPriceIds) ? extraPriceIds : [];
+    for (const p of extras) {
+      if (typeof p !== "string" || !/^[a-zA-Z0-9_-]+$/.test(p)) {
+        throw new Error("Invalid extraPriceIds");
+      }
+    }
 
     const stripe = createStripeClient(environment);
 
-    const prices = await stripe.prices.list({ lookup_keys: [priceId] });
-    if (!prices.data.length) throw new Error("Price not found");
-    const stripePrice = prices.data[0];
+    const lookupKeys = [priceId, ...extras];
+    const prices = await stripe.prices.list({ lookup_keys: lookupKeys });
+    const primary = prices.data.find((p) => p.lookup_key === priceId);
+    if (!primary) throw new Error("Price not found");
+
+    const lineItems: { price: string; quantity: number }[] = [
+      { price: primary.id, quantity: quantity || 1 },
+    ];
+    for (const key of extras) {
+      const match = prices.data.find((p) => p.lookup_key === key);
+      if (!match) throw new Error(`Extra price not found: ${key}`);
+      lineItems.push({ price: match.id, quantity: 1 });
+    }
 
     const session = await stripe.checkout.sessions.create({
-      line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
+      line_items: lineItems,
       mode: "payment",
       ui_mode: "embedded",
       return_url: returnUrl,

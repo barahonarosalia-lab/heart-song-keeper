@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
-import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
+import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, VINYL_PHOTO_UPSELL_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
 import PhotoPreview from "@/components/PhotoPreview";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
@@ -75,6 +75,21 @@ interface OrderState {
   photo_reviewed: boolean;
   photo_crop_area: { x: number; y: number; width: number; height: number } | null;
   photo_zoom: number;
+  // Vinyl Poster upsell — Story tier only, on Canvas or Digital products.
+  // A style flag on the base SKU (not a separate product). When the user
+  // opts into the photo center, a $10 line item (VINYL_PHOTO_UPSELL_PRICE_ID)
+  // is added to the checkout session and the vinyl_photo_* fields carry
+  // the same shape as photo_url/photo_crop_area (namespaced to avoid
+  // colliding with a regular product photo).
+  is_vinyl_poster: boolean;
+  vinyl_header_text: string;
+  vinyl_bottom_text: string;
+  vinyl_photo_upsell: boolean;
+  vinyl_photo_url: string;
+  vinyl_photo_quality: PhotoQuality | null;
+  vinyl_photo_quality_override: boolean;
+  vinyl_photo_crop_area: { x: number; y: number; width: number; height: number } | null;
+  vinyl_photo_zoom: number;
 }
 
 // Capitalized tier value sent in the checkout payload — backend does an
@@ -484,6 +499,15 @@ const Start = () => {
     photo_reviewed: false,
     photo_crop_area: null,
     photo_zoom: 1,
+    is_vinyl_poster: false,
+    vinyl_header_text: "",
+    vinyl_bottom_text: "",
+    vinyl_photo_upsell: false,
+    vinyl_photo_url: "",
+    vinyl_photo_quality: null,
+    vinyl_photo_quality_override: false,
+    vinyl_photo_crop_area: null,
+    vinyl_photo_zoom: 1,
   });
 
   const { openCheckout, checkoutElement } = useStripeCheckout();
@@ -581,10 +605,33 @@ const Start = () => {
       metadata.addon_price_id = DIGITAL_ADDON_PRICE_ID;
     }
 
+    // Vinyl Poster (Story tier, Canvas/Digital only). is_vinyl_poster is a
+    // style flag on the base SKU; when vinyl_photo_upsell is also true we
+    // bundle the $10 photo-center line item alongside the base price.
+    const extraPriceIds: string[] = [];
+    if (order.is_vinyl_poster) {
+      put("is_vinyl_poster", true);
+      put("vinyl_header_text", order.vinyl_header_text);
+      put("vinyl_bottom_text", order.vinyl_bottom_text);
+      if (order.vinyl_photo_upsell) {
+        put("vinyl_photo_upsell", true);
+        put("vinyl_photo_url", order.vinyl_photo_url);
+        put("vinyl_photo_quality", order.vinyl_photo_quality);
+        put("vinyl_photo_quality_override", order.vinyl_photo_quality_override);
+        put("vinyl_photo_crop_area", order.vinyl_photo_crop_area);
+        put("vinyl_photo_zoom",
+          order.vinyl_photo_url && order.vinyl_photo_zoom !== 1
+            ? order.vinyl_photo_zoom
+            : null);
+        extraPriceIds.push(VINYL_PHOTO_UPSELL_PRICE_ID);
+      }
+    }
+
     openCheckout({
       priceId,
       metadata,
       returnUrl: `${window.location.origin}/order/{CHECKOUT_SESSION_ID}`,
+      ...(extraPriceIds.length > 0 && { extraPriceIds }),
     });
   };
 
@@ -2294,6 +2341,278 @@ const buildProductSubStep = (order: OrderState, setOrder: SetOrder): WizardStep 
   };
 };
 
+// ----- Vinyl Poster step (Story tier, Canvas or Digital only) ------------
+
+const VinylPosterStepBody = ({
+  order,
+  setOrder,
+}: {
+  order: OrderState;
+  setOrder: SetOrder;
+}) => {
+  const productLabel =
+    order.product === "canvas" ? "Canvas" : "Digital";
+  const photoOk =
+    !!order.vinyl_photo_url &&
+    (order.vinyl_photo_quality === "green" ||
+      order.vinyl_photo_quality_override);
+
+  return (
+    <div className="space-y-8">
+      {/* Yes / No */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <button
+          type="button"
+          onClick={() =>
+            setOrder((prev) => ({ ...prev, is_vinyl_poster: true }))
+          }
+          className={cn(
+            "relative rounded-2xl border p-6 text-left transition-all bg-card",
+            order.is_vinyl_poster
+              ? "border-gold ring-2 ring-gold/40 shadow-card"
+              : "border-border/60 hover:border-gold",
+          )}
+        >
+          {order.is_vinyl_poster && (
+            <span className="absolute top-3 right-3 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy">
+              <Check className="size-3.5" strokeWidth={3} />
+            </span>
+          )}
+          <p className="label-eyebrow text-gold mb-2">Vinyl Poster</p>
+          <p className="font-serif text-xl text-navy leading-tight pr-8">
+            Yes, make it a Vinyl Poster
+          </p>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            Their song's actual lyrics wrap around the edge like a record label,
+            with your own header text at the top.
+          </p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setOrder((prev) => ({
+              ...prev,
+              is_vinyl_poster: false,
+              vinyl_photo_upsell: false,
+              vinyl_header_text: "",
+              vinyl_bottom_text: "",
+              vinyl_photo_url: "",
+              vinyl_photo_quality: null,
+              vinyl_photo_quality_override: false,
+              vinyl_photo_crop_area: null,
+              vinyl_photo_zoom: 1,
+            }))
+          }
+          className={cn(
+            "relative rounded-2xl border p-6 text-left transition-all bg-card",
+            order.is_vinyl_poster === false
+              ? "border-gold ring-2 ring-gold/40 shadow-card"
+              : "border-border/60 hover:border-gold",
+          )}
+        >
+          {order.is_vinyl_poster === false && (
+            <span className="absolute top-3 right-3 inline-flex items-center justify-center size-7 rounded-full bg-gold text-navy">
+              <Check className="size-3.5" strokeWidth={3} />
+            </span>
+          )}
+          <p className="label-eyebrow text-gold mb-2">Standard</p>
+          <p className="font-serif text-xl text-navy leading-tight pr-8">
+            No, standard {productLabel}
+          </p>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            Keep your {productLabel.toLowerCase()} as-is. You'll choose the art
+            or upload a photo in the next step.
+          </p>
+        </button>
+      </div>
+
+      {order.is_vinyl_poster && (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300 pt-2">
+          {/* Header text */}
+          <div className="space-y-2">
+            <label htmlFor="vinyl-header" className="label-eyebrow text-gold block">
+              Header text (required)
+            </label>
+            <Input
+              id="vinyl-header"
+              value={order.vinyl_header_text}
+              onChange={(e) =>
+                setOrder((prev) => ({
+                  ...prev,
+                  vinyl_header_text: e.target.value.slice(0, 60),
+                }))
+              }
+              placeholder="Happy Anniversary, Maria"
+              className="h-12 rounded-xl bg-card border-border/60"
+              maxLength={60}
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              {order.vinyl_header_text.length}/60
+            </p>
+          </div>
+
+          {/* Date (optional) */}
+          <div className="space-y-2">
+            <label htmlFor="vinyl-date" className="label-eyebrow text-gold block">
+              Date (optional)
+            </label>
+            <Input
+              id="vinyl-date"
+              value={order.vinyl_bottom_text}
+              onChange={(e) =>
+                setOrder((prev) => ({
+                  ...prev,
+                  vinyl_bottom_text: e.target.value.slice(0, 40),
+                }))
+              }
+              placeholder="June 14, 2026"
+              className="h-12 rounded-xl bg-card border-border/60"
+              maxLength={40}
+            />
+          </div>
+
+          {/* Center choice */}
+          <div className="space-y-3">
+            <p className="label-eyebrow text-gold">Choose the center</p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    vinyl_photo_upsell: false,
+                    vinyl_photo_url: "",
+                    vinyl_photo_quality: null,
+                    vinyl_photo_quality_override: false,
+                    vinyl_photo_crop_area: null,
+                    vinyl_photo_zoom: 1,
+                  }))
+                }
+                className={cn(
+                  "relative rounded-2xl border p-5 text-left transition-all bg-card",
+                  !order.vinyl_photo_upsell
+                    ? "border-gold ring-2 ring-gold/40 shadow-card"
+                    : "border-border/60 hover:border-gold",
+                )}
+              >
+                {!order.vinyl_photo_upsell && (
+                  <span className="absolute top-3 right-3 inline-flex items-center justify-center size-6 rounded-full bg-gold text-navy">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
+                )}
+                <p className="label-eyebrow text-gold mb-1">Included</p>
+                <p className="font-serif text-lg text-navy pr-8">QR Code</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  A QR code and short tagline sit at the center — scan to hear
+                  their song.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setOrder((prev) => ({ ...prev, vinyl_photo_upsell: true }))
+                }
+                className={cn(
+                  "relative rounded-2xl border p-5 text-left transition-all bg-card",
+                  order.vinyl_photo_upsell
+                    ? "border-gold ring-2 ring-gold/40 shadow-card"
+                    : "border-border/60 hover:border-gold",
+                )}
+              >
+                {order.vinyl_photo_upsell && (
+                  <span className="absolute top-3 right-3 inline-flex items-center justify-center size-6 rounded-full bg-gold text-navy">
+                    <Check className="size-3" strokeWidth={3} />
+                  </span>
+                )}
+                <p className="label-eyebrow text-gold mb-1">+ $10</p>
+                <p className="font-serif text-lg text-navy pr-8">Your Photo</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Swap the center for a photo of your recipient — round, like a
+                  vinyl label.
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Photo upload with circular crop */}
+          {order.vinyl_photo_upsell && (
+            <div className="space-y-3 pt-2 border-t border-border/40 animate-in fade-in duration-300">
+              <p className="label-eyebrow text-gold pt-4">
+                Upload your center photo
+              </p>
+              <PhotoPreview
+                product="vinyl"
+                value={order.vinyl_photo_url}
+                onChange={(dataUrl) =>
+                  setOrder((prev) => ({ ...prev, vinyl_photo_url: dataUrl }))
+                }
+                quality={order.vinyl_photo_quality}
+                onQualityChange={(q) =>
+                  setOrder((prev) => ({ ...prev, vinyl_photo_quality: q }))
+                }
+                acknowledged={order.vinyl_photo_quality_override}
+                onAcknowledgedChange={(v) =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    vinyl_photo_quality_override: v,
+                  }))
+                }
+                onCropAreaChange={(area, zoom) =>
+                  setOrder((prev) => ({
+                    ...prev,
+                    vinyl_photo_crop_area: area
+                      ? { x: area.x, y: area.y, width: area.width, height: area.height }
+                      : null,
+                    vinyl_photo_zoom: zoom,
+                  }))
+                }
+              />
+              <p className="text-xs text-muted-foreground italic leading-relaxed">
+                This is a preview of your photo placement only — the finished
+                poster will also include your song's actual lyrics wrapped
+                around the edge, generated after you choose your song.
+              </p>
+              {photoOk && (
+                <p className="text-xs text-emerald-700">
+                  Photo ready — you can continue.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const buildVinylPosterStep = (
+  order: OrderState,
+  setOrder: SetOrder,
+): WizardStep => ({
+  title: "Want this as a Vinyl Poster?",
+  subtitle:
+    "A circular poster with your recipient's actual song lyrics wrapping the edge like a vinyl record label, with your own header text at the top.",
+  isValid: () => {
+    // Must make an explicit yes/no choice
+    if (order.is_vinyl_poster === null || order.is_vinyl_poster === undefined) {
+      // Boolean is always defined; treat unset as invalid via header check below.
+    }
+    if (!order.is_vinyl_poster) return true; // "No" is valid — skip vinyl fields
+    if (!order.vinyl_header_text.trim()) return false;
+    if (order.vinyl_photo_upsell) {
+      if (!order.vinyl_photo_url) return false;
+      if (order.vinyl_photo_quality === "green") return true;
+      return order.vinyl_photo_quality_override;
+    }
+    return true;
+  },
+  render: () => <VinylPosterStepBody order={order} setOrder={setOrder} />,
+});
+
+
+
 const buildCardArtStep = (order: OrderState, setOrder: SetOrder): WizardStep => ({
   title: "Choose the art for their card.",
   subtitle: order.product ? cardSubheadlineForProduct(order.product) : undefined,
@@ -2749,6 +3068,12 @@ const StoryWizard = ({
       ),
     },
     buildProductStep(order, setOrder, onSelectProduct),
+    // Vinyl Poster upsell — Story tier only, and only when the customer
+    // has selected Canvas or Digital. Sits right after product selection
+    // so a "No" answer flows straight into the existing productSubStep.
+    ...((order.product === "canvas" || order.product === "digital")
+      ? [buildVinylPosterStep(order, setOrder)]
+      : []),
     buildProductSubStep(order, setOrder),
     buildCardArtStep(order, setOrder),
     buildReviewStep(order, setOrder, addDigitalCopy, setAddDigitalCopy, digitalAddonEligible),
