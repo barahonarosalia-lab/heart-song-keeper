@@ -6,6 +6,7 @@ interface Manifest {
   song_b_url?: string;
   recipient_name?: string;
   qr_state?: string;
+  is_vinyl_poster?: boolean;
 }
 
 const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
@@ -26,6 +27,8 @@ const Choose = () => {
   const [chosen, setChosen] = useState<"A" | "B" | null>(null);
   const [regenerated, setRegenerated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [songTitle, setSongTitle] = useState("");
+  const [songArtist, setSongArtist] = useState("");
 
   useEffect(() => {
     if (!order) {
@@ -56,12 +59,20 @@ const Choose = () => {
 
   const choose = async (choice: "A" | "B") => {
     if (submitting) return;
+    if (manifest?.is_vinyl_poster && (!songTitle.trim() || !songArtist.trim())) return;
     setSubmitting(true);
     try {
       await fetch(N8N_CHOICE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ order_id: order, choice }),
+        body: JSON.stringify({
+          order_id: order,
+          choice,
+          ...(manifest?.is_vinyl_poster && {
+            song_title: songTitle.trim(),
+            song_artist: songArtist.trim(),
+          }),
+        }),
       });
     } catch {}
     setChosen(choice);
@@ -152,9 +163,47 @@ const Choose = () => {
           )}
         </div>
 
+        {manifest.is_vinyl_poster && (
+          <div className="w-full max-w-xl flex flex-col gap-4 text-left">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="song-title" className="text-cream text-sm font-light tracking-wide">
+                Song title
+              </label>
+              <input
+                id="song-title"
+                type="text"
+                required
+                value={songTitle}
+                onChange={(e) => setSongTitle(e.target.value)}
+                placeholder="e.g. Golden Hour"
+                className="w-full px-4 py-3 rounded-lg bg-navy-deep/60 border border-gold/30 text-cream placeholder:text-cream/40 focus:outline-none focus:border-gold"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="song-artist" className="text-cream text-sm font-light tracking-wide">
+                Artist name
+              </label>
+              <input
+                id="song-artist"
+                type="text"
+                required
+                value={songArtist}
+                onChange={(e) => setSongArtist(e.target.value)}
+                placeholder="e.g. as you'd like it credited"
+                className="w-full px-4 py-3 rounded-lg bg-navy-deep/60 border border-gold/30 text-cream placeholder:text-cream/40 focus:outline-none focus:border-gold"
+              />
+            </div>
+            <p className="text-cream/60 text-xs font-light italic">
+              This appears on your Vinyl Poster, exactly as you type it.
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           {(["A", "B"] as const).map((v) => {
             const url = v === "A" ? manifest.song_a_url! : manifest.song_b_url!;
+            const vinylIncomplete =
+              !!manifest.is_vinyl_poster && (!songTitle.trim() || !songArtist.trim());
             return (
               <div
                 key={v}
@@ -165,8 +214,8 @@ const Choose = () => {
                 <button
                   type="button"
                   onClick={() => choose(v)}
-                  disabled={submitting}
-                  className="mt-2 px-8 py-3 rounded-full bg-gradient-gold text-navy font-semibold shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.6)] hover:shadow-[0_12px_32px_-8px_hsl(var(--gold)/0.8)] hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                  disabled={submitting || vinylIncomplete}
+                  className="mt-2 px-8 py-3 rounded-full bg-gradient-gold text-navy font-semibold shadow-[0_8px_24px_-8px_hsl(var(--gold)/0.6)] hover:shadow-[0_12px_32px_-8px_hsl(var(--gold)/0.8)] hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 >
                   {submitting ? "Saving…" : `This one — Version ${v}`}
                 </button>
@@ -174,6 +223,12 @@ const Choose = () => {
             );
           })}
         </div>
+
+        {manifest.is_vinyl_poster && (
+          <p className="text-gold/80 text-sm text-center max-w-xl font-light">
+            Choosing a version finalizes your Vinyl Poster for production — this selection can't be changed afterward.
+          </p>
+        )}
 
         <button
           type="button"
