@@ -604,14 +604,6 @@ const Start = () => {
       put("vinyl_bottom_text", order.vinyl_bottom_text);
       if (order.vinyl_photo_upsell) {
         put("vinyl_photo_upsell", true);
-        put("vinyl_photo_url", order.vinyl_photo_url);
-        put("vinyl_photo_quality", order.vinyl_photo_quality);
-        put("vinyl_photo_quality_override", order.vinyl_photo_quality_override);
-        put("vinyl_photo_crop_area", order.vinyl_photo_crop_area);
-        put("vinyl_photo_zoom",
-          order.vinyl_photo_url && order.vinyl_photo_zoom !== 1
-            ? order.vinyl_photo_zoom
-            : null);
         extraPriceIds.push(VINYL_PHOTO_UPSELL_PRICE_ID);
       }
     }
