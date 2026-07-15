@@ -276,6 +276,7 @@ const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
 interface ArtPiece {
   id: string;
   name: string;
+  image: string;
 }
 
 interface CollectionDef {
@@ -285,12 +286,13 @@ interface CollectionDef {
   pieces: ArtPiece[];
 }
 
-// Generate 10 placeholder art slots per collection.
-// Real art images will be swapped in before launch.
-const makePlaceholders = (collectionId: string, count = 10): ArtPiece[] =>
-  Array.from({ length: count }, (_, i) => ({
-    id: `${collectionId}_art_${i + 1}`,
-    name: `Art ${i + 1}`,
+const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+
+const makePieces = (entries: [string, string][]): ArtPiece[] =>
+  entries.map(([id, name]) => ({
+    id,
+    name,
+    image: `${ART_BASE}/${id}.jpg`,
   }));
 
 const COLLECTIONS: CollectionDef[] = [
@@ -298,31 +300,103 @@ const COLLECTIONS: CollectionDef[] = [
     id: "little_luminaries",
     name: "Little Luminaries",
     cover: luminaries,
-    pieces: makePlaceholders("little_luminaries"),
+    pieces: makePieces([
+      ["ll-cat-001", "Cat"],
+      ["ll-deer-001", "Deer"],
+      ["ll-elephant-001", "Elephant"],
+      ["ll-fawn-001", "Fawn"],
+      ["ll-fox-001", "Fox"],
+      ["ll-giraffe-001", "Giraffe"],
+      ["ll-punchangel-001", "Punch Angel"],
+      ["ll-punchbubble-001", "Punch Bubble"],
+      ["ll-punchforest-00", "Punch Forest"],
+      ["ll-punchhammock-001", "Punch Hammock"],
+      ["ll-punchhug-001", "Punch Hug"],
+      ["ll-punchpinkcloud-001", "Punch Pink Cloud"],
+      ["ll-punchpurplecloud-001", "Punch Purple Cloud"],
+      ["ll-punchrainbow-001", "Punch Rainbow"],
+      ["ll-punchsleep-001", "Punch Sleep"],
+      ["ll-punchsunflower-001", "Punch Sunflower"],
+    ]),
   },
   {
     id: "moonlit_botanica",
     name: "Moonlit Botanica",
     cover: botanica,
-    pieces: makePlaceholders("moonlit_botanica"),
+    pieces: makePieces([
+      ["mb-birdflowers-001", "Bird & Flowers"],
+      ["mb-bleedinghearts-001", "Bleeding Hearts"],
+      ["mb-cat-001", "Cat"],
+      ["mb-cat-002", "Cat II"],
+      ["mb-dogcollar-001", "Dog & Collar"],
+      ["mb-horse-001", "Horse"],
+      ["mb-iris-001", "Iris"],
+      ["mb-lantern-001", "Lantern"],
+      ["mb-magnolia-001", "Magnolia"],
+      ["mb-moth-001", "Moth"],
+      ["mb-peonies-001", "Peonies"],
+      ["mb-poppies-001", "Poppies"],
+      ["mb-raven-001", "Raven"],
+      ["mb-rose-001", "Rose"],
+      ["mb-rose-002", "Rose II"],
+      ["mb-wisteria-001", "Wisteria"],
+      ["mb-yarn-001", "Yarn"],
+    ]),
   },
   {
     id: "meadow_mane",
     name: "Meadow & Mane",
     cover: meadow,
-    pieces: makePlaceholders("meadow_mane"),
+    pieces: makePieces([
+      ["mm-bear-001", "Bear"],
+      ["mm-bison-001", "Bison"],
+      ["mm-buck-001", "Buck"],
+      ["mm-canyon-001", "Canyon"],
+      ["mm-dog-001", "Dog"],
+      ["mm-eagle-001", "Eagle"],
+      ["mm-elk-001", "Elk"],
+      ["mm-horse-001", "Horse"],
+      ["mm-lake-001", "Lake"],
+      ["mm-river-001", "River"],
+      ["mm-tundra-001", "Tundra"],
+      ["mm-wolf-001", "Wolf"],
+    ]),
   },
   {
     id: "fable_fawn",
     name: "Fable & Fawn",
     cover: fable,
-    pieces: makePlaceholders("fable_fawn"),
+    pieces: makePieces([
+      ["ff-archway-001", "Archway"],
+      ["ff-cats-001", "Cats"],
+      ["ff-fawn-001", "Fawn"],
+      ["ff-fox-001", "Fox"],
+      ["ff-fox-002", "Fox II"],
+      ["ff-fullmoon-001", "Full Moon"],
+      ["ff-hobbitcottage-001", "Hobbit Cottage"],
+      ["ff-horse-001", "Horse"],
+      ["ff-mushrooms-001", "Mushrooms"],
+      ["ff-rabbit-001", "Rabbit"],
+      ["ff-stag-001", "Stag"],
+      ["ff-twilightfield-001", "Twilight Field"],
+    ]),
   },
   {
     id: "ember_ivy",
     name: "Ember & Ivy",
     cover: ember,
-    pieces: makePlaceholders("ember_ivy"),
+    pieces: makePieces([
+      ["ei-bench-001", "Garden Bench"],
+      ["ei-birds-001", "Birds"],
+      ["ei-butterfly-001", "Butterfly"],
+      ["ei-butterfly-002", "Butterfly II"],
+      ["ei-cottage-001", "Cottage"],
+      ["ei-fox-001", "Fox"],
+      ["ei-path-001", "Garden Path"],
+      ["ei-rosegarden-001", "Rose Garden"],
+      ["ei-stonetable-001", "Stone Table"],
+      ["ei-swans-001", "Swans"],
+    ]),
   },
 ];
 
@@ -1426,7 +1500,7 @@ const ArtGallery = ({
             >
               <div className="aspect-square overflow-hidden bg-muted">
                 <img
-                  src={collection.cover}
+                  src={piece.image}
                   alt={piece.name}
                   loading="lazy"
                   className="w-full h-full object-cover"
