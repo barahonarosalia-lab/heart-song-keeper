@@ -27,6 +27,8 @@ const Choose = () => {
   const [chosen, setChosen] = useState<"A" | "B" | null>(null);
   const [regenerated, setRegenerated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [songTitle, setSongTitle] = useState("");
+  const [songArtist, setSongArtist] = useState("");
 
   useEffect(() => {
     if (!order) {
