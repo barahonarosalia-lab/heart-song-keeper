@@ -6,7 +6,7 @@ interface Manifest {
   song_b_url?: string;
   recipient_name?: string;
   qr_state?: string;
-  is_vinyl_poster?: boolean;
+  is_vinyl_poster?: string;
 }
 
 const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
