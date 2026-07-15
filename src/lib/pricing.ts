@@ -77,3 +77,9 @@ export const DIGITAL_ADDON_PRICE_ID = "digital_addon";
 // Standalone post-purchase upsell linked from the jewelry confirmation email.
 // $15 one-time. Sold via the /art-companion page only.
 export const ART_COMPANION_PRICE_ID = "art_companion_digital";
+
+// Vinyl Poster photo upsell — $10 one-time. Added as an extra Stripe
+// line item alongside the base Digital/Canvas Story SKU when the customer
+// chooses "Your Photo" as the center of their vinyl poster. Vinyl Poster
+// itself is a style flag on those SKUs, not a separate product.
+export const VINYL_PHOTO_UPSELL_PRICE_ID = "vinyl_photo_upsell";
