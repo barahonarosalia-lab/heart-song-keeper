@@ -8,6 +8,7 @@ interface StripeEmbeddedCheckoutProps {
   customerEmail?: string;
   metadata?: Record<string, string>;
   returnUrl?: string;
+  extraPriceIds?: string[];
 }
 
 export function StripeEmbeddedCheckout({
@@ -16,6 +17,7 @@ export function StripeEmbeddedCheckout({
   customerEmail,
   metadata,
   returnUrl,
+  extraPriceIds,
 }: StripeEmbeddedCheckoutProps) {
   const fetchClientSecret = async (): Promise<string> => {
     const finalReturnUrl =
@@ -29,6 +31,7 @@ export function StripeEmbeddedCheckout({
         metadata,
         returnUrl: finalReturnUrl,
         environment: getStripeEnvironment(),
+        extraPriceIds,
       },
     });
     if (error || !data?.clientSecret) {
