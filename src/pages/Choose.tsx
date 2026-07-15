@@ -163,7 +163,7 @@ const Choose = () => {
           )}
         </div>
 
-        {manifest.is_vinyl_poster && (
+        {manifest.is_vinyl_poster === "true" && (
           <div className="w-full max-w-xl flex flex-col gap-4 text-left">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="song-title" className="text-cream text-sm font-light tracking-wide">
@@ -203,7 +203,7 @@ const Choose = () => {
           {(["A", "B"] as const).map((v) => {
             const url = v === "A" ? manifest.song_a_url! : manifest.song_b_url!;
             const vinylIncomplete =
-              !!manifest.is_vinyl_poster && (!songTitle.trim() || !songArtist.trim());
+              manifest.is_vinyl_poster === "true" && (!songTitle.trim() || !songArtist.trim());
             return (
               <div
                 key={v}
@@ -224,7 +224,7 @@ const Choose = () => {
           })}
         </div>
 
-        {manifest.is_vinyl_poster && (
+        {manifest.is_vinyl_poster === "true" && (
           <p className="text-gold/80 text-sm text-center max-w-xl font-light">
             Choosing a version finalizes your Vinyl Poster for production — this selection can't be changed afterward.
           </p>
