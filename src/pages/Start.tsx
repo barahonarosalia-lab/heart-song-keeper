@@ -1500,7 +1500,7 @@ const ArtGallery = ({
             >
               <div className="aspect-square overflow-hidden bg-muted">
                 <img
-                  src={collection.cover}
+                  src={piece.image}
                   alt={piece.name}
                   loading="lazy"
                   className="w-full h-full object-cover"
