@@ -3068,6 +3068,12 @@ const StoryWizard = ({
       ),
     },
     buildProductStep(order, setOrder, onSelectProduct),
+    // Vinyl Poster upsell — Story tier only, and only when the customer
+    // has selected Canvas or Digital. Sits right after product selection
+    // so a "No" answer flows straight into the existing productSubStep.
+    ...((order.product === "canvas" || order.product === "digital")
+      ? [buildVinylPosterStep(order, setOrder)]
+      : []),
     buildProductSubStep(order, setOrder),
     buildCardArtStep(order, setOrder),
     buildReviewStep(order, setOrder, addDigitalCopy, setAddDigitalCopy, digitalAddonEligible),
