@@ -59,12 +59,20 @@ const Choose = () => {
 
   const choose = async (choice: "A" | "B") => {
     if (submitting) return;
+    if (manifest?.is_vinyl_poster && (!songTitle.trim() || !songArtist.trim())) return;
     setSubmitting(true);
     try {
       await fetch(N8N_CHOICE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ order_id: order, choice }),
+        body: JSON.stringify({
+          order_id: order,
+          choice,
+          ...(manifest?.is_vinyl_poster && {
+            song_title: songTitle.trim(),
+            song_artist: songArtist.trim(),
+          }),
+        }),
       });
     } catch {}
     setChosen(choice);
