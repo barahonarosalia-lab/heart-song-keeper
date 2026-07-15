@@ -20,6 +20,8 @@ import Giving from "./pages/Giving.tsx";
 import Faq from "./pages/Faq.tsx";
 import Terms from "./pages/Terms.tsx";
 import Privacy from "./pages/Privacy.tsx";
+import Login from "./pages/Login.tsx";
+import OAuthConsent from "./pages/OAuthConsent.tsx";
 import { Placeholder } from "./pages/Placeholder.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
@@ -54,6 +56,8 @@ const App = () => (
           <Route path="/faq" element={<Faq />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
           <Route path="/accessibility" element={<Placeholder eyebrow="ACCESSIBILITY" title="Our accessibility statement is on the way." />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
