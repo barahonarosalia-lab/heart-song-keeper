@@ -2463,11 +2463,11 @@ const VinylPosterStepBody = ({
                   setOrder((prev) => ({
                     ...prev,
                     vinyl_photo_upsell: false,
-                    vinyl_photo_url: "",
-                    vinyl_photo_quality: null,
-                    vinyl_photo_quality_override: false,
-                    vinyl_photo_crop_area: null,
-                    vinyl_photo_zoom: 1,
+                    photo_url: "",
+                    photo_quality: null,
+                    photo_quality_override: false,
+                    photo_crop_area: null,
+                    photo_zoom: 1,
                   }))
                 }
                 className={cn(
