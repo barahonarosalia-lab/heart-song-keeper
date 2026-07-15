@@ -161,6 +161,7 @@ export default function PhotoPreview({
             crop={crop}
             zoom={zoom}
             aspect={aspect}
+            cropShape={product === "vinyl" ? "round" : "rect"}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={(_, area) => {
