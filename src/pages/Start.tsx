@@ -78,18 +78,12 @@ interface OrderState {
   // Vinyl Poster upsell — Story tier only, on Canvas or Digital products.
   // A style flag on the base SKU (not a separate product). When the user
   // opts into the photo center, a $10 line item (VINYL_PHOTO_UPSELL_PRICE_ID)
-  // is added to the checkout session and the vinyl_photo_* fields carry
-  // the same shape as photo_url/photo_crop_area (namespaced to avoid
-  // colliding with a regular product photo).
+  // is added to the checkout session. The photo itself reuses the shared
+  // photo_url / photo_crop_area / photo_zoom fields (only one photo per order).
   is_vinyl_poster: boolean;
   vinyl_header_text: string;
   vinyl_bottom_text: string;
   vinyl_photo_upsell: boolean;
-  vinyl_photo_url: string;
-  vinyl_photo_quality: PhotoQuality | null;
-  vinyl_photo_quality_override: boolean;
-  vinyl_photo_crop_area: { x: number; y: number; width: number; height: number } | null;
-  vinyl_photo_zoom: number;
 }
 
 // Capitalized tier value sent in the checkout payload — backend does an
