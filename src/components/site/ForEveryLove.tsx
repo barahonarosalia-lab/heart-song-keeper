@@ -80,7 +80,6 @@ export const ForEveryLove = () => {
             For every kind of <span className="italic text-rose">love</span>
           </h2>
           <p className="text-base md:text-lg text-navy/70 leading-relaxed">
-            Not just for babies. Not just for loss.<br />
             For anyone who matters.
           </p>
         </div>
