@@ -1289,6 +1289,27 @@ const OrnamentExpansion = ({
               </div>
             </>
           )}
+
+          {order.ornament_design === "baby_clean" && (
+            <div className="space-y-2">
+              <label htmlFor="ornament-dedication" className="label-eyebrow text-gold block">
+                Dedication (optional)
+              </label>
+              <Input
+                id="ornament-dedication"
+                maxLength={30}
+                value={order.ornament_dedication}
+                onChange={(e) =>
+                  setOrder((prev) => ({ ...prev, ornament_dedication: e.target.value }))
+                }
+                placeholder="e.g. Loved you before you arrived"
+                className="h-11 rounded-xl bg-cream border-border/60"
+              />
+              <p className="text-xs text-muted-foreground text-right">
+                {order.ornament_dedication.length}/30
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>
