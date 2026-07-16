@@ -98,12 +98,13 @@ const blankets = [
   },
 ];
 
+const ORNAMENT_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/ornament-mockup";
+
 const ornaments = [
-  { name: "Moonlit Botanica", desc: "Navy rose botanical wreath", price: "From $59" },
-  { name: "Little Luminaries", desc: "Gold circle watercolor", price: "From $59" },
-  { name: "Pet Memorial", desc: "Autumn botanical wreath", price: "From $59" },
-  { name: "Classic & Elegant", desc: "Timeless wreath design", price: "From $59", comingSoon: true },
-  { name: "Colorful Celebration", desc: "Joyful botanical burst", price: "From $59", comingSoon: true },
+  { name: "Moonlit Rose", desc: "Navy & white rose wreath", price: "From $79", giftboxImg: "finalmemorialgiftboxmockup.jpeg", holidayImg: "finalmemorialholidaymockup.jpeg" },
+  { name: "Champagne & Sage", desc: "Champagne bow, sage wreath", price: "From $79", giftboxImg: "finalbabycleangiftboxmockup.jpeg", holidayImg: "finalbabycleanholidaymockup.jpeg" },
+  { name: "Champagne & Sage — with Year", desc: "Same wreath, with a year badge", price: "From $79", giftboxImg: "finalbabybannergiftboxmockup.jpeg", holidayImg: "finalholidaybabybannermockup.jpeg" },
+  { name: "Pet", desc: "Autumn wreath with paw prints", price: "From $79", giftboxImg: "finalpetgiftboxmockup.jpeg", holidayImg: "finalpetholidaymockup.jpeg" },
 ];
 
 const CollectionsPage = () => {
