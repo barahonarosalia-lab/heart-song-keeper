@@ -54,6 +54,9 @@ export const Products = () => {
             Every Key of Hearts works on any of these.<br className="hidden sm:inline" />
             {" "}Free shipping on every order.
           </p>
+          <p className="text-sm md:text-base text-navy/60 leading-relaxed">
+            Prices shown are for our Story tier — Voice adds $20, Memory adds $30, on any product below.
+          </p>
         </div>
 
         {/* Mobile horizontal scroll */}
