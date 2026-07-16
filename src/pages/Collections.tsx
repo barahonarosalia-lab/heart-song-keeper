@@ -73,10 +73,12 @@ const artCollections: ArtCollection[] = [
   },
 ];
 
+const JEWELRY_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/jewelry%20mockup";
+
 const jewelryStyles = [
-  { name: "Heart", price: "Silver from $89 · Gold from $99" },
-  { name: "Circle", price: "Silver from $89 · Gold from $99" },
-  { name: "Dog Tag", price: "Silver from $89 · Gold from $99" },
+  { name: "Heart", silverImg: "mockupsilverheart.jpeg", goldImg: "mockupgoldheart.jpeg" },
+  { name: "Round", silverImg: "mockupsilvercircle.jpeg", goldImg: "mockupgoldcircle.jpeg" },
+  { name: "Dog Tag", silverImg: "mockupdogtagsilver.jpeg", goldImg: "mockupdogtaggold.jpeg" },
 ];
 
 const blankets = [
