@@ -271,6 +271,14 @@ const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
   { id: "dogtag", name: "Dog Tag" },
 ];
 
+const JEWELRY_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/jewelry%20mockup";
+
+const JEWELRY_MOCKUPS: Record<JewelryStyle, Record<"gold" | "silver", string>> = {
+  heart:  { gold: "mockupgoldheart.jpeg",  silver: "mockupsilverheart.jpeg" },
+  round:  { gold: "mockupgoldcircle.jpeg", silver: "mockupsilvercircle.jpeg" },
+  dogtag: { gold: "mockupdogtaggold.jpeg", silver: "mockupdogtagsilver.jpeg" },
+};
+
 // ----- Collections (art) --------------------------------------------------
 
 interface ArtPiece {
@@ -1304,6 +1312,8 @@ const JewelryExpansion = ({
         <div className="grid grid-cols-3 gap-3">
           {JEWELRY_STYLES.map((style) => {
             const selected = order.jewelry_style === style.id;
+            const finish = order.jewelry_finish || "gold";
+            const mockupSrc = `${JEWELRY_MOCKUP_BASE}/${JEWELRY_MOCKUPS[style.id][finish]}`;
             return (
               <button
                 key={style.id}
@@ -1312,18 +1322,24 @@ const JewelryExpansion = ({
                   setOrder((prev) => ({ ...prev, jewelry_style: style.id }))
                 }
                 className={cn(
-                  "relative rounded-xl border p-3 min-h-[64px] transition-all bg-card hover:border-gold",
+                  "relative rounded-xl border p-3 min-h-[140px] transition-all bg-card hover:border-gold flex flex-col gap-2",
                   selected
                     ? "border-gold ring-2 ring-gold/40"
                     : "border-border/60",
                 )}
               >
                 {selected && (
-                  <span className="absolute top-1.5 right-1.5 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy">
+                  <span className="absolute top-1.5 right-1.5 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy z-10">
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 )}
-                <p className="font-serif text-sm md:text-base text-navy">
+                <img
+                  src={mockupSrc}
+                  alt={`${style.name} ${finish} mockup`}
+                  loading="lazy"
+                  className="w-full aspect-square rounded-lg object-cover"
+                />
+                <p className="font-serif text-sm md:text-base text-navy text-center">
                   {style.name}
                 </p>
               </button>
