@@ -279,6 +279,11 @@ const JEWELRY_MOCKUPS: Record<JewelryStyle, Record<"gold" | "silver", string>> =
   dogtag: { gold: "mockupdogtaggold.jpeg", silver: "mockupdogtagsilver.jpeg" },
 };
 
+const JEWELRY_SIZE_MOCKUPS: Partial<Record<JewelryStyle, string>> = {
+  heart: "sizemockupheartsilver.jpeg",
+  dogtag: "sizemockupdogtagsilver.jpeg",
+};
+
 // ----- Collections (art) --------------------------------------------------
 
 interface ArtPiece {
