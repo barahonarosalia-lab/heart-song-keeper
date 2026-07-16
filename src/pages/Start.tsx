@@ -1217,7 +1217,7 @@ const OrnamentExpansion = ({
                   onChange={(e) =>
                     setOrder((prev) => ({ ...prev, ornament_line_1: e.target.value }))
                   }
-                  placeholder={order.ornament_design === "moonlit_botanica" ? "e.g. His light shines on" : "e.g. Cooper"}
+                  placeholder={order.ornament_design === "memorial" ? "e.g. His light shines on" : "e.g. Cooper"}
                   className="h-11 rounded-xl bg-cream border-border/60"
                 />
                 <p className="text-xs text-muted-foreground text-right">
