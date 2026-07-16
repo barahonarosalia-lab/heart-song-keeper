@@ -1,7 +1,3 @@
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import heroKey from "@/assets/hero-key.png";
-
 export const Hero = () => {
   return (
     <section className="relative min-h-[55vh] md:min-h-[60vh] overflow-hidden bg-gradient-navy text-cream pt-8 md:pt-12">
@@ -14,15 +10,9 @@ export const Hero = () => {
 
       <div className="container relative z-10 py-10 md:py-14 flex items-center">
         <div className="w-full max-w-2xl space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-up text-left">
-          <h1 className="font-serif text-[clamp(1.5rem,4.5vw,3.75rem)] leading-[1.05] text-cream tracking-tight text-balance">
-            The key to their{" "}
-            <span className="italic text-gold">heart.</span>{" "}
-            Forever.
+          <h1 className="font-serif text-[clamp(1.1rem,3.2vw,2.75rem)] leading-[1.05] text-cream tracking-tight text-balance whitespace-nowrap">
+            The key to their <span className="italic text-gold">heart.</span> Forever.
           </h1>
-
-          <p className="font-serif italic text-gold text-lg">
-            I'll find a way to tell you again.
-          </p>
 
           <p className="text-lg md:text-xl text-cream/60 max-w-md leading-relaxed">
             A song. A voice. A story.<br />
@@ -30,27 +20,7 @@ export const Hero = () => {
             On something they hold forever.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center pt-1 sm:pt-2">
-            <div className="flex items-center gap-3">
-              <img
-                src={heroKey}
-                alt="Ornate gold key with heart-shaped bow"
-                width={1024}
-                height={1024}
-                className="h-12 sm:h-14 w-auto key-glow animate-float"
-              />
-              <Button variant="gold" size="lg" asChild>
-                <a href="/start">
-                  Find their key <ArrowRight className="ml-1" />
-                </a>
-              </Button>
-            </div>
-            <Button variant="cream" size="lg" asChild>
-              <a href="#how">See how it works</a>
-            </Button>
-          </div>
-
-          <div className="pt-1">
+          <div className="pt-2">
             <a
               href="/upgrade"
               className="text-xs italic text-cream/70 hover:text-cream transition-colors underline underline-offset-2"

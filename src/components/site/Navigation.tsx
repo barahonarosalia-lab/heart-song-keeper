@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import heroKey from "@/assets/hero-key.png";
 
 const links = [
   { label: "Digital", href: "#products" },
@@ -71,7 +72,10 @@ export const Navigation = () => {
               <a href="#how">How it Works</a>
             </Button>
             <Button variant="gold" asChild>
-              <Link to="/start">Find their key</Link>
+              <Link to="/start">
+                <img src={heroKey} alt="" aria-hidden="true" className="h-5 w-auto -ml-1 mr-1" />
+                Find their key
+              </Link>
             </Button>
           </div>
 
@@ -118,6 +122,7 @@ export const Navigation = () => {
           <div className="mt-10 space-y-6">
             <Button variant="gold" size="lg" className="w-full" asChild>
               <Link to="/start" onClick={() => setOpen(false)}>
+                <img src={heroKey} alt="" aria-hidden="true" className="h-5 w-auto -ml-1 mr-1" />
                 Find their Key →
               </Link>
             </Button>
