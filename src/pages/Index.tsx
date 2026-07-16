@@ -23,7 +23,7 @@ const Index = () => {
       <Collections />
       <ForEveryLove />
       <CardSection />
-      <EmotionalProof />
+      
       <Footer />
       <CookieConsent />
     </main>
