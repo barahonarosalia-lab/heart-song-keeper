@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/site/Navigation";
 import { Hero } from "@/components/site/Hero";
 import { TierPicker } from "@/components/site/TierPicker";
+import { ScanShowcase } from "@/components/site/ScanShowcase";
 import { CardSection } from "@/components/site/CardSection";
 import { ForEveryLove } from "@/components/site/ForEveryLove";
 import { Collections } from "@/components/site/Collections";
@@ -17,6 +18,7 @@ const Index = () => {
       <Navigation />
       <Hero />
       <TierPicker />
+      <ScanShowcase />
       <ForEveryLove />
       <TwoWaysToGive />
       <Products />
