@@ -16,6 +16,7 @@ const Index = () => {
     <main className="min-h-screen bg-cream text-navy">
       <Navigation />
       <Hero />
+      <TierPicker />
       <TwoWaysToGive />
       <Products />
       <HowItWorks />
