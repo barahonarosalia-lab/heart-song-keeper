@@ -87,7 +87,7 @@ export const ForEveryLove = () => {
   return (
     <section className="bg-gradient-cream pt-10 md:pt-14 pb-20 md:pb-28">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20 space-y-5">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-20 space-y-5">
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance">
             For every kind of <span className="italic text-rose">love</span>
           </h2>
