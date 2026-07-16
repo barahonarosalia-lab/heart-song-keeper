@@ -5,17 +5,19 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { label: "Collections", href: "#collections" },
-  { label: "How it works", href: "#how" },
-  { label: "Products", href: "#products" },
-  { label: "Gift Cards", href: "#gift-cards" },
+  { label: "Digital", href: "#products" },
+  { label: "Canvas", href: "#products" },
+  { label: "Ornament", href: "#products" },
+  { label: "Jewelry", href: "#products" },
+  { label: "Blanket", href: "#products" },
+  { label: "Vinyl Poster", href: "#products" },
 ];
 
 const overlayLinks = [
-  { label: "How it works", to: "/how-it-works" },
   { label: "Collections", to: "/collections" },
+  { label: "FAQ", to: "/faq" },
+  { label: "Gift Cards", to: "/gift-cards" },
   { label: "Pricing", to: "/pricing" },
-  { label: "Gift cards", to: "/gift-cards" },
   { label: "Upgrade your Key", to: "/upgrade" },
 ];
 
