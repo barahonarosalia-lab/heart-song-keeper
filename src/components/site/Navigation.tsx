@@ -122,6 +122,7 @@ export const Navigation = () => {
           <div className="mt-10 space-y-6">
             <Button variant="gold" size="lg" className="w-full" asChild>
               <Link to="/start" onClick={() => setOpen(false)}>
+                <img src={heroKey} alt="" aria-hidden="true" className="h-5 w-auto -ml-1 mr-1" />
                 Find their Key →
               </Link>
             </Button>
