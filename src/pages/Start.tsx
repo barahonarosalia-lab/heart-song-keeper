@@ -2764,7 +2764,7 @@ const buildReviewStep = (
         />
         <div className="flex items-start justify-between gap-4">
           <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-            Not sure what to say? Leave this blank and we'll write something beautiful from the details you've given us.
+            This goes inside their card. Not sure what to say? Leave it blank and we'll write something beautiful from the details you've given us.
           </p>
           <span className="text-xs text-muted-foreground tabular-nums shrink-0">
             {order.customer_message.length}/500
