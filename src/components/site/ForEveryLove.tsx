@@ -44,6 +44,31 @@ const cards = [
     headline: "You're not bad at gifts. You just haven't found the right one yet.",
     body: "Something original. Something that plays. Something they'll never throw away.",
   },
+  {
+    label: "The Pregnancy Announcement",
+    headline: "Two lines. One song.",
+    body: "Announce it in a way they'll replay forever. Scan the card, hear the news wrapped in music.",
+  },
+  {
+    label: "The Gender Reveal",
+    headline: "Blue or pink. Yours forever.",
+    body: "Wrap the big reveal in an original song — press play the moment they find out.",
+  },
+  {
+    label: "The Proposal",
+    headline: "They said yes. Now it plays forever.",
+    body: "The question. The song underneath it. Something to scan and relive on every anniversary.",
+  },
+  {
+    label: "The Retirement",
+    headline: "Forty years of Mondays. One song for what's next.",
+    body: "For the career that mattered. A song for everything they built, and everything ahead.",
+  },
+  {
+    label: "The Thank You",
+    headline: "Some thank-yous need more than a card.",
+    body: "For the person who showed up when it counted. Say it in a way they'll keep.",
+  },
 ];
 
 export const ForEveryLove = () => {
