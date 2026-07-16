@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 const products = [
   {
     name: "Digital Download",
-    price: "From $29",
+    price: "From $49",
     tagline: "Instant. Printable. Frameable.",
     details: [
       "High resolution art print with QR code",
@@ -14,28 +14,28 @@ const products = [
   },
   {
     name: "Canvas Print",
-    price: "From $79",
+    price: "From $99",
     tagline: "Gallery wrap. Ready to hang.",
     details: ["11x14 unframed canvas", "Ships in 4-6 business days", "Free shipping"],
     cta: "Choose Canvas",
   },
   {
     name: "Acrylic Ornament",
-    price: "From $59",
+    price: "From $79",
     tagline: "A keepsake that plays their song — every time they hold it.",
     details: ["Scan it anytime · Gift box included", "Ships in 5-7 business days"],
     cta: "Choose Ornament",
   },
   {
     name: "Jewelry",
-    price: "From $89",
+    price: "From $109",
     tagline: "Worn every day. Scanned whenever they need it.",
-    details: ["Heart · Circle · Dog Tag", "Silver or Gold", "Ships in 5-7 business days"],
+    details: ["Heart · Round · Dog Tag", "Silver or Gold", "Ships in 5-7 business days"],
     cta: "Choose Jewelry",
   },
   {
     name: "Sherpa Blanket",
-    price: "From $119",
+    price: "From $139",
     tagline: "Wrap up. Press play. They're there.",
     details: ["50x60 · Full color · Soft sherpa", "Ships in 3-5 business days"],
     cta: "Choose Blanket",
