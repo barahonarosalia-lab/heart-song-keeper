@@ -2591,7 +2591,7 @@ const VinylPosterStepBody = ({
                   </span>
                 )}
                 <img
-                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-027.jpg"
+                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-027-thumb.jpg"
                   alt="Your Photo vinyl poster example"
                   className="w-full aspect-[4/5] object-cover rounded-lg mb-3"
                   loading="lazy"
