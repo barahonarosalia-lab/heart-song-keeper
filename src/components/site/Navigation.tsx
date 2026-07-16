@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import heroKey from "@/assets/hero-key.png";
 
 const links = [
   { label: "Digital", href: "#products" },
