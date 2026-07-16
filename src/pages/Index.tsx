@@ -17,12 +17,13 @@ const Index = () => {
       <Navigation />
       <Hero />
       <TierPicker />
+      <ForEveryLove />
       <TwoWaysToGive />
       <Products />
       <HowItWorks />
       <Collections />
-      <ForEveryLove />
       <CardSection />
+      
       
       <Footer />
       <CookieConsent />
