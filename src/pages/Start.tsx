@@ -2507,10 +2507,10 @@ const VinylPosterStepBody = ({
             </p>
           </div>
 
-          {/* Date (optional) */}
+          {/* Bottom text (optional) */}
           <div className="space-y-2">
             <label htmlFor="vinyl-date" className="label-eyebrow text-gold block">
-              Date (optional)
+              Bottom text (optional)
             </label>
             <Input
               id="vinyl-date"
@@ -2521,10 +2521,13 @@ const VinylPosterStepBody = ({
                   vinyl_bottom_text: e.target.value.slice(0, 40),
                 }))
               }
-              placeholder="June 14, 2026"
+              placeholder="e.g. June 14, 2026"
               className="h-12 rounded-xl bg-card border-border/60"
               maxLength={40}
             />
+            <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+              A date works well here, but it's yours to use however you'd like.
+            </p>
           </div>
 
           {/* Center choice */}
