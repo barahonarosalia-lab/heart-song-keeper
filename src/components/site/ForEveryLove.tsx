@@ -71,6 +71,18 @@ const cards = [
   },
 ];
 
+const featuredLabels = [
+  "The Deployed Parent",
+  "The Grieving Family",
+  "The Grandparent",
+  "The New Parent",
+  "The Pet Family",
+  "The Couple",
+  "The Graduate",
+  "The Recovery Milestone",
+  "The Terrible Gift Giver",
+];
+
 export const ForEveryLove = () => {
   return (
     <section className="bg-gradient-cream pt-10 md:pt-14 pb-20 md:pb-28">
@@ -85,7 +97,7 @@ export const ForEveryLove = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {cards.map((c, i) => (
+          {cards.filter(c => featuredLabels.includes(c.label)).map((c, i) => (
             <article
               key={c.label}
               className="group bg-cream rounded-2xl py-4 px-5 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40"
