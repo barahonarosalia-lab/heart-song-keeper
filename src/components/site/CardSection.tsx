@@ -1,16 +1,13 @@
 export const CardSection = () => {
   return (
-    <section className="relative bg-navy text-cream pt-24 md:pt-32 pb-10 md:pb-14 overflow-hidden">
-      <div className="absolute inset-0 starfield opacity-20" />
-      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
-
+    <section className="relative bg-cream text-navy pt-24 md:pt-32 pb-10 md:pb-14 overflow-hidden">
       <div className="container relative">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <p className="label-eyebrow text-gold">Included with every order</p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-cream text-balance leading-[1.05]">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance leading-[1.05]">
             The card is where <span className="italic text-gold">it begins.</span>
           </h2>
-          <div className="space-y-4 text-cream/70 leading-relaxed text-[17px] max-w-xl mx-auto">
+          <div className="space-y-4 text-navy/70 leading-relaxed text-[17px] max-w-xl mx-auto">
             <p>
               Before they unwrap anything. Before they scan anything. They read it.
             </p>

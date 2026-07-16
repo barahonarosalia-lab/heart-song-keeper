@@ -23,11 +23,10 @@ const steps = [
 
 export const HowItWorks = () => {
   return (
-    <section id="how" className="relative bg-navy text-cream py-24 md:py-32 overflow-hidden">
-      <div className="absolute inset-0 starfield opacity-30" />
+    <section id="how" className="relative bg-cream text-navy py-24 md:py-32 overflow-hidden">
       <div className="container relative">
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-cream text-balance">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance">
             Four steps. One <span className="italic text-gold">forever</span>.
           </h2>
         </div>
@@ -36,10 +35,10 @@ export const HowItWorks = () => {
           {steps.map((s, i) => (
             <div key={s.n} className="relative">
               <div className="font-serif text-gold text-5xl md:text-6xl mb-5 leading-none">{s.n}</div>
-              <h3 className="font-serif text-xl md:text-2xl text-cream mb-3 leading-snug text-balance">
+              <h3 className="font-serif text-xl md:text-2xl text-navy mb-3 leading-snug text-balance">
                 {s.title}
               </h3>
-              <p className="text-cream/60 leading-relaxed text-[15px]">{s.body}</p>
+              <p className="text-navy/70 leading-relaxed text-[15px]">{s.body}</p>
 
               {/* Connector line on desktop */}
               {i < steps.length - 1 && (
