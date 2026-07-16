@@ -5,17 +5,19 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { label: "Collections", href: "#collections" },
-  { label: "How it works", href: "#how" },
-  { label: "Products", href: "#products" },
-  { label: "Gift Cards", href: "#gift-cards" },
+  { label: "Digital", href: "#products" },
+  { label: "Canvas", href: "#products" },
+  { label: "Ornament", href: "#products" },
+  { label: "Jewelry", href: "#products" },
+  { label: "Blanket", href: "#products" },
+  { label: "Vinyl Poster", href: "#products" },
 ];
 
 const overlayLinks = [
-  { label: "How it works", to: "/how-it-works" },
   { label: "Collections", to: "/collections" },
+  { label: "FAQ", to: "/faq" },
+  { label: "Gift Cards", to: "/gift-cards" },
   { label: "Pricing", to: "/pricing" },
-  { label: "Gift cards", to: "/gift-cards" },
   { label: "Upgrade your Key", to: "/upgrade" },
 ];
 
@@ -52,7 +54,7 @@ export const Navigation = () => {
             Key of Hearts
           </Link>
 
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-6">
             {links.map((l) => (
               <a
                 key={l.label}
@@ -64,14 +66,17 @@ export const Navigation = () => {
             ))}
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-3">
+            <Button variant="cream" size="sm" asChild>
+              <a href="#how">How it Works</a>
+            </Button>
             <Button variant="gold" asChild>
               <Link to="/start">Find their key</Link>
             </Button>
           </div>
 
           <button
-            className="lg:hidden text-cream p-2 -mr-2 relative z-[60]"
+            className="text-cream p-2 -mr-2 relative z-[60]"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
             aria-expanded={open}
@@ -84,7 +89,7 @@ export const Navigation = () => {
       {/* Full-screen overlay menu */}
       <div
         className={cn(
-          "lg:hidden fixed inset-x-0 top-11 bottom-0 z-[55] bg-navy transition-all duration-500",
+          "fixed inset-x-0 top-11 bottom-0 z-[55] bg-navy transition-all duration-500",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         aria-hidden={!open}
