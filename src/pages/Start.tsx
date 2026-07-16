@@ -1308,6 +1308,10 @@ const JewelryExpansion = ({
 }) => {
   const silverPrice = amountForPriceKey("jewelry_silver", tier);
   const goldPrice = amountForPriceKey("jewelry_gold", tier);
+  const [showSizeRef, setShowSizeRef] = useState(false);
+  const sizeMockupFile = order.jewelry_style
+    ? JEWELRY_SIZE_MOCKUPS[order.jewelry_style]
+    : undefined;
 
   return (
     <div className="mt-2 pt-7 border-t border-border/60 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
