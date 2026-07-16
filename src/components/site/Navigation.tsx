@@ -72,7 +72,10 @@ export const Navigation = () => {
               <a href="#how">How it Works</a>
             </Button>
             <Button variant="gold" asChild>
-              <Link to="/start">Find their key</Link>
+              <Link to="/start">
+                <img src={heroKey} alt="" aria-hidden="true" className="h-5 w-auto -ml-1 mr-1" />
+                Find their key
+              </Link>
             </Button>
           </div>
 
