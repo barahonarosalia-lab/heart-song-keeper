@@ -85,7 +85,8 @@ export const ForEveryLove = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {cards.map((c, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {cards.filter(c => featuredLabels.includes(c.label)).map((c, i) => (
             <article
               key={c.label}
               className="group bg-cream rounded-2xl py-4 px-5 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40"
