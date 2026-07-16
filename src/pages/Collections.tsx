@@ -232,31 +232,34 @@ const CollectionsPage = () => {
               >
                 {/* Front */}
                 <div className="p-5 border-b border-border/40">
+                {/* Silver */}
+                <div className="p-5 border-b border-border/40">
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
-                    Front
+                    Silver
                   </p>
-                  <div className="aspect-square bg-muted rounded-xl flex items-center justify-center mb-2">
-                    <span className="text-xs text-muted-foreground italic">{j.name} · front</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    QR code engraved — links to their song
-                  </p>
+                  <img
+                    src={`${JEWELRY_MOCKUP_BASE}/${j.silverImg}`}
+                    alt={`${j.name} silver`}
+                    loading="lazy"
+                    className="aspect-square w-full rounded-xl object-cover mb-2"
+                  />
+                  <p className="text-xs text-muted-foreground">From $109</p>
                 </div>
-                {/* Back */}
+                {/* Gold */}
                 <div className="p-5">
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
-                    Back
+                    Gold
                   </p>
-                  <div className="aspect-square bg-muted rounded-xl flex items-center justify-center mb-2">
-                    <span className="text-xs text-muted-foreground italic">{j.name} · back</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Two lines engraved just for them — included
-                  </p>
+                  <img
+                    src={`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`}
+                    alt={`${j.name} gold`}
+                    loading="lazy"
+                    className="aspect-square w-full rounded-xl object-cover mb-2"
+                  />
+                  <p className="text-xs text-muted-foreground">From $119</p>
                 </div>
                 <div className="px-5 pb-6 pt-2 border-t border-border/40 space-y-1.5">
                   <h3 className="font-serif text-2xl text-navy">{j.name}</h3>
-                  <p className="text-sm text-navy/80">{j.price}</p>
                   <p className="text-xs text-muted-foreground">Engraving included. Free shipping.</p>
                 </div>
               </article>
