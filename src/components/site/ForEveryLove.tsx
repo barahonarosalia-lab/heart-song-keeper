@@ -71,6 +71,18 @@ const cards = [
   },
 ];
 
+const featuredLabels = [
+  "The Deployed Parent",
+  "The Grieving Family",
+  "The Grandparent",
+  "The New Parent",
+  "The Pet Family",
+  "The Couple",
+  "The Graduate",
+  "The Recovery Milestone",
+  "The Terrible Gift Giver",
+];
+
 export const ForEveryLove = () => {
   return (
     <section className="bg-gradient-cream pt-10 md:pt-14 pb-20 md:pb-28">
