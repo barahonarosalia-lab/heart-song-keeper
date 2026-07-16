@@ -1,22 +1,22 @@
 const steps = [
   {
     n: "01",
-    title: "Choose their collection",
-    body: "Any art. Any occasion. You decide what speaks to them.",
+    title: "Choose their tier",
+    body: "Story, Voice, or Memory — however their moment is best told.",
   },
   {
     n: "02",
     title: "Choose their gift",
-    body: "Digital · Canvas · Ornament · Jewelry · Blanket",
+    body: "Digital · Canvas · Ornament · Jewelry · Blanket · Vinyl Poster",
   },
   {
     n: "03",
-    title: "Share their story or pick their song",
-    body: "We do the rest within 48 business hours.",
+    title: "Share their story",
+    body: "Tell us about them, or upload their voice or video. We do the rest within 48 business hours.",
   },
   {
     n: "04",
-    title: "They scan. They feel it. Forever.",
+    title: "They scan. Forever.",
     body: "Every time. For the rest of their life.",
   },
 ];
