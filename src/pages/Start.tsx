@@ -2560,7 +2560,7 @@ const VinylPosterStepBody = ({
                   </span>
                 )}
                 <img
-                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-016.jpg"
+                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-016-thumb.jpg"
                   alt="QR Code vinyl poster example"
                   className="w-full aspect-[4/5] object-cover rounded-lg mb-3"
                   loading="lazy"
