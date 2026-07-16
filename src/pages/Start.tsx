@@ -254,15 +254,16 @@ interface OrnamentDesign {
   id: string;
   name: string;
   descriptor: string;
-  comingSoon?: boolean;
+  giftboxImg: string;
 }
 
+const ORNAMENT_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/ornament-mockup";
+
 const ORNAMENT_DESIGNS: OrnamentDesign[] = [
-  { id: "moonlit_botanica", name: "Moonlit Botanica", descriptor: "Navy rose botanical wreath" },
-  { id: "little_luminaries", name: "Little Luminaries", descriptor: "Gold circle watercolor" },
-  { id: "pet_memorial", name: "Pet Memorial", descriptor: "Autumn botanical wreath" },
-  { id: "classic_elegant", name: "Classic & Elegant", descriptor: "Silver pinecone", comingSoon: true },
-  { id: "colorful_celebration", name: "Colorful Celebration", descriptor: "Jewel tones", comingSoon: true },
+  { id: "memorial", name: "Moonlit Rose", descriptor: "Navy & white rose wreath", giftboxImg: "finalmemorialgiftboxmockup.jpeg" },
+  { id: "baby_clean", name: "Champagne & Sage", descriptor: "Champagne bow, sage wreath", giftboxImg: "finalbabycleangiftboxmockup.jpeg" },
+  { id: "baby_banner", name: "Champagne & Sage — with Year", descriptor: "Same wreath, with a year badge", giftboxImg: "finalbabybannergiftboxmockup.jpeg" },
+  { id: "pet", name: "Pet", descriptor: "Autumn wreath with paw prints", giftboxImg: "finalpetgiftboxmockup.jpeg" },
 ];
 
 const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
