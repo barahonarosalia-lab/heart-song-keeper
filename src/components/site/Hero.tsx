@@ -7,7 +7,7 @@ export const Hero = () => {
             The key to their <span className="italic text-gold">heart.</span> Forever.
           </h1>
 
-          <p className="text-base md:text-lg text-navy/70 max-w-md leading-loose">
+          <p className="text-sm sm:text-base md:text-lg text-navy/70 max-w-md leading-relaxed">
             Behind a QR code.<br />
             On something they hold forever.
           </p>
