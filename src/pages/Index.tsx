@@ -15,12 +15,12 @@ const Index = () => {
     <main className="min-h-screen bg-cream text-navy">
       <Navigation />
       <Hero />
-      <CardSection />
-      <ForEveryLove />
-      <Collections />
-      <HowItWorks />
       <TwoWaysToGive />
       <Products />
+      <HowItWorks />
+      <Collections />
+      <ForEveryLove />
+      <CardSection />
       <EmotionalProof />
       <Footer />
       <CookieConsent />

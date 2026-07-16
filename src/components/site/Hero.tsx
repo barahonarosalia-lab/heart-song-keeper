@@ -4,7 +4,7 @@ import heroKey from "@/assets/hero-key.png";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-navy text-cream pt-8 md:pt-12">
+    <section className="relative min-h-[78vh] md:min-h-[82vh] overflow-hidden bg-gradient-navy text-cream pt-8 md:pt-12">
       {/* Starfield layers */}
       <div className="absolute inset-0 starfield opacity-80 animate-twinkle" />
       <div className="absolute inset-0 starfield opacity-50" style={{ animationDelay: "1.5s" }} />
@@ -15,7 +15,7 @@ export const Hero = () => {
       <div className="container relative z-10 py-8 md:py-12 lg:py-16 min-h-[calc(100vh-5rem)] flex items-center">
         <div className="w-full grid grid-cols-[1fr_auto] lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center">
           {/* Left text — vertically centered alongside the key */}
-          <div className="space-y-5 sm:space-y-6 lg:space-y-8 max-w-xl animate-fade-up text-left">
+          <div className="space-y-4 sm:space-y-5 lg:space-y-6 max-w-xl animate-fade-up text-left">
             <p className="text-xs sm:text-sm font-sans uppercase tracking-[0.25em] text-gold">
               Key of Hearts
             </p>
@@ -60,7 +60,7 @@ export const Hero = () => {
 
           {/* Right key — sized to roughly match the text block height */}
           <div className="relative flex items-center justify-center">
-            <div className="relative w-[38vw] max-w-[160px] sm:max-w-[260px] md:max-w-[380px] lg:w-full lg:max-w-[500px] animate-float">
+            <div className="relative w-[38vw] max-w-[160px] sm:max-w-[260px] md:max-w-[300px] lg:w-full lg:max-w-[360px] animate-float">
               <img
                 src={heroKey}
                 alt="Ornate gold key with heart-shaped bow"
