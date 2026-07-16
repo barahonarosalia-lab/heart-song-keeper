@@ -2507,10 +2507,10 @@ const VinylPosterStepBody = ({
             </p>
           </div>
 
-          {/* Date (optional) */}
+          {/* Bottom text (optional) */}
           <div className="space-y-2">
             <label htmlFor="vinyl-date" className="label-eyebrow text-gold block">
-              Date (optional)
+              Bottom text (optional)
             </label>
             <Input
               id="vinyl-date"
@@ -2521,10 +2521,13 @@ const VinylPosterStepBody = ({
                   vinyl_bottom_text: e.target.value.slice(0, 40),
                 }))
               }
-              placeholder="June 14, 2026"
+              placeholder="e.g. June 14, 2026"
               className="h-12 rounded-xl bg-card border-border/60"
               maxLength={40}
             />
+            <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
+              A date works well here, but it's yours to use however you'd like.
+            </p>
           </div>
 
           {/* Center choice */}
@@ -2556,6 +2559,12 @@ const VinylPosterStepBody = ({
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 )}
+                <img
+                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-016.jpg"
+                  alt="QR Code vinyl poster example"
+                  className="w-full aspect-[4/5] object-cover rounded-lg mb-3"
+                  loading="lazy"
+                />
                 <p className="label-eyebrow text-gold mb-1">Included</p>
                 <p className="font-serif text-lg text-navy pr-8">QR Code</p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -2581,6 +2590,12 @@ const VinylPosterStepBody = ({
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 )}
+                <img
+                  src="https://assets.keyofhearts.com/koh-composites/vinyl-poster/KOH-TEST-VINYL-027.jpg"
+                  alt="Your Photo vinyl poster example"
+                  className="w-full aspect-[4/5] object-cover rounded-lg mb-3"
+                  loading="lazy"
+                />
                 <p className="label-eyebrow text-gold mb-1">+ $10</p>
                 <p className="font-serif text-lg text-navy pr-8">Your Photo</p>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -2749,7 +2764,7 @@ const buildReviewStep = (
         />
         <div className="flex items-start justify-between gap-4">
           <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-            Not sure what to say? Leave this blank and we'll write something beautiful from the details you've given us.
+            This goes inside their card. Not sure what to say? Leave it blank and we'll write something beautiful from the details you've given us.
           </p>
           <span className="text-xs text-muted-foreground tabular-nums shrink-0">
             {order.customer_message.length}/500
@@ -2779,7 +2794,9 @@ const buildReviewStep = (
         />
         <div className="flex items-start justify-between gap-4">
           <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-            A line that's entirely yours — featured on its own inside their card.
+            {order.is_vinyl_poster
+              ? "This appears at the bottom of your Vinyl Poster, and inside their card."
+              : "A line that's entirely yours — featured on its own inside their card."}
           </p>
           <span className="text-xs text-muted-foreground tabular-nums shrink-0">
             {order.dedication.length}/100
