@@ -1355,6 +1355,30 @@ const JewelryExpansion = ({
             );
           })}
         </div>
+        {sizeMockupFile && (
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => setShowSizeRef((v) => !v)}
+              className="text-xs italic text-navy/70 hover:text-navy underline underline-offset-2 transition-colors"
+            >
+              {showSizeRef ? "Hide size reference" : "See actual size →"}
+            </button>
+            {showSizeRef && (
+              <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-300">
+                <img
+                  src={`${JEWELRY_MOCKUP_BASE}/${sizeMockupFile}`}
+                  alt="Actual size reference, shown in hand"
+                  loading="lazy"
+                  className="max-w-xs w-full rounded-lg"
+                />
+                <p className="mt-2 text-xs italic text-navy/60">
+                  Shown at actual size, in hand.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Finish */}
