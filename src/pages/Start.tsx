@@ -2794,7 +2794,9 @@ const buildReviewStep = (
         />
         <div className="flex items-start justify-between gap-4">
           <p className="text-xs leading-relaxed" style={{ color: "#6B6B6B" }}>
-            A line that's entirely yours — featured on its own inside their card.
+            {order.is_vinyl_poster
+              ? "This appears at the bottom of your Vinyl Poster, and inside their card."
+              : "A line that's entirely yours — featured on its own inside their card."}
           </p>
           <span className="text-xs text-muted-foreground tabular-nums shrink-0">
             {order.dedication.length}/100
