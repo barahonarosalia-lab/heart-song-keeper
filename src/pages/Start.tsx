@@ -271,6 +271,14 @@ const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
   { id: "dogtag", name: "Dog Tag" },
 ];
 
+const JEWELRY_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/jewelry%20mockup";
+
+const JEWELRY_MOCKUPS: Record<JewelryStyle, Record<"gold" | "silver", string>> = {
+  heart:  { gold: "mockupgoldheart.jpeg",  silver: "mockupsilverheart.jpeg" },
+  round:  { gold: "mockupgoldcircle.jpeg", silver: "mockupsilvercircle.jpeg" },
+  dogtag: { gold: "mockupdogtaggold.jpeg", silver: "mockupdogtagsilver.jpeg" },
+};
+
 // ----- Collections (art) --------------------------------------------------
 
 interface ArtPiece {
