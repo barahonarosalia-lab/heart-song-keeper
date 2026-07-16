@@ -254,15 +254,16 @@ interface OrnamentDesign {
   id: string;
   name: string;
   descriptor: string;
-  comingSoon?: boolean;
+  giftboxImg: string;
 }
 
+const ORNAMENT_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/ornament-mockup";
+
 const ORNAMENT_DESIGNS: OrnamentDesign[] = [
-  { id: "moonlit_botanica", name: "Moonlit Botanica", descriptor: "Navy rose botanical wreath" },
-  { id: "little_luminaries", name: "Little Luminaries", descriptor: "Gold circle watercolor" },
-  { id: "pet_memorial", name: "Pet Memorial", descriptor: "Autumn botanical wreath" },
-  { id: "classic_elegant", name: "Classic & Elegant", descriptor: "Silver pinecone", comingSoon: true },
-  { id: "colorful_celebration", name: "Colorful Celebration", descriptor: "Jewel tones", comingSoon: true },
+  { id: "memorial", name: "Moonlit Rose", descriptor: "Navy & white rose wreath", giftboxImg: "finalmemorialgiftboxmockup.jpeg" },
+  { id: "baby_clean", name: "Champagne & Sage", descriptor: "Champagne bow, sage wreath", giftboxImg: "finalbabycleangiftboxmockup.jpeg" },
+  { id: "baby_banner", name: "Champagne & Sage — with Year", descriptor: "Same wreath, with a year badge", giftboxImg: "finalbabybannergiftboxmockup.jpeg" },
+  { id: "pet", name: "Pet", descriptor: "Autumn wreath with paw prints", giftboxImg: "finalpetgiftboxmockup.jpeg" },
 ];
 
 const JEWELRY_STYLES: { id: JewelryStyle; name: string }[] = [
@@ -1163,37 +1164,36 @@ const OrnamentExpansion = ({
         <div className="grid grid-cols-2 gap-3">
           {ORNAMENT_DESIGNS.map((design) => {
             const selected = order.ornament_design === design.id;
-            const disabled = !!design.comingSoon;
             return (
               <button
                 key={design.id}
                 type="button"
-                disabled={disabled}
                 onClick={() =>
-                  !disabled &&
                   setOrder((prev) => ({ ...prev, ornament_design: design.id }))
                 }
                 className={cn(
-                  "relative text-left rounded-xl border p-3 transition-all min-h-[88px]",
-                  disabled
-                    ? "border-border/40 bg-muted/30 opacity-50 cursor-not-allowed"
-                    : "bg-card hover:border-gold hover:shadow-soft cursor-pointer",
-                  selected && !disabled
+                  "relative text-left rounded-xl border p-3 transition-all min-h-[220px] bg-card hover:border-gold hover:shadow-soft cursor-pointer flex flex-col",
+                  selected
                     ? "border-gold ring-2 ring-gold/40"
                     : "border-border/60",
                 )}
               >
-                {selected && !disabled && (
-                  <span className="absolute top-2 right-2 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy">
+                {selected && (
+                  <span className="absolute top-2 right-2 inline-flex items-center justify-center size-5 rounded-full bg-gold text-navy z-10">
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 )}
+                <img
+                  src={`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`}
+                  alt={design.name}
+                  loading="lazy"
+                  className="w-full aspect-square rounded-lg object-cover mb-2"
+                />
                 <p className="font-serif text-sm md:text-base text-navy leading-tight pr-6">
                   {design.name}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 leading-snug">
                   {design.descriptor}
-                  {disabled && " (coming soon)"}
                 </p>
               </button>
             );
@@ -1204,7 +1204,7 @@ const OrnamentExpansion = ({
       {/* Optional fields appear once a design is selected */}
       {order.ornament_design && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          {(order.ornament_design === "moonlit_botanica" || order.ornament_design === "pet_memorial") && (
+          {(order.ornament_design === "memorial" || order.ornament_design === "pet") && (
             <>
               <div className="space-y-2">
                 <label htmlFor="ornament-line-1" className="label-eyebrow text-gold block">
@@ -1217,7 +1217,7 @@ const OrnamentExpansion = ({
                   onChange={(e) =>
                     setOrder((prev) => ({ ...prev, ornament_line_1: e.target.value }))
                   }
-                  placeholder={order.ornament_design === "moonlit_botanica" ? "e.g. His light shines on" : "e.g. Cooper"}
+                  placeholder={order.ornament_design === "memorial" ? "e.g. His light shines on" : "e.g. Cooper"}
                   className="h-11 rounded-xl bg-cream border-border/60"
                 />
                 <p className="text-xs text-muted-foreground text-right">
@@ -1236,7 +1236,7 @@ const OrnamentExpansion = ({
                   onChange={(e) =>
                     setOrder((prev) => ({ ...prev, ornament_line_2: e.target.value }))
                   }
-                  placeholder={order.ornament_design === "moonlit_botanica" ? "e.g. Forever in our hearts" : "e.g. Best dog. Best friend."}
+                  placeholder={order.ornament_design === "memorial" ? "e.g. Forever in our hearts" : "e.g. Best dog. Best friend."}
                   className="h-11 rounded-xl bg-cream border-border/60"
                 />
                 <p className="text-xs text-muted-foreground text-right">
@@ -1246,7 +1246,7 @@ const OrnamentExpansion = ({
             </>
           )}
 
-          {order.ornament_design === "little_luminaries" && (
+          {order.ornament_design === "baby_banner" && (
             <>
               <div className="space-y-2">
                 <label htmlFor="ornament-year" className="label-eyebrow text-gold block">

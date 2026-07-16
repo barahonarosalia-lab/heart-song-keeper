@@ -98,12 +98,13 @@ const blankets = [
   },
 ];
 
+const ORNAMENT_MOCKUP_BASE = "https://assets.keyofhearts.com/shineon/ornament-mockup";
+
 const ornaments = [
-  { name: "Moonlit Botanica", desc: "Navy rose botanical wreath", price: "From $59" },
-  { name: "Little Luminaries", desc: "Gold circle watercolor", price: "From $59" },
-  { name: "Pet Memorial", desc: "Autumn botanical wreath", price: "From $59" },
-  { name: "Classic & Elegant", desc: "Timeless wreath design", price: "From $59", comingSoon: true },
-  { name: "Colorful Celebration", desc: "Joyful botanical burst", price: "From $59", comingSoon: true },
+  { name: "Moonlit Rose", desc: "Navy & white rose wreath", price: "From $79", giftboxImg: "finalmemorialgiftboxmockup.jpeg", holidayImg: "finalmemorialholidaymockup.jpeg" },
+  { name: "Champagne & Sage", desc: "Champagne bow, sage wreath", price: "From $79", giftboxImg: "finalbabycleangiftboxmockup.jpeg", holidayImg: "finalbabycleanholidaymockup.jpeg" },
+  { name: "Champagne & Sage — with Year", desc: "Same wreath, with a year badge", price: "From $79", giftboxImg: "finalbabybannergiftboxmockup.jpeg", holidayImg: "finalholidaybabybannermockup.jpeg" },
+  { name: "Pet", desc: "Autumn wreath with paw prints", price: "From $79", giftboxImg: "finalpetgiftboxmockup.jpeg", holidayImg: "finalpetholidaymockup.jpeg" },
 ];
 
 const CollectionsPage = () => {
@@ -353,22 +354,37 @@ const CollectionsPage = () => {
             {ornaments.map((o) => (
               <article
                 key={o.name}
-                className={cn(
-                  "bg-card rounded-2xl border border-border/50 p-5 md:p-6 text-center shadow-soft",
-                  o.comingSoon && "opacity-70"
-                )}
+                className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-soft flex flex-col"
               >
-                <div className="aspect-square bg-cream-warm rounded-full flex items-center justify-center mb-4 mx-auto max-w-[220px] relative">
-                  <span className="text-xs text-muted-foreground italic px-2">{o.name}</span>
-                  {o.comingSoon && (
-                    <span className="absolute top-1 right-1 bg-navy/90 text-cream text-[9px] tracking-[0.18em] uppercase px-2 py-1 rounded-full">
-                      Soon
-                    </span>
-                  )}
+                <div className="grid grid-cols-2 border-b border-border/40">
+                  <div className="p-4 border-r border-border/40">
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
+                      Gift Box
+                    </p>
+                    <img
+                      src={`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`}
+                      alt={`${o.name} gift box`}
+                      loading="lazy"
+                      className="aspect-square w-full rounded-lg object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
+                      Styled
+                    </p>
+                    <img
+                      src={`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`}
+                      alt={`${o.name} styled`}
+                      loading="lazy"
+                      className="aspect-square w-full rounded-lg object-cover"
+                    />
+                  </div>
                 </div>
-                <h3 className="font-serif text-lg md:text-xl text-navy mb-1">{o.name}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground mb-2 leading-snug">{o.desc}</p>
-                <p className="text-sm text-navy/80">{o.price}</p>
+                <div className="p-5 md:p-6 text-center">
+                  <h3 className="font-serif text-lg md:text-xl text-navy mb-1">{o.name}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground mb-2 leading-snug">{o.desc}</p>
+                  <p className="text-sm text-navy/80">{o.price}</p>
+                </div>
               </article>
             ))}
           </div>
