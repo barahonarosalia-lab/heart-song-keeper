@@ -7,29 +7,29 @@ export const TwoWaysToGive = () => {
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance">
-            Two ways to give a <span className="italic text-gold">Key of Hearts</span>
+            Three ways to give a <span className="italic text-gold">Key of Hearts</span>
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
-          {/* Signature */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+          {/* Story */}
           <Card
-            title="Signature Key of Hearts"
-            price="From $29"
-            intro="Choose from our curated song collection. Three versions per occasion — instrumental, humming, or with lyrics. Pick the one that feels right."
+            title="Story"
+            price="From $49"
+            intro="An original song written just for them. Tell us their story, pick their genre, and we'll turn it into music only they could recognize."
             features={[
               "Original song for their occasion",
               "QR code plays forever",
               "Personalized card included",
-              "Digital · Canvas · Ornament · Jewelry · Blanket",
+              "Digital · Canvas · Ornament · Jewelry · Blanket · Vinyl Poster",
             ]}
           />
 
-          {/* Preserve a voice */}
+          {/* Voice */}
           <Card
-            title="Preserve a Voice"
-            price="From $49"
-            intro="Upload their audio or share their story. We wrap it in music and keep it safe forever."
+            title="Voice"
+            price="From $69"
+            intro="Upload their voice or record something new. We wrap it in music and keep it safe forever."
             useFor={[
               "A voicemail from someone you lost",
               "A soldier recording bedtime stories",
@@ -43,6 +43,19 @@ export const TwoWaysToGive = () => {
               "QR code plays forever",
               "Personalized card included",
               "Audio upload optional — pay now, send later",
+            ]}
+          />
+
+          {/* Memory */}
+          <Card
+            title="Memory"
+            price="From $79"
+            intro="Upload a video and we turn it into a keepsake — their movement, their voice, wrapped in an original song."
+            features={[
+              "Their video, set to original music",
+              "QR code plays forever",
+              "Personalized card included",
+              "Video upload optional — pay now, send later",
             ]}
             highlight
           />
