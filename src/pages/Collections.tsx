@@ -230,8 +230,6 @@ const CollectionsPage = () => {
                 key={j.name}
                 className="bg-cream text-navy rounded-2xl border border-gold/40 overflow-hidden shadow-card h-full"
               >
-                {/* Front */}
-                <div className="p-5 border-b border-border/40">
                 {/* Silver */}
                 <div className="p-5 border-b border-border/40">
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
