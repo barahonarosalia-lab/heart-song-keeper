@@ -1246,7 +1246,7 @@ const OrnamentExpansion = ({
             </>
           )}
 
-          {order.ornament_design === "little_luminaries" && (
+          {order.ornament_design === "baby_banner" && (
             <>
               <div className="space-y-2">
                 <label htmlFor="ornament-year" className="label-eyebrow text-gold block">
