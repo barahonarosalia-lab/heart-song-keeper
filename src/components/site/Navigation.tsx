@@ -24,14 +24,6 @@ const overlayLinks = [
 
 export const Navigation = () => {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -42,14 +34,8 @@ export const Navigation = () => {
 
   return (
     <>
-      <header
-        className={cn(
-          "fixed top-11 inset-x-0 z-50 transition-all duration-500",
-          scrolled
-            ? "bg-navy/85 backdrop-blur-md border-b border-cream/10"
-            : "bg-transparent"
-        )}
-      >
+      <header className="fixed top-11 inset-x-0 z-50 bg-navy/85 backdrop-blur-md border-b border-cream/10">
+
         <nav className="container flex items-center justify-between h-20">
           <Link to="/" className="font-serif text-2xl md:text-[28px] text-cream tracking-tight leading-none">
             Key of Hearts
