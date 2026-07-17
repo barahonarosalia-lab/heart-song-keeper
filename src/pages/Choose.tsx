@@ -204,7 +204,7 @@ const Choose = () => {
           {(["A", "B"] as const).map((v) => {
             const url = v === "A" ? manifest.song_a_url! : manifest.song_b_url!;
             const vinylIncomplete =
-              manifest.is_vinyl_poster === "true" && (!songTitle.trim() || !songArtist.trim());
+              manifest.is_story === "true" && (!songTitle.trim() || !songArtist.trim());
             return (
               <div
                 key={v}
