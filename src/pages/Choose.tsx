@@ -7,6 +7,7 @@ interface Manifest {
   recipient_name?: string;
   qr_state?: string;
   is_vinyl_poster?: string;
+  is_story?: string;
 }
 
 const N8N_CHOICE = "https://koh-choice-proxy.barahonarosalia.workers.dev";
@@ -59,7 +60,7 @@ const Choose = () => {
 
   const choose = async (choice: "A" | "B") => {
     if (submitting) return;
-    if (manifest?.is_vinyl_poster === "true" && (!songTitle.trim() || !songArtist.trim())) return;
+    if (manifest?.is_story === "true" && (!songTitle.trim() || !songArtist.trim())) return;
     setSubmitting(true);
     try {
       await fetch(N8N_CHOICE, {
@@ -68,7 +69,7 @@ const Choose = () => {
         body: JSON.stringify({
           order_id: order,
           choice,
-          ...(manifest?.is_vinyl_poster === "true" && {
+          ...(manifest?.is_story === "true" && {
             song_title: songTitle.trim(),
             song_artist: songArtist.trim(),
           }),
@@ -163,7 +164,7 @@ const Choose = () => {
           )}
         </div>
 
-        {manifest.is_vinyl_poster === "true" && (
+        {manifest.is_story === "true" && (
           <div className="w-full max-w-xl flex flex-col gap-4 text-left">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="song-title" className="text-cream text-sm font-light tracking-wide">
@@ -194,7 +195,7 @@ const Choose = () => {
               />
             </div>
             <p className="text-cream/60 text-xs font-light italic">
-              This appears on your Vinyl Poster, exactly as you type it.
+              This helps us credit the song correctly, exactly as you'd like it shown.
             </p>
           </div>
         )}
@@ -203,7 +204,7 @@ const Choose = () => {
           {(["A", "B"] as const).map((v) => {
             const url = v === "A" ? manifest.song_a_url! : manifest.song_b_url!;
             const vinylIncomplete =
-              manifest.is_vinyl_poster === "true" && (!songTitle.trim() || !songArtist.trim());
+              manifest.is_story === "true" && (!songTitle.trim() || !songArtist.trim());
             return (
               <div
                 key={v}
