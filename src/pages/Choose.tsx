@@ -195,7 +195,7 @@ const Choose = () => {
               />
             </div>
             <p className="text-cream/60 text-xs font-light italic">
-              This appears on your Vinyl Poster, exactly as you type it.
+              This helps us credit the song correctly, exactly as you'd like it shown.
             </p>
           </div>
         )}
