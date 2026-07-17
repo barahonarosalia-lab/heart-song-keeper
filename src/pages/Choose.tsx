@@ -164,7 +164,7 @@ const Choose = () => {
           )}
         </div>
 
-        {manifest.is_vinyl_poster === "true" && (
+        {manifest.is_story === "true" && (
           <div className="w-full max-w-xl flex flex-col gap-4 text-left">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="song-title" className="text-cream text-sm font-light tracking-wide">
