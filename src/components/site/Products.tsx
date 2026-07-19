@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 const products = [
   {
     name: "Digital Download",
+    productId: "digital",
     price: "From $49",
     tagline: "Instant. Printable. Frameable.",
     details: [
@@ -14,6 +15,7 @@ const products = [
   },
   {
     name: "Canvas Print",
+    productId: "canvas",
     price: "From $99",
     tagline: "Gallery wrap. Ready to hang.",
     details: ["11x14 unframed canvas", "Ships in 4-6 business days", "Free shipping"],
@@ -21,6 +23,7 @@ const products = [
   },
   {
     name: "Acrylic Ornament",
+    productId: "ornament",
     price: "From $79",
     tagline: "A keepsake that plays their song — every time they hold it.",
     details: ["Scan it anytime · Gift box included", "Ships in 5-7 business days"],
@@ -28,6 +31,7 @@ const products = [
   },
   {
     name: "Jewelry",
+    productId: "jewelry",
     price: "From $109",
     tagline: "Worn every day. Scanned whenever they need it.",
     details: ["Heart · Round · Dog Tag", "Silver or Gold", "Ships in 5-7 business days"],
@@ -35,6 +39,7 @@ const products = [
   },
   {
     name: "Sherpa Blanket",
+    productId: "blanket",
     price: "From $139",
     tagline: "Wrap up. Press play. They're there.",
     details: ["50x60 · Full color · Soft sherpa", "Ships in 3-5 business days"],
@@ -86,9 +91,9 @@ export const Products = () => {
 };
 
 const ProductCard = ({
-  name, price, tagline, details, cta, mobile = false,
+  name, productId, price, tagline, details, cta, mobile = false,
 }: {
-  name: string; price: string; tagline: string; details: string[]; cta: string; mobile?: boolean;
+  name: string; productId: string; price: string; tagline: string; details: string[]; cta: string; mobile?: boolean;
 }) => (
   <article
     className={`group bg-card rounded-2xl p-6 md:p-7 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40 flex flex-col ${
@@ -103,8 +108,10 @@ const ProductCard = ({
     <ul className="space-y-1.5 text-sm text-muted-foreground leading-relaxed mb-7 flex-1">
       {details.map((d) => <li key={d}>{d}</li>)}
     </ul>
-    <Button variant="navy" size="default" className="w-full mt-auto">
-      {cta}
-    </Button>
+    <a href={`/start?product=${productId}`} className="w-full mt-auto">
+      <Button variant="navy" size="default" className="w-full">
+        {cta}
+      </Button>
+    </a>
   </article>
 );
