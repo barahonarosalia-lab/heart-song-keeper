@@ -1185,7 +1185,7 @@ const OrnamentExpansion = ({
                   </span>
                 )}
                 <img
-                  src={`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`}
+                  src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`, 400)}
                   alt={design.name}
                   loading="lazy"
                   className="w-full aspect-square rounded-lg object-cover mb-2"
