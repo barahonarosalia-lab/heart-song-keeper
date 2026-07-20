@@ -136,7 +136,7 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
   };
   const files = COLLECTION_ART[collection.slug];
   const images = files
-    ? files.map((name, i) => ({ src: `${ART_BASE}/${name}.jpg`, index: i + 1 }))
+    ? files.map((name, i) => ({ src: resizeImg(`${ART_BASE}/${name}.jpg`, 800), index: i + 1 }))
     : Array.from({ length: 10 }, (_, i) => ({ src: collection.img, index: i + 1 }));
 
   return (
