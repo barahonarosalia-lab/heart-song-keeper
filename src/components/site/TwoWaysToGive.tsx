@@ -9,6 +9,9 @@ export const TwoWaysToGive = () => {
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance">
             Three ways to give a <span className="italic text-gold">Key of Hearts</span>
           </h2>
+          <p className="text-center text-navy/70 max-w-xl mx-auto -mt-2 mb-4">
+            However you tell their story — <span className="italic text-gold">scan it, hear it, forever.</span> Every Key of Hearts includes a QR code that plays forever and a personalized card.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
@@ -19,8 +22,6 @@ export const TwoWaysToGive = () => {
             intro="An original song written just for them. Tell us their story, pick their genre, and we'll turn it into music only they could recognize."
             features={[
               "Original song for their occasion",
-              "QR code plays forever",
-              "Personalized card included",
               "Digital · Canvas · Ornament · Jewelry · Blanket · Vinyl Poster",
             ]}
           />
@@ -40,8 +41,6 @@ export const TwoWaysToGive = () => {
             ]}
             features={[
               "Their voice · Their words · Their story",
-              "QR code plays forever",
-              "Personalized card included",
               "Audio upload optional — pay now, send later",
             ]}
           />
@@ -53,8 +52,6 @@ export const TwoWaysToGive = () => {
             intro="Upload a video and we turn it into a keepsake — their movement, their voice, wrapped in an original song."
             features={[
               "Their video, set to original music",
-              "QR code plays forever",
-              "Personalized card included",
               "Video upload optional — pay now, send later",
             ]}
             highlight
@@ -81,7 +78,7 @@ const Card = ({
   highlight?: boolean;
 }) => (
   <div
-    className={`relative rounded-3xl p-8 md:p-10 lg:p-12 flex flex-col bg-navy text-cream overflow-hidden border ${
+    className={`relative rounded-3xl p-6 md:p-8 lg:p-9 flex flex-col bg-navy text-cream overflow-hidden border ${
       highlight ? "border-gold/40" : "border-cream/10"
     } shadow-card`}
   >
@@ -90,11 +87,11 @@ const Card = ({
 
     <div className="relative">
       <p className="label-eyebrow text-gold mb-4">{price}</p>
-      <h3 className="font-serif text-3xl md:text-4xl mb-5 text-balance">{title}</h3>
-      <p className="text-cream/70 leading-relaxed mb-7">{intro}</p>
+      <h3 className="font-serif text-3xl md:text-4xl mb-4 text-balance">{title}</h3>
+      <p className="text-cream/70 leading-relaxed mb-5">{intro}</p>
 
       {useFor && (
-        <div className="mb-7">
+        <div className="mb-5">
           <p className="text-sm uppercase tracking-wider text-cream/50 mb-3">Use for:</p>
           <ul className="space-y-2 text-cream/80 text-[15px]">
             {useFor.map((u) => (
@@ -107,7 +104,7 @@ const Card = ({
         </div>
       )}
 
-      <ul className="space-y-3 mb-9">
+      <ul className="space-y-3 mb-6">
         {features.map((f) => (
           <li key={f} className="flex gap-3 text-cream/90 text-[15px]">
             <Check className="size-5 text-gold shrink-0 mt-0.5" />
