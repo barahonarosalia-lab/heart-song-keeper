@@ -13,7 +13,7 @@ export const Hero = () => {
           </p>
         </div>
 
-        <div className="mt-8 md:mt-10 rounded-2xl overflow-hidden shadow-xl border border-gold/10">
+        <div className="mt-8 md:mt-10 rounded-2xl overflow-hidden shadow-xl border border-gold/10 mb-0">
           <img
             src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
             alt="Framed Key of Hearts prints displayed in a living room"
