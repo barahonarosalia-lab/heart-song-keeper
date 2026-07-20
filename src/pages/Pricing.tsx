@@ -63,7 +63,7 @@ const rows: ProductRow[] = [
 
 const Pricing = () => {
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-dvh bg-cream">
       <Navigation />
       <main className="pt-32 pb-24">
         <section className="container max-w-5xl">

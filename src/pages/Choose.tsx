@@ -91,7 +91,7 @@ const Choose = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6">
         <p className="font-serif italic text-gold text-base">Loading…</p>
       </main>
     );
@@ -99,7 +99,7 @@ const Choose = () => {
 
   if (manifest?.qr_state === "activated") {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6 text-center">
         <div className="flex flex-col items-center gap-4 max-w-md">
           <p className="font-serif text-cream text-2xl md:text-3xl">This song has already been chosen.</p>
           <a href={`/listen/${order}`} className="font-serif italic text-gold text-base underline-offset-4 hover:underline">
@@ -112,7 +112,7 @@ const Choose = () => {
 
   if (error || !manifest?.song_a_url || !manifest?.song_b_url) {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6 text-center">
         <p className="font-serif text-cream text-lg max-w-md">
           Something went wrong — email us at{" "}
           <a href="mailto:hello@keyofhearts.com" className="text-gold underline-offset-4 hover:underline">
@@ -125,7 +125,7 @@ const Choose = () => {
 
   if (regenerated) {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6 text-center">
         <div className="flex flex-col items-center gap-6 max-w-md">
           <HeartIcon />
           <h1 className="font-serif text-cream text-5xl md:text-6xl">We're starting over.</h1>
@@ -139,7 +139,7 @@ const Choose = () => {
 
   if (chosen) {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6 text-center">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6 text-center">
         <div className="flex flex-col items-center gap-6 max-w-md">
           <HeartIcon />
           <h1 className="font-serif text-cream text-5xl md:text-6xl">Perfect.</h1>
@@ -152,7 +152,7 @@ const Choose = () => {
   }
 
   return (
-    <main className="min-h-screen w-full bg-navy text-cream px-6 py-16">
+    <main className="min-h-dvh w-full bg-navy text-cream px-6 py-16">
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-12">
         <div className="flex flex-col items-center gap-3">
           <p className="label-eyebrow text-gold">Story Song</p>

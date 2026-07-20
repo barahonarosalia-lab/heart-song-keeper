@@ -3,7 +3,7 @@ import { Footer } from "@/components/site/Footer";
 
 const Privacy = () => {
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-dvh bg-cream">
       <Navigation />
       <main className="pt-32 pb-24">
         <section className="container max-w-3xl">

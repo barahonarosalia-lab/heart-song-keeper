@@ -147,7 +147,7 @@ const Upgrade = () => {
       day: "numeric",
     });
     return (
-      <main className="min-h-screen bg-cream flex flex-col">
+      <main className="min-h-dvh bg-cream flex flex-col">
         <Navigation />
         <section className="bg-navy text-cream flex-1 flex items-center py-24 md:py-32 pt-32 md:pt-40">
           <div className="container max-w-2xl text-center space-y-8">
@@ -179,7 +179,7 @@ const Upgrade = () => {
 
   // ----- DEFAULT STATE -----
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-dvh bg-cream">
       <Navigation />
       {/* Header */}
       <header className="bg-navy text-cream pt-32 md:pt-40 pb-20 md:pb-28">

@@ -49,7 +49,7 @@ const GiftCards = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-dvh bg-cream">
       <Navigation />
 
       {/* HEADER */}

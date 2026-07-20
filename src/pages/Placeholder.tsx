@@ -10,7 +10,7 @@ interface PlaceholderProps {
 }
 
 export const Placeholder = ({ eyebrow, title, body }: PlaceholderProps) => (
-  <div className="min-h-screen bg-cream flex flex-col">
+  <div className="min-h-dvh bg-cream flex flex-col">
     <Navigation />
     <main className="flex-1 pt-32 pb-24">
       <section className="container max-w-2xl text-center">

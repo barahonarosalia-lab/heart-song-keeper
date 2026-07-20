@@ -74,7 +74,7 @@ export default function OAuthConsent() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-cream flex items-center justify-center px-6">
+      <main className="min-h-dvh bg-cream flex items-center justify-center px-6">
         <div className="max-w-md text-center">
           <p className="label-eyebrow text-gold mb-4">Connection request</p>
           <h1 className="font-serif text-3xl text-navy mb-4">We couldn't load this request</h1>
@@ -86,7 +86,7 @@ export default function OAuthConsent() {
 
   if (!details) {
     return (
-      <main className="min-h-screen bg-cream flex items-center justify-center">
+      <main className="min-h-dvh bg-cream flex items-center justify-center">
         <p className="text-navy/60 italic">Loading…</p>
       </main>
     );
@@ -95,7 +95,7 @@ export default function OAuthConsent() {
   const clientName = details.client?.name ?? "an app";
 
   return (
-    <main className="min-h-screen bg-cream flex items-center justify-center px-6 py-12">
+    <main className="min-h-dvh bg-cream flex items-center justify-center px-6 py-12">
       <div className="max-w-md w-full bg-card border border-gold/20 rounded-2xl shadow-card p-8 space-y-6">
         <div className="text-center">
           <p className="label-eyebrow text-gold mb-3">Connection request</p>
