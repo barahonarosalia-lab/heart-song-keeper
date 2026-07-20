@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
+import { resizeImg } from "@/lib/img";
+
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
 
 type CollectionItem = {
@@ -113,7 +115,7 @@ const CollectionCard = ({
   >
     <div className="aspect-[4/5] overflow-hidden bg-muted">
       <img
-        src={img}
+        src={resizeImg(img, mobile ? 480 : 640)}
         alt={name}
         loading="lazy"
         width={800}
