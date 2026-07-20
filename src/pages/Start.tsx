@@ -1571,7 +1571,7 @@ const ArtGallery = ({
             >
               <div className="aspect-square overflow-hidden bg-muted">
                 <img
-                  src={piece.image}
+                  src={resizeImg(piece.image, 400)}
                   alt={piece.name}
                   loading="lazy"
                   className="w-full h-full object-cover"
