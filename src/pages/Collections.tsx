@@ -6,13 +6,11 @@ import { Button } from "@/components/ui/button";
 import { SwipeRow } from "@/components/site/SwipeRow";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
 import { cn } from "@/lib/utils";
-import luminaries from "@/assets/collection-luminaries.jpg";
-import meadow from "@/assets/collection-meadow.jpg";
-import botanica from "@/assets/collection-botanica.jpg";
-import fable from "@/assets/collection-fable.jpg";
-import ember from "@/assets/collection-ember.jpg";
+import { resizeImg } from "@/lib/img";
 import blanketPhoto from "@/assets/blanket-photo.jpg";
 import blanketArt from "@/assets/blanket-art.jpg";
+
+const ART_BASE = "https://assets.keyofhearts.com/koh-art";
 
 type ArtCollection = {
   name: string;
@@ -26,7 +24,7 @@ type ArtCollection = {
 const artCollections: ArtCollection[] = [
   {
     name: "Little Luminaries",
-    img: luminaries,
+    img: resizeImg(`${ART_BASE}/ll-punchsleep-001.jpg`, 800),
     description:
       "Soft, whimsical art anchored by wonder. For the ones who just arrived and the ones who welcomed them.",
     occasions: ["Baby & Birth", "New Parent", "Lullaby & Nursery", "Pregnancy Loss"],
@@ -34,7 +32,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Meadow & Mane",
-    img: meadow,
+    img: resizeImg(`${ART_BASE}/mm-horse-001.jpg`, 800),
     description:
       "Bold, painterly landscapes for the moments that were earned. For the ones who showed up and kept going.",
     occasions: [
@@ -49,7 +47,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Moonlit Botanica",
-    img: botanica,
+    img: resizeImg(`${ART_BASE}/mb-dogcollar-001.jpg`, 800),
     description:
       "Dark florals and candlelight. Art that holds grief with dignity — never clinical, never cold.",
     occasions: ["Memorial & Grief", "Pregnancy Loss", "Pet Memorial"],
@@ -57,7 +55,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Fable & Fawn",
-    img: fable,
+    img: resizeImg(`${ART_BASE}/ff-mushrooms-001.jpg`, 800),
     description:
       "Adult whimsy with an enchanted edge. For the one who still believes in magic — and is probably 34.",
     occasions: ["Friendship", "Just Because", "Childhood Memory"],
@@ -65,7 +63,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Ember & Ivy",
-    img: ember,
+    img: resizeImg(`${ART_BASE}/ei-birds-001.jpg`, 800),
     description:
       "Candlelit and romantic. For the love that was chosen and keeps being chosen every day.",
     occasions: ["Anniversary & Wedding", "Friendship", "Just Because"],
@@ -142,6 +140,14 @@ const CollectionsPage = () => {
               Five worlds. Each one its own feeling.
             </h2>
           </div>
+
+          <div className="max-w-2xl mx-auto mb-10 rounded-xl border border-gold/40 bg-gold/5 px-5 py-4 text-center">
+            <p className="text-sm md:text-base text-navy/80 leading-relaxed">
+              Have a photo of your own? Digital, Canvas, and Blanket can all be made from your own photo instead — just choose <span className="italic text-gold">"Your Photo"</span> at checkout.
+            </p>
+          </div>
+
+
 
           <SwipeRow basis="basis-[75%] md:basis-[45%] lg:basis-[33%]">
             {artCollections.map((c) => (
