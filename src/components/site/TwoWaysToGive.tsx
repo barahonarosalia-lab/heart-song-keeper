@@ -54,7 +54,10 @@ export const TwoWaysToGive = () => {
             highlight
           />
         </div>
-      </div>
+        </div>
+        <p className="text-center text-navy/70 max-w-xl mx-auto mt-10">
+          All tiers include: a QR code that <span className="italic text-gold">scans, plays, and lasts forever</span> — plus a personalized card.
+        </p>
     </section>
   );
 };
