@@ -1,7 +1,7 @@
 export const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-cream text-navy">
-      <div className="container pt-20 md:pt-28 pb-6 md:pb-8">
+      <div className="container pt-20 md:pt-28 pb-0">
         <div className="w-full max-w-2xl space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-up text-left">
           <h1 className="font-serif text-[clamp(1.1rem,3.2vw,2.75rem)] leading-[1.05] text-navy tracking-tight text-balance whitespace-nowrap">
             The key to their <span className="italic text-gold">heart.</span> Forever.
