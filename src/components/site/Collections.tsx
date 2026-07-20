@@ -77,10 +77,14 @@ export const Collections = () => {
         </div>
 
         {/* Desktop: grid */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
-          {collections.map((c) => (
-            <CollectionCard key={c.slug} {...c} onOpen={() => setActive(c)} />
-          ))}
+        <div className="hidden md:block -mx-6 px-6 overflow-x-auto scrollbar-none pb-4">
+          <div className="flex gap-6 lg:gap-7 snap-x snap-mandatory">
+            {collections.map((c) => (
+              <div key={c.slug} className="w-[320px] lg:w-[360px] shrink-0 snap-start">
+                <CollectionCard {...c} onOpen={() => setActive(c)} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
