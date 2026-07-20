@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { resizeImg } from "@/lib/img";
 
 type Collection = {
   name: string;
