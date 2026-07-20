@@ -8,9 +8,9 @@ export const Hero = () => {
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg text-navy/70 max-w-md leading-relaxed">
-            Behind a QR code.<br />
-            On something they hold forever.
+            Behind a QR code. On something they hold forever.
           </p>
+
         </div>
 
         <div className="mt-8 md:mt-10 rounded-2xl overflow-hidden shadow-xl border border-gold/10 mb-0">
