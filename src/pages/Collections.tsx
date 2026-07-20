@@ -141,6 +141,14 @@ const CollectionsPage = () => {
             </h2>
           </div>
 
+          <div className="max-w-2xl mx-auto mb-10 rounded-xl border border-gold/40 bg-gold/5 px-5 py-4 text-center">
+            <p className="text-sm md:text-base text-navy/80 leading-relaxed">
+              Have a photo of your own? Digital, Canvas, and Blanket can all be made from your own photo instead — just choose <span className="italic text-gold">"Your Photo"</span> at checkout.
+            </p>
+          </div>
+
+
+
           <SwipeRow basis="basis-[75%] md:basis-[45%] lg:basis-[33%]">
             {artCollections.map((c) => (
               <article
