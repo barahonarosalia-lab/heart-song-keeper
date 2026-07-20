@@ -1,17 +1,7 @@
 export const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-cream text-navy">
-      <div className="absolute inset-0 z-0">
-        <img
-          src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
-          alt=""
-          className="w-full h-full opacity-70"
-          style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cream" />
-      </div>
-      <div className="container relative z-10 pt-20 md:pt-28 pb-6 md:pb-8 flex items-center">
+      <div className="container pt-20 md:pt-28 pb-6 md:pb-8">
         <div className="w-full max-w-2xl space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-up text-left">
           <h1 className="font-serif text-[clamp(1.1rem,3.2vw,2.75rem)] leading-[1.05] text-navy tracking-tight text-balance whitespace-nowrap">
             The key to their <span className="italic text-gold">heart.</span> Forever.
@@ -21,6 +11,15 @@ export const Hero = () => {
             Behind a QR code.<br />
             On something they hold forever.
           </p>
+        </div>
+
+        <div className="mt-8 md:mt-10 rounded-2xl overflow-hidden shadow-xl border border-gold/10">
+          <img
+            src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
+            alt="Framed Key of Hearts prints displayed in a living room"
+            className="w-full aspect-[21/9] object-cover"
+            style={{ objectPosition: 'center 30%' }}
+          />
         </div>
       </div>
     </section>
