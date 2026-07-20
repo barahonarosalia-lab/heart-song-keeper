@@ -23,7 +23,7 @@ export const TierPicker = () => {
   return (
     <section className="pt-0 pb-8 md:pb-12">
       <div className="container">
-        <div className="max-w-3xl md:max-w-5xl mx-auto mt-4 md:-mt-32 lg:-mt-40 relative z-10">
+        <div className="max-w-3xl md:max-w-5xl mx-auto mt-4 md:-mt-40 lg:-mt-48 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
 
             {tiers.map((t) => (
