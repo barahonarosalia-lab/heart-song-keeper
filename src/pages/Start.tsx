@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, VINYL_PHOTO_UPSELL_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
 import PhotoPreview from "@/components/PhotoPreview";
+import { resizeImg } from "@/lib/img";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
@@ -1184,7 +1185,7 @@ const OrnamentExpansion = ({
                   </span>
                 )}
                 <img
-                  src={`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`}
+                  src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`, 400)}
                   alt={design.name}
                   loading="lazy"
                   className="w-full aspect-square rounded-lg object-cover mb-2"
@@ -1364,7 +1365,7 @@ const JewelryExpansion = ({
                   </span>
                 )}
                 <img
-                  src={mockupSrc}
+                  src={resizeImg(mockupSrc, 400)}
                   alt={`${style.name} ${finish} mockup`}
                   loading="lazy"
                   className="w-full aspect-square rounded-lg object-cover"
@@ -1570,7 +1571,7 @@ const ArtGallery = ({
             >
               <div className="aspect-square overflow-hidden bg-muted">
                 <img
-                  src={piece.image}
+                  src={resizeImg(piece.image, 400)}
                   alt={piece.name}
                   loading="lazy"
                   className="w-full h-full object-cover"
