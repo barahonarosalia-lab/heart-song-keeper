@@ -1,3 +1,5 @@
+import { resizeImg } from "@/lib/img";
+
 export const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-cream text-navy">
