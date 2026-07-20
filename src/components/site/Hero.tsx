@@ -5,9 +5,9 @@ export const Hero = () => {
         <img
           src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
           alt=""
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover object-top opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/90 to-cream/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cream" />
       </div>
       <div className="container relative z-10 pt-20 md:pt-28 pb-6 md:pb-8 flex items-center">
