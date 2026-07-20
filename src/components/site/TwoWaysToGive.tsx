@@ -9,9 +9,6 @@ export const TwoWaysToGive = () => {
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-navy text-balance">
             Three ways to give a <span className="italic text-gold">Key of Hearts</span>
           </h2>
-          <p className="text-center text-navy/70 max-w-xl mx-auto -mt-2 mb-4">
-            However you tell their story — <span className="italic text-gold">scan it, hear it, forever.</span> Every Key of Hearts includes a QR code that plays forever and a personalized card.
-          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
