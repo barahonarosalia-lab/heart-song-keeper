@@ -14,7 +14,7 @@ import { CookieConsent } from "@/components/site/CookieConsent";
 
 const Index = () => {
   return (
-    <main className="min-h-screen bg-cream text-navy">
+    <main className="min-h-dvh bg-cream text-navy">
       <Navigation />
       <Hero />
       <TierPicker />

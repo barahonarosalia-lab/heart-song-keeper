@@ -87,7 +87,7 @@ const sections: FaqSection[] = [
 
 const Faq = () => {
   return (
-    <main className="min-h-screen bg-cream text-navy">
+    <main className="min-h-dvh bg-cream text-navy">
       <Navigation />
 
       {/* Header */}

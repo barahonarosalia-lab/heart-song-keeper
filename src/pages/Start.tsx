@@ -791,7 +791,7 @@ const Start = () => {
   }, [order.blanket_orientation]);
 
   return (
-    <main className="min-h-screen bg-cream text-navy">
+    <main className="min-h-dvh bg-cream text-navy">
       {/* HEADER */}
       <header className="bg-gradient-navy text-cream relative overflow-hidden">
         <div className="absolute inset-0 starfield opacity-40" />

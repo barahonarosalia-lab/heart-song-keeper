@@ -111,7 +111,7 @@ const CollectionsPage = () => {
   const [activeCollection, setActiveCollection] = useState<ArtCollection | null>(null);
 
   return (
-    <main className="min-h-screen bg-cream text-navy">
+    <main className="min-h-dvh bg-cream text-navy">
       <Navigation />
 
       <CollectionGalleryOverlay

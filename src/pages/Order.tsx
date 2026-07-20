@@ -408,7 +408,7 @@ const StripeOrderConfirmation = ({ row }: { row: StripeOrderRow }) => {
     sessionStorage.setItem(key, "1");
   }, [row.stripe_session_id, row.status, row.amount_total, row.currency, row.price_id, row.customer_email, meta.recipient_name, meta.occasion]);
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-dvh bg-cream">
       <Navigation />
       <header className="bg-navy-deep text-cream relative overflow-hidden pt-20">
         <div className="absolute inset-0 starfield opacity-30" />
@@ -598,7 +598,7 @@ const Order = () => {
   if (isStripeSession) {
     if (stripeLoading) {
       return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-dvh bg-cream flex flex-col">
           <Navigation />
           <div className="flex-1 flex items-center justify-center px-6">
             <div className="max-w-md text-center space-y-4">
@@ -615,7 +615,7 @@ const Order = () => {
     }
     if (stripeError) {
       return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-dvh bg-cream flex flex-col">
           <Navigation />
           <div className="flex-1 flex items-center justify-center px-6">
             <div className="max-w-md text-center space-y-6">
@@ -640,7 +640,7 @@ const Order = () => {
 
   if (!order || !order.paid) {
     return (
-      <div className="min-h-screen bg-cream flex flex-col">
+      <div className="min-h-dvh bg-cream flex flex-col">
         <Navigation />
         <div className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center space-y-6">
@@ -666,7 +666,7 @@ const Order = () => {
   const showDigitalAddon = order.product === "canvas" || order.product === "blanket";
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-dvh bg-cream">
       <Navigation />
       {/* Header */}
       <header className="bg-navy-deep text-cream relative overflow-hidden pt-20">

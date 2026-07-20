@@ -29,7 +29,7 @@ const ComingSoon = () => {
 
   return (
     <main
-      className="min-h-screen w-full flex items-center justify-center px-6 py-12"
+      className="min-h-dvh w-full flex items-center justify-center px-6 py-12"
       style={{ backgroundColor: "#1A2744" }}
     >
       <div className="w-full max-w-md flex flex-col items-center text-center">

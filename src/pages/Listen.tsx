@@ -80,7 +80,7 @@ const formatTime = (s: number) => {
 
 // ===== Not Found state =====
 const NotFound = () => (
-  <main className="min-h-screen w-full bg-navy flex flex-col items-center justify-center px-6 text-center">
+  <main className="min-h-dvh w-full bg-navy flex flex-col items-center justify-center px-6 text-center">
     <h1 className="font-serif text-cream text-3xl md:text-4xl mb-6">
       We couldn't find this Key.
     </h1>
@@ -248,7 +248,7 @@ const Listen = () => {
   // ----- Loading / Invalid / unpaid -----
   if (loading) {
     return (
-      <main className="min-h-screen w-full bg-navy flex items-center justify-center px-6">
+      <main className="min-h-dvh w-full bg-navy flex items-center justify-center px-6">
         <p className="font-serif italic text-gold text-base">Loading…</p>
       </main>
     );
@@ -287,7 +287,7 @@ const Listen = () => {
   const downloadExt = isVideo ? "mp4" : "mp3";
 
   return (
-    <main className="relative min-h-screen w-full bg-navy overflow-hidden text-cream">
+    <main className="relative min-h-dvh w-full bg-navy overflow-hidden text-cream">
       {/* Atmospheric collection art background — 15% opacity */}
       <div
         aria-hidden
@@ -331,7 +331,7 @@ const Listen = () => {
       )}
 
       {/* Centered content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-16">
+      <div className="relative z-10 min-h-dvh flex flex-col items-center justify-center px-6 py-16">
         <div className={cn("w-full flex flex-col items-center text-center gap-6", isVideo ? "max-w-2xl" : "max-w-md")}>
           {/* Recipient */}
           {(record.recipient_name || record.occasion) && (
