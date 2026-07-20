@@ -1365,7 +1365,7 @@ const JewelryExpansion = ({
                   </span>
                 )}
                 <img
-                  src={mockupSrc}
+                  src={resizeImg(mockupSrc, 400)}
                   alt={`${style.name} ${finish} mockup`}
                   loading="lazy"
                   className="w-full aspect-square rounded-lg object-cover"
