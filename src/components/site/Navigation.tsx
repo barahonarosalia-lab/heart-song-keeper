@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 import heroKey from "@/assets/hero-key.png";
 
 const links = [
-  { label: "Digital", href: "#products" },
-  { label: "Canvas", href: "#products" },
-  { label: "Ornament", href: "#products" },
-  { label: "Jewelry", href: "#products" },
-  { label: "Blanket", href: "#products" },
-  { label: "Vinyl Poster", href: "#products" },
+  { label: "Digital", href: "/#products" },
+  { label: "Canvas", href: "/#products" },
+  { label: "Ornament", href: "/#products" },
+  { label: "Jewelry", href: "/#products" },
+  { label: "Blanket", href: "/#products" },
+  { label: "Vinyl Poster", href: "/#products" },
 ];
 
 const overlayLinks = [
@@ -55,7 +55,7 @@ export const Navigation = () => {
 
           <div className="hidden lg:flex items-center gap-3">
             <Button variant="cream" size="sm" asChild>
-              <a href="#how">How it Works</a>
+              <a href="/#how">How it Works</a>
             </Button>
             <Button variant="gold" asChild>
               <Link to="/start">
