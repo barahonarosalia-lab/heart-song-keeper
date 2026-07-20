@@ -17,7 +17,7 @@ export const Hero = () => {
 
         <div className="mt-8 md:mt-10 rounded-2xl overflow-hidden shadow-xl border border-gold/10 mb-0">
           <img
-            src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
+            src={resizeImg("https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg", 1600)}
             alt="Framed Key of Hearts prints displayed in a living room"
             className="w-full aspect-[21/9] object-cover"
             style={{ objectPosition: 'center 30%' }}
