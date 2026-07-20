@@ -6,13 +6,11 @@ import { Button } from "@/components/ui/button";
 import { SwipeRow } from "@/components/site/SwipeRow";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
 import { cn } from "@/lib/utils";
-import luminaries from "@/assets/collection-luminaries.jpg";
-import meadow from "@/assets/collection-meadow.jpg";
-import botanica from "@/assets/collection-botanica.jpg";
-import fable from "@/assets/collection-fable.jpg";
-import ember from "@/assets/collection-ember.jpg";
+import { resizeImg } from "@/lib/img";
 import blanketPhoto from "@/assets/blanket-photo.jpg";
 import blanketArt from "@/assets/blanket-art.jpg";
+
+const ART_BASE = "https://assets.keyofhearts.com/koh-art";
 
 type ArtCollection = {
   name: string;
