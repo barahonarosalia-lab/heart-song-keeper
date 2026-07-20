@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
-import luminaries from "@/assets/collection-luminaries.jpg";
-import meadow from "@/assets/collection-meadow.jpg";
-import fable from "@/assets/collection-fable.jpg";
-import botanica from "@/assets/collection-botanica.jpg";
-import ember from "@/assets/collection-ember.jpg";
+const ART_BASE = "https://assets.keyofhearts.com/koh-art";
 
 type CollectionItem = {
   name: string;
