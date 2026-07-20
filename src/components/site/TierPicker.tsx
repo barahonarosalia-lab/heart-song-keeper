@@ -36,7 +36,7 @@ export const TierPicker = () => {
                   <span className="text-xs font-sans text-gold font-medium">{t.price}</span>
                 </div>
                 <p className="text-sm text-navy/70 leading-relaxed flex-1">{t.tagline}</p>
-                <Button variant="gold" size="lg" asChild className="w-full text-base font-semibold">
+                <Button variant="gold" size="lg" asChild className="w-full text-base md:text-lg font-semibold py-2 md:py-6">
                   <Link to="/start">Start {t.name}</Link>
                 </Button>
               </div>
