@@ -1,6 +1,15 @@
 export const Hero = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-cream text-navy">
+    <section className="relative overflow-hidden bg-cream text-navy">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://assets.keyofhearts.com/koh-composites/marketing-mockups/homepage-mockup.jpg"
+          alt=""
+          className="w-full h-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/90 to-cream/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cream" />
+      </div>
       <div className="container relative z-10 pt-20 md:pt-28 pb-6 md:pb-8 flex items-center">
         <div className="w-full max-w-2xl space-y-4 sm:space-y-5 lg:space-y-6 animate-fade-up text-left">
           <h1 className="font-serif text-[clamp(1.1rem,3.2vw,2.75rem)] leading-[1.05] text-navy tracking-tight text-balance whitespace-nowrap">
