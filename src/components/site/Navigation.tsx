@@ -43,19 +43,19 @@ export const Navigation = () => {
 
           <div className="hidden lg:flex items-center gap-6">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.label}
-                href={l.href}
+                to={l.href}
                 className="text-sm text-cream/80 hover:text-gold transition-colors duration-300"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
             <Button variant="cream" size="sm" asChild>
-              <a href="/#how">How it Works</a>
+              <Link to="/#how">How it Works</Link>
             </Button>
             <Button variant="gold" asChild>
               <Link to="/start">
