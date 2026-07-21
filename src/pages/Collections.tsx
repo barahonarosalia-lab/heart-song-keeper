@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
 import { SwipeRow } from "@/components/site/SwipeRow";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
+import { LazyImage } from "@/components/site/LazyImage";
 import { cn } from "@/lib/utils";
 import { resizeImg } from "@/lib/img";
 import blanketPhoto from "@/assets/blanket-photo.jpg";
@@ -165,10 +166,9 @@ const CollectionsPage = () => {
                 className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50 h-full flex flex-col cursor-pointer transition-all hover:shadow-card hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                  <img
+                  <LazyImage
                     src={c.img}
                     alt={c.name}
-                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
@@ -242,10 +242,9 @@ const CollectionsPage = () => {
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                     Silver
                   </p>
-                  <img
+                  <LazyImage
                     src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.silverImg}`, 500)}
                     alt={`${j.name} silver`}
-                    loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
                   />
                   <p className="text-xs text-muted-foreground">From $109</p>
@@ -255,10 +254,9 @@ const CollectionsPage = () => {
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                     Gold
                   </p>
-                  <img
+                  <LazyImage
                     src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`, 500)}
                     alt={`${j.name} gold`}
-                    loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
                   />
                   <p className="text-xs text-muted-foreground">From $119</p>
@@ -367,10 +365,9 @@ const CollectionsPage = () => {
                     <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                       Gift Box
                     </p>
-                    <img
+                    <LazyImage
                       src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`, 500)}
                       alt={`${o.name} gift box`}
-                      loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
                     />
                   </div>
@@ -378,10 +375,9 @@ const CollectionsPage = () => {
                     <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                       Styled
                     </p>
-                    <img
+                    <LazyImage
                       src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`, 500)}
                       alt={`${o.name} styled`}
-                      loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
                     />
                   </div>

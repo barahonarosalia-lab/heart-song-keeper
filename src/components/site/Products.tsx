@@ -67,12 +67,12 @@ export const Products = () => {
         {/* Mobile horizontal scroll */}
         <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-none pb-4">
           <div className="flex gap-5 snap-x snap-mandatory">
-            {products.map((p) => <ProductCard key={p.name} {...p} mobile />)}
+            {products.map((p, i) => <ProductCard key={p.name} {...p} index={i} mobile />)}
           </div>
         </div>
 
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6">
-          {products.map((p) => <ProductCard key={p.name} {...p} />)}
+          {products.map((p, i) => <ProductCard key={p.name} {...p} index={i} />)}
         </div>
 
         {/* Shipping notice */}
@@ -91,14 +91,15 @@ export const Products = () => {
 };
 
 const ProductCard = ({
-  name, productId, price, tagline, details, cta, mobile = false,
+  name, productId, price, tagline, details, cta, index = 0, mobile = false,
 }: {
-  name: string; productId: string; price: string; tagline: string; details: string[]; cta: string; mobile?: boolean;
+  name: string; productId: string; price: string; tagline: string; details: string[]; cta: string; index?: number; mobile?: boolean;
 }) => (
   <article
-    className={`group bg-card rounded-2xl p-6 md:p-7 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40 flex flex-col ${
+    className={`group bg-card rounded-2xl p-6 md:p-7 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40 flex flex-col animate-fade-up ${
       mobile ? "min-w-[78vw] snap-center" : ""
     }`}
+    style={{ animationDelay: `${index * 80}ms` }}
   >
     <p className="label-eyebrow text-gold mb-3">{price}</p>
     <h3 className="font-serif text-2xl text-navy mb-3 leading-tight">{name}</h3>

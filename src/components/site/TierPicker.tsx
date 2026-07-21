@@ -26,10 +26,11 @@ export const TierPicker = () => {
         <div className="max-w-3xl md:max-w-5xl mx-auto mt-4 md:-mt-40 lg:-mt-48 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6">
 
-            {tiers.map((t) => (
+            {tiers.map((t, i) => (
               <div
                 key={t.name}
-                className="rounded-lg border border-navy/10 bg-white p-5 md:p-6 flex flex-col gap-2 shadow-xl hover:shadow-2xl transition-shadow"
+                className="rounded-lg border border-navy/10 bg-white p-5 md:p-6 flex flex-col gap-2 shadow-xl hover:shadow-2xl transition-shadow animate-fade-up"
+                style={{ animationDelay: `${i * 100}ms` }}
               >
                 <div className="flex items-baseline justify-between gap-2">
                   <h3 className="font-serif text-xl text-navy">{t.name}</h3>

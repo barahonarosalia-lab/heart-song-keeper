@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { resizeImg } from "@/lib/img";
+import { LazyImage } from "@/components/site/LazyImage";
 
 type Collection = {
   name: string;
@@ -207,10 +208,9 @@ const GalleryView = ({
                 aria-label={`Select art ${img.index}`}
               >
                 <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
-                  <img
+                  <LazyImage
                     src={img.src}
                     alt={`Art ${img.index}`}
-                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   {/* Preview chip — opens expanded view without selecting */}
@@ -299,10 +299,9 @@ const MobileGallery = ({
                 aria-label={`Select art ${img.index}`}
               >
                 <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
-                  <img
+                  <LazyImage
                     src={img.src}
                     alt={`Art ${img.index}`}
-                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <span
@@ -403,7 +402,7 @@ const ExpandedView = ({
                 key={i}
                 className="min-w-0 shrink-0 basis-full h-full flex items-center justify-center px-5 md:px-10 py-4"
               >
-                <img
+                <LazyImage
                   src={img.src}
                   alt={`Art ${img.index}`}
                   className="max-w-full max-h-full object-contain rounded-xl"
