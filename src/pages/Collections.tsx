@@ -57,7 +57,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Fable & Fawn",
-    img: resizeImg(`${ART_BASE}/ff-mushrooms-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ff-mushrooms-001-web-800.webp`,
     description:
       "Adult whimsy with an enchanted edge. For the one who still believes in magic — and is probably 34.",
     occasions: ["Friendship", "Just Because", "Childhood Memory"],
