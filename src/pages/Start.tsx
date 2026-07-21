@@ -1185,10 +1185,9 @@ const OrnamentExpansion = ({
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 )}
-                <img
+                <LazyImage
                   src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${design.giftboxImg}`, 400)}
                   alt={design.name}
-                  loading="lazy"
                   className="w-full aspect-square rounded-lg object-cover mb-2"
                 />
                 <p className="font-serif text-sm md:text-base text-navy leading-tight pr-6">
