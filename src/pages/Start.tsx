@@ -1515,6 +1515,7 @@ const ArtGallery = ({
 }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   // Reset/scroll when the collection changes — if a piece is already selected
   // (e.g. came from /collections deep link), scroll to that piece instead of
