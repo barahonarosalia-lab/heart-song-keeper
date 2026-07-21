@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
+import { LazyImage } from "@/components/site/LazyImage";
 import { resizeImg } from "@/lib/img";
 
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
