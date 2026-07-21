@@ -1571,12 +1571,31 @@ const ArtGallery = ({
                   : "border-border/60 hover:border-gold/60",
               )}
             >
-              <div className="aspect-square overflow-hidden bg-muted">
+              <div className="aspect-square overflow-hidden bg-muted relative">
                 <LazyImage
                   src={resizeImg(piece.image, 400)}
                   alt={piece.name}
                   className="w-full h-full object-cover"
                 />
+                <span
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Expand ${piece.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightboxSrc(resizeImg(piece.image, 1600));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setLightboxSrc(resizeImg(piece.image, 1600));
+                    }
+                  }}
+                  className="absolute top-2 right-2 inline-flex items-center justify-center size-8 rounded-full bg-black/50 hover:bg-black/70 text-cream transition-colors cursor-pointer"
+                >
+                  <Maximize2 className="size-4" />
+                </span>
               </div>
               {selected && (
                 <span className="absolute top-3 right-3 inline-flex items-center justify-center size-8 rounded-full bg-gold text-navy shadow-gold">
