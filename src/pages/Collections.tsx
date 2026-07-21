@@ -12,6 +12,7 @@ import blanketPhoto from "@/assets/blanket-photo.jpg";
 import blanketArt from "@/assets/blanket-art.jpg";
 
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
 
 type ArtCollection = {
   name: string;
@@ -25,7 +26,7 @@ type ArtCollection = {
 const artCollections: ArtCollection[] = [
   {
     name: "Little Luminaries",
-    img: resizeImg(`${ART_BASE}/ll-punchsleep-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ll-punchsleep-001-web-800.webp`,
     description:
       "Soft, whimsical art anchored by wonder. For the ones who just arrived and the ones who welcomed them.",
     occasions: ["Baby & Birth", "New Parent", "Lullaby & Nursery", "Pregnancy Loss"],
@@ -33,7 +34,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Meadow & Mane",
-    img: resizeImg(`${ART_BASE}/mm-horse-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/mm-horse-001-web-800.webp`,
     description:
       "Bold, painterly landscapes for the moments that were earned. For the ones who showed up and kept going.",
     occasions: [
@@ -48,7 +49,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Moonlit Botanica",
-    img: resizeImg(`${ART_BASE}/mb-dogcollar-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/mb-dogcollar-001-web-800.webp`,
     description:
       "Dark florals and candlelight. Art that holds grief with dignity — never clinical, never cold.",
     occasions: ["Memorial & Grief", "Pregnancy Loss", "Pet Memorial"],
@@ -56,7 +57,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Fable & Fawn",
-    img: resizeImg(`${ART_BASE}/ff-mushrooms-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ff-mushrooms-001-web-800.webp`,
     description:
       "Adult whimsy with an enchanted edge. For the one who still believes in magic — and is probably 34.",
     occasions: ["Friendship", "Just Because", "Childhood Memory"],
@@ -64,7 +65,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Ember & Ivy",
-    img: resizeImg(`${ART_BASE}/ei-birds-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ei-birds-001-web-800.webp`,
     description:
       "Candlelit and romantic. For the love that was chosen and keeps being chosen every day.",
     occasions: ["Anniversary & Wedding", "Friendship", "Just Because"],

@@ -5,7 +5,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { resizeImg } from "@/lib/img";
 import { LazyImage } from "@/components/site/LazyImage";
 
 type Collection = {
@@ -107,7 +106,7 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
     );
   }
 
-  const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+  const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
   const COLLECTION_ART: Record<string, string[]> = {
     "little-luminaries": [
       "ll-cat-001","ll-deer-001","ll-elephant-001","ll-fawn-001","ll-fox-001","ll-giraffe-001",
@@ -137,7 +136,7 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
   };
   const files = COLLECTION_ART[collection.slug];
   const images = files
-    ? files.map((name, i) => ({ src: resizeImg(`${ART_BASE}/${name}.jpg`, 800), index: i + 1 }))
+    ? files.map((name, i) => ({ src: `${ART_THUMB_BASE}/${name}-web-800.webp`, index: i + 1 }))
     : Array.from({ length: 10 }, (_, i) => ({ src: collection.img, index: i + 1 }));
 
   return (
