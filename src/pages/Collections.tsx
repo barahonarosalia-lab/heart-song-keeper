@@ -368,7 +368,7 @@ const CollectionsPage = () => {
                       Gift Box
                     </p>
                     <img
-                      src={`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`}
+                      src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`, 500)}
                       alt={`${o.name} gift box`}
                       loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
