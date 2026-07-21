@@ -375,10 +375,9 @@ const CollectionsPage = () => {
                     <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                       Styled
                     </p>
-                    <img
+                    <LazyImage
                       src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`, 500)}
                       alt={`${o.name} styled`}
-                      loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
                     />
                   </div>
