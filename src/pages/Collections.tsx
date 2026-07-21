@@ -34,7 +34,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Meadow & Mane",
-    img: resizeImg(`${ART_BASE}/mm-horse-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/mm-horse-001-web-800.webp`,
     description:
       "Bold, painterly landscapes for the moments that were earned. For the ones who showed up and kept going.",
     occasions: [
