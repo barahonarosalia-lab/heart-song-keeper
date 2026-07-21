@@ -12,6 +12,7 @@ import blanketPhoto from "@/assets/blanket-photo.jpg";
 import blanketArt from "@/assets/blanket-art.jpg";
 
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
 
 type ArtCollection = {
   name: string;
