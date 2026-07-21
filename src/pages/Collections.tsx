@@ -242,10 +242,9 @@ const CollectionsPage = () => {
                   <p className="text-[10px] tracking-[0.25em] uppercase text-gold font-medium mb-2">
                     Silver
                   </p>
-                  <img
+                  <LazyImage
                     src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.silverImg}`, 500)}
                     alt={`${j.name} silver`}
-                    loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
                   />
                   <p className="text-xs text-muted-foreground">From $109</p>
