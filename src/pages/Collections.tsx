@@ -379,7 +379,7 @@ const CollectionsPage = () => {
                       Styled
                     </p>
                     <img
-                      src={`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`}
+                      src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`, 500)}
                       alt={`${o.name} styled`}
                       loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
