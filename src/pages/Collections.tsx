@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
 import { SwipeRow } from "@/components/site/SwipeRow";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
+import { LazyImage } from "@/components/site/LazyImage";
 import { cn } from "@/lib/utils";
 import { resizeImg } from "@/lib/img";
 import blanketPhoto from "@/assets/blanket-photo.jpg";
