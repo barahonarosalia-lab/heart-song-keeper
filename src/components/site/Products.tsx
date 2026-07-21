@@ -67,12 +67,12 @@ export const Products = () => {
         {/* Mobile horizontal scroll */}
         <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-none pb-4">
           <div className="flex gap-5 snap-x snap-mandatory">
-            {products.map((p) => <ProductCard key={p.name} {...p} mobile />)}
+            {products.map((p, i) => <ProductCard key={p.name} {...p} index={i} mobile />)}
           </div>
         </div>
 
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6">
-          {products.map((p) => <ProductCard key={p.name} {...p} />)}
+          {products.map((p, i) => <ProductCard key={p.name} {...p} index={i} />)}
         </div>
 
         {/* Shipping notice */}
