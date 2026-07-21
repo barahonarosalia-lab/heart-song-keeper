@@ -299,10 +299,9 @@ const MobileGallery = ({
                 aria-label={`Select art ${img.index}`}
               >
                 <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-gold/30 bg-navy/40 shadow-card">
-                  <img
+                  <LazyImage
                     src={img.src}
                     alt={`Art ${img.index}`}
-                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <span
