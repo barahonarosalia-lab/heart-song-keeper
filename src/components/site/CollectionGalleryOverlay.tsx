@@ -106,7 +106,7 @@ export const CollectionGalleryOverlay = ({ collection, onClose }: Props) => {
     );
   }
 
-  const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+  const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
   const COLLECTION_ART: Record<string, string[]> = {
     "little-luminaries": [
       "ll-cat-001","ll-deer-001","ll-elephant-001","ll-fawn-001","ll-fox-001","ll-giraffe-001",
