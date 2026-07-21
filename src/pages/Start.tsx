@@ -304,6 +304,7 @@ interface CollectionDef {
 }
 
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
 
 const makePieces = (entries: [string, string][]): ArtPiece[] =>
   entries.map(([id, name]) => ({
