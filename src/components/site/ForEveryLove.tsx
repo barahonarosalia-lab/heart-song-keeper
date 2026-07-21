@@ -100,7 +100,7 @@ export const ForEveryLove = () => {
           {cards.filter(c => featuredLabels.includes(c.label)).map((c, i) => (
             <article
               key={c.label}
-              className="group bg-cream rounded-2xl py-4 px-5 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40"
+              className="group bg-cream rounded-2xl py-4 px-5 shadow-soft hover:shadow-card transition-all duration-500 hover:-translate-y-1 border border-border/40 animate-fade-up"
               style={{ animationDelay: `${i * 60}ms` }}
             >
               <p className="label-eyebrow text-gold mb-3">{c.label}</p>
