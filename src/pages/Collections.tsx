@@ -256,7 +256,7 @@ const CollectionsPage = () => {
                     Gold
                   </p>
                   <img
-                    src={`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`}
+                    src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`, 500)}
                     alt={`${j.name} gold`}
                     loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
