@@ -115,7 +115,7 @@ const CollectionCard = ({
   >
     <div className="aspect-[4/5] overflow-hidden bg-muted">
       <LazyImage
-        src={resizeImg(img, mobile ? 480 : 640)}
+        src={img}
         alt={name}
         width={800}
         height={1024}
