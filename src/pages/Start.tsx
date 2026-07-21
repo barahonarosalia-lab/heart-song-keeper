@@ -11,6 +11,7 @@ import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { priceIdForOrder, DIGITAL_ADDON_PRICE_ID, VINYL_PHOTO_UPSELL_PRICE_ID, amountForPriceKey, BASE_STORY_PRICES, TIER_UPCHARGE } from "@/lib/pricing";
 import PhotoPreview from "@/components/PhotoPreview";
 import { resizeImg } from "@/lib/img";
+import { LazyImage } from "@/components/site/LazyImage";
 import luminaries from "@/assets/collection-luminaries.jpg";
 import meadow from "@/assets/collection-meadow.jpg";
 import fable from "@/assets/collection-fable.jpg";
