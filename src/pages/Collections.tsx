@@ -243,7 +243,7 @@ const CollectionsPage = () => {
                     Silver
                   </p>
                   <img
-                    src={`${JEWELRY_MOCKUP_BASE}/${j.silverImg}`}
+                    src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.silverImg}`, 500)}
                     alt={`${j.name} silver`}
                     loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
@@ -256,7 +256,7 @@ const CollectionsPage = () => {
                     Gold
                   </p>
                   <img
-                    src={`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`}
+                    src={resizeImg(`${JEWELRY_MOCKUP_BASE}/${j.goldImg}`, 500)}
                     alt={`${j.name} gold`}
                     loading="lazy"
                     className="aspect-square w-full rounded-xl object-cover mb-2"
@@ -368,7 +368,7 @@ const CollectionsPage = () => {
                       Gift Box
                     </p>
                     <img
-                      src={`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`}
+                      src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.giftboxImg}`, 500)}
                       alt={`${o.name} gift box`}
                       loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
@@ -379,7 +379,7 @@ const CollectionsPage = () => {
                       Styled
                     </p>
                     <img
-                      src={`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`}
+                      src={resizeImg(`${ORNAMENT_MOCKUP_BASE}/${o.holidayImg}`, 500)}
                       alt={`${o.name} styled`}
                       loading="lazy"
                       className="aspect-square w-full rounded-lg object-cover"
