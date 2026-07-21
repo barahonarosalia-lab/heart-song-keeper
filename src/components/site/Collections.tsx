@@ -2,9 +2,8 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOverlay";
 import { LazyImage } from "@/components/site/LazyImage";
-import { resizeImg } from "@/lib/img";
 
-const ART_BASE = "https://assets.keyofhearts.com/koh-art";
+const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
 
 type CollectionItem = {
   name: string;
@@ -18,32 +17,32 @@ const collections: CollectionItem[] = [
   {
     name: "Little Luminaries",
     slug: "little-luminaries",
-    img: `${ART_BASE}/ll-punchsleep-001.jpg`,
+    img: `${ART_THUMB_BASE}/ll-punchsleep-001-web-800.webp`,
     body: "Soft, whimsical, and deeply loved. Anchored by Punch — the real baby macaque who went viral for clinging to his stuffed orangutan. For baby, birth, lullaby, new parent, and pregnancy loss occasions.",
   },
   {
     name: "Meadow & Mane",
     slug: "meadow-mane",
-    img: `${ART_BASE}/mm-horse-001.jpg`,
+    img: `${ART_THUMB_BASE}/mm-horse-001-web-800.webp`,
     body: "Bold landscapes and animals that feel earned. Wide skies, golden fields, rugged wilderness. The kind of art a man would actually hang on his wall. For military, graduation, sobriety, childhood memory, and milestone occasions.",
   },
   {
     name: "Fable & Fawn",
     slug: "fable-fawn",
-    img: `${ART_BASE}/ff-mushrooms-001.jpg`,
+    img: `${ART_THUMB_BASE}/ff-mushrooms-001-web-800.webp`,
     body: "Adult whimsy with an enchanted edge. Moonlit foxes, glowing cottages, botanical charm. The world of someone who believes in magic but is 34. For friendship, just because, and childhood memory occasions.",
     comingSoon: true,
   },
   {
     name: "Moonlit Botanica",
     slug: "moonlit-botanica",
-    img: `${ART_BASE}/mb-dogcollar-001.jpg`,
+    img: `${ART_THUMB_BASE}/mb-dogcollar-001-web-800.webp`,
     body: "Dark florals, candlelight, and quiet reverence. Art that holds grief with dignity — never clinical, never cold. For memorial, grief, and pregnancy loss occasions.",
   },
   {
     name: "Ember & Ivy",
     slug: "ember-ivy",
-    img: `${ART_BASE}/ei-birds-001.jpg`,
+    img: `${ART_THUMB_BASE}/ei-birds-001-web-800.webp`,
     body: "Warm, intimate, and romantic. Candlelit gardens, paired foxes, cottage roses. The feeling of being chosen and staying chosen. For anniversary, wedding, deep friendship, and cat lovers.",
     comingSoon: true,
   },
