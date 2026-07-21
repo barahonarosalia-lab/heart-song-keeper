@@ -26,7 +26,7 @@ type ArtCollection = {
 const artCollections: ArtCollection[] = [
   {
     name: "Little Luminaries",
-    img: resizeImg(`${ART_BASE}/ll-punchsleep-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ll-punchsleep-001-web-800.webp`,
     description:
       "Soft, whimsical art anchored by wonder. For the ones who just arrived and the ones who welcomed them.",
     occasions: ["Baby & Birth", "New Parent", "Lullaby & Nursery", "Pregnancy Loss"],
