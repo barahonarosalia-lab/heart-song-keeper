@@ -166,10 +166,9 @@ const CollectionsPage = () => {
                 className="bg-card rounded-2xl overflow-hidden shadow-soft border border-border/50 h-full flex flex-col cursor-pointer transition-all hover:shadow-card hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                  <img
+                  <LazyImage
                     src={c.img}
                     alt={c.name}
-                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/10 to-transparent" />
