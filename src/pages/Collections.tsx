@@ -65,7 +65,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Ember & Ivy",
-    img: resizeImg(`${ART_BASE}/ei-birds-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/ei-birds-001-web-800.webp`,
     description:
       "Candlelit and romantic. For the love that was chosen and keeps being chosen every day.",
     occasions: ["Anniversary & Wedding", "Friendship", "Just Because"],
