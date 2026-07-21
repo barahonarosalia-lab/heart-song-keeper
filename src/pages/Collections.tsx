@@ -49,7 +49,7 @@ const artCollections: ArtCollection[] = [
   },
   {
     name: "Moonlit Botanica",
-    img: resizeImg(`${ART_BASE}/mb-dogcollar-001.jpg`, 800),
+    img: `${ART_THUMB_BASE}/mb-dogcollar-001-web-800.webp`,
     description:
       "Dark florals and candlelight. Art that holds grief with dignity — never clinical, never cold.",
     occasions: ["Memorial & Grief", "Pregnancy Loss", "Pet Memorial"],
