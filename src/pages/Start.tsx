@@ -1626,6 +1626,8 @@ const ArtGallery = ({
           />
         ))}
       </div>
+
+      <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </div>
   );
 };
