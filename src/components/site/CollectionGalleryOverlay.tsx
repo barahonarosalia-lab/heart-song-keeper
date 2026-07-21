@@ -402,7 +402,7 @@ const ExpandedView = ({
                 key={i}
                 className="min-w-0 shrink-0 basis-full h-full flex items-center justify-center px-5 md:px-10 py-4"
               >
-                <img
+                <LazyImage
                   src={img.src}
                   alt={`Art ${img.index}`}
                   className="max-w-full max-h-full object-contain rounded-xl"
