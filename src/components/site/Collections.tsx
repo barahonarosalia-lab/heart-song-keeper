@@ -115,10 +115,9 @@ const CollectionCard = ({
     }`}
   >
     <div className="aspect-[4/5] overflow-hidden bg-muted">
-      <img
+      <LazyImage
         src={resizeImg(img, mobile ? 480 : 640)}
         alt={name}
-        loading="lazy"
         width={800}
         height={1024}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
