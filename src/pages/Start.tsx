@@ -1574,7 +1574,7 @@ const ArtGallery = ({
             >
               <div className="aspect-square overflow-hidden bg-muted relative">
                 <LazyImage
-                  src={resizeImg(piece.image, 400)}
+                  src={`${ART_THUMB_BASE}/${piece.id}-web-800.webp`}
                   alt={piece.name}
                   className="w-full h-full object-cover"
                 />
@@ -1584,13 +1584,13 @@ const ArtGallery = ({
                   aria-label={`Expand ${piece.name}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setLightboxSrc(resizeImg(piece.image, 1600));
+                    setLightboxSrc(`${ART_THUMB_BASE}/${piece.id}-mockup-1600.webp`);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.stopPropagation();
                       e.preventDefault();
-                      setLightboxSrc(resizeImg(piece.image, 1600));
+                      setLightboxSrc(`${ART_THUMB_BASE}/${piece.id}-mockup-1600.webp`);
                     }
                   }}
                   className="absolute top-2 right-2 inline-flex items-center justify-center size-8 rounded-full bg-black/50 hover:bg-black/70 text-cream transition-colors cursor-pointer"
