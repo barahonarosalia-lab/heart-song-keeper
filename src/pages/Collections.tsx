@@ -8,8 +8,6 @@ import { CollectionGalleryOverlay } from "@/components/site/CollectionGalleryOve
 import { LazyImage } from "@/components/site/LazyImage";
 import { cn } from "@/lib/utils";
 import { resizeImg } from "@/lib/img";
-import blanketPhoto from "@/assets/blanket-photo.jpg";
-import blanketArt from "@/assets/blanket-art.jpg";
 
 const ART_BASE = "https://assets.keyofhearts.com/koh-art";
 const ART_THUMB_BASE = "https://assets.keyofhearts.com/koh-art-thumbs";
@@ -71,14 +69,14 @@ const jewelryStyles = [
 const blankets = [
   {
     label: "PHOTO BLANKET",
-    img: blanketPhoto,
+    img: "https://assets.keyofhearts.com/koh-composites/marketing-mockups/phtoblanketmockup.png",
     description: "Your photo. Full bleed. Their song behind a QR in every corner.",
     price: "From $119",
     note: "Upload your photo at checkout",
   },
   {
     label: "KOH ART BLANKET",
-    img: blanketArt,
+    img: "https://assets.keyofhearts.com/koh-composites/marketing-mockups/blanketmockupsite2.png",
     description: "Choose from our art collections. Every corner carries their QR.",
     price: "From $119",
     note: null,
