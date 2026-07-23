@@ -173,16 +173,6 @@ const CollectionsPage = () => {
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                     {c.description}
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {c.occasions.map((o) => (
-                      <span
-                        key={o}
-                        className="text-[11px] md:text-xs text-gold border border-gold/40 rounded-full px-2.5 py-0.5"
-                      >
-                        {o}
-                      </span>
-                    ))}
-                  </div>
                   <div className="mt-auto pt-2">
                     <Button
                       variant="outline"
