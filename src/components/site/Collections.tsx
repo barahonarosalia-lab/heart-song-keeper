@@ -36,7 +36,7 @@ const collections: CollectionItem[] = [
     name: "Moonlit Botanica",
     slug: "moonlit-botanica",
     img: `${ART_THUMB_BASE}/mb-dogcollar-001-web-800.webp`,
-    body: "Dark florals, candlelight, and quiet reverence. Art that holds grief with dignity — never clinical, never cold. For memorial, grief, and pregnancy loss occasions.",
+    body: "Dark florals, candlelight, and quiet reverence. Art that holds grief with dignity. For memorial, grief, and pregnancy loss occasions.",
   },
   {
     name: "Ember & Ivy",
