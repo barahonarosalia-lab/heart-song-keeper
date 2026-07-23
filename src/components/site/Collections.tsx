@@ -31,7 +31,6 @@ const collections: CollectionItem[] = [
     slug: "fable-fawn",
     img: `${ART_THUMB_BASE}/ff-mushrooms-001-web-800.webp`,
     body: "Adult whimsy with an enchanted edge. Moonlit foxes, glowing cottages, botanical charm. The world of someone who believes in magic but is 34. For friendship, just because, and childhood memory occasions.",
-    comingSoon: true,
   },
   {
     name: "Moonlit Botanica",
@@ -44,7 +43,7 @@ const collections: CollectionItem[] = [
     slug: "ember-ivy",
     img: `${ART_THUMB_BASE}/ei-birds-001-web-800.webp`,
     body: "Warm, intimate, and romantic. Candlelit gardens, paired foxes, cottage roses. The feeling of being chosen and staying chosen. For anniversary, wedding, deep friendship, and cat lovers.",
-    comingSoon: true,
+    
   },
 ];
 
