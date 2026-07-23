@@ -18,7 +18,6 @@ type ArtCollection = {
   name: string;
   img: string;
   description: string;
-  occasions: string[];
   slug: string;
   comingSoon?: boolean;
 };
@@ -28,47 +27,35 @@ const artCollections: ArtCollection[] = [
     name: "Little Luminaries",
     img: `${ART_THUMB_BASE}/ll-punchsleep-001-web-800.webp`,
     description:
-      "Soft, whimsical art anchored by wonder. For the ones who just arrived and the ones who welcomed them.",
-    occasions: ["Baby & Birth", "New Parent", "Lullaby & Nursery", "Pregnancy Loss"],
+      "Soft, whimsical, and deeply loved. Anchored by Punch — the real baby macaque who went viral for clinging to his stuffed orangutan. For baby, birth, lullaby, new parent, and pregnancy loss occasions.",
     slug: "little-luminaries",
   },
   {
     name: "Meadow & Mane",
     img: `${ART_THUMB_BASE}/mm-horse-001-web-800.webp`,
     description:
-      "Bold, painterly landscapes for the moments that were earned. For the ones who showed up and kept going.",
-    occasions: [
-      "Military & Deployment",
-      "Graduation",
-      "Sobriety & Recovery",
-      "Birthday",
-      "Friendship",
-      "Just Because",
-    ],
+      "Bold landscapes and animals that feel earned. Wide skies, golden fields, rugged wilderness. The kind of art a man would actually hang on his wall. For military, graduation, sobriety, childhood memory, and milestone occasions.",
     slug: "meadow-mane",
   },
   {
     name: "Moonlit Botanica",
     img: `${ART_THUMB_BASE}/mb-dogcollar-001-web-800.webp`,
     description:
-      "Dark florals and candlelight. Art that holds grief with dignity — never clinical, never cold.",
-    occasions: ["Memorial & Grief", "Pregnancy Loss", "Pet Memorial"],
+      "Dark florals, candlelight, and quiet reverence. Art that holds grief with dignity. For memorial, grief, and pregnancy loss occasions.",
     slug: "moonlit-botanica",
   },
   {
     name: "Fable & Fawn",
     img: `${ART_THUMB_BASE}/ff-mushrooms-001-web-800.webp`,
     description:
-      "Adult whimsy with an enchanted edge. For the one who still believes in magic — and is probably 34.",
-    occasions: ["Friendship", "Just Because", "Childhood Memory"],
+      "Adult whimsy with an enchanted edge. Moonlit foxes, glowing cottages, botanical charm. The world of someone who believes in magic but is 34. For friendship, just because, and childhood memory occasions.",
     slug: "fable-fawn",
   },
   {
     name: "Ember & Ivy",
     img: `${ART_THUMB_BASE}/ei-birds-001-web-800.webp`,
     description:
-      "Candlelit and romantic. For the love that was chosen and keeps being chosen every day.",
-    occasions: ["Anniversary & Wedding", "Friendship", "Just Because"],
+      "Warm, intimate, and romantic. Candlelit gardens, paired foxes, cottage roses. The feeling of being chosen and staying chosen. For anniversary, wedding, deep friendship, and cat lovers.",
     slug: "ember-ivy",
   },
 ];
